@@ -1,6 +1,10 @@
 pluginManagement {
   repositories {
     gradlePluginPortal()
+    final userHome = System.getProperty('user.home')
+//    maven {
+//      url = uri("file://${userHome}repository")
+//    }
   }
 }
 
