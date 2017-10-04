@@ -24,5 +24,3 @@ def call(int buildNumber) {
     }
   }
 }
-
-return this

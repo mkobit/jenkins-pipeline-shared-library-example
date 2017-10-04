@@ -43,8 +43,12 @@ sharedLibrary {
   groovyVersion = "2.4.12"
 //  coreVersion = "2.73"
 //  testHarnessVersion = "2.24"
-//  pluginDependencies {
+  pluginDependencies(Action {
+    dependency("org.jenkinsci.plugins", "pipeline-model-api", "1.2.1")
+    dependency("org.jenkinsci.plugins", "pipeline-model-declarative-agent", "1.1.1")
+    dependency("org.jenkinsci.plugins", "pipeline-model-definition", "1.2.1")
+    dependency("org.jenkinsci.plugins", "pipeline-model-extensions", "1.2.1")
 //    workflowCpsGlobalLibraryPluginVersion = "2.8"
 //    blueocean("blueocean-web", "1.2.0")
-//  }
+  })
 }
