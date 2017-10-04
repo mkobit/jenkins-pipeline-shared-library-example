@@ -1,10 +1,10 @@
+import com.gradle.scan.plugin.BuildScanPlugin
 import org.gradle.kotlin.dsl.version
 import java.io.ByteArrayOutputStream
 
 plugins {
   id("com.gradle.build-scan") version "1.9"
-  // Fails on apply of plugin right now, need to investigate
-  id("com.mkobit.jenkins.pipelines.shared-library") version "0.1.0"
+  id("com.mkobit.jenkins.pipelines.shared-library") version "0.2.0"
 }
 
 val commitSha: String by lazy {
@@ -41,14 +41,10 @@ dependencies {
 
 sharedLibrary {
   groovyVersion = "2.4.12"
-//  coreVersion = "2.73"
-//  testHarnessVersion = "2.24"
   pluginDependencies(Action {
     dependency("org.jenkinsci.plugins", "pipeline-model-api", "1.2.1")
     dependency("org.jenkinsci.plugins", "pipeline-model-declarative-agent", "1.1.1")
     dependency("org.jenkinsci.plugins", "pipeline-model-definition", "1.2.1")
     dependency("org.jenkinsci.plugins", "pipeline-model-extensions", "1.2.1")
-//    workflowCpsGlobalLibraryPluginVersion = "2.8"
-//    blueocean("blueocean-web", "1.2.0")
   })
 }
