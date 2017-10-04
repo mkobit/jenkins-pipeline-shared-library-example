@@ -1,0 +1,48 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/openjdk:8-jdk
+        environment:
+          JAVA_OPTS: -XX:+UseG1GC -Xmx1024m -Xms512m
+          # Disable Kotlin compiler daemon - https://discuss.kotlinlang.org/t/solved-disable-kotlin-compiler-process-keepalive/2622
+          GRADLE_OPTS: -Dkotlin.compiler.execution.strategy="in-process"
+
+    working_directory: ~/shared-library-example
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+          - home-cache-{{ checksum "build.gradle.kts" }}-{{ checksum "gradle.properties" }}-{{ checksum "gradle/junit5.gradle.kts" }}
+          - build-cache-{{ checksum "build.gradle.kts" }}-{{ checksum "gradle.properties" }}-{{ checksum "gradle/junit5.gradle.kts" }}
+
+      - run:
+          command: |
+            java -XshowSettings:vm -XX:+PrintCommandLineFlags -version
+            java -XshowSettings:vm -XX:+PrintCommandLineFlags -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -version
+            javac -version
+          name: Show Java Version
+
+      - run:
+          command: ./gradlew downloadDependencies --max-workers 1 --info --stacktrace
+          name: Download Dependencies
+
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: home-cache-{{ checksum "build.gradle.kts" }}-{{ checksum "gradle.properties" }}-{{ checksum "gradle/junit5.gradle.kts" }}
+
+      - run:
+          command: ./gradlew integrationTest build --max-workers 1 --stacktrace --scan
+          name: Build
+
+      - store_test_results:
+          path: ~/shared-library-example/build/test-results/
+
+      - save_cache:
+          paths:
+            - ~/shared-library-example/.gradle
+          key: build-cache-{{ checksum "build.gradle.kts" }}-{{ checksum "gradle.properties" }}-{{ checksum "gradle/junit5.gradle.kts" }}
+
+
