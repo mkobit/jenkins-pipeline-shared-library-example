@@ -2,6 +2,8 @@ pluginManagement {
   repositories {
     gradlePluginPortal()
     final userHome = System.getProperty('user.home')
+    maven { url = uri('http://jcenter.bintray.com') }
+
 //    maven {
 //      url = uri("file://${userHome}repository")
 //    }

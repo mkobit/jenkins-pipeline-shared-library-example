@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream
 plugins {
   id("com.gradle.build-scan") version "1.9"
   // Fails on apply of plugin right now, need to investigate
-  id("com.mkobit.jenkins.pipelines.shared-library") version "0.1.0" apply false
+  id("com.mkobit.jenkins.pipelines.shared-library") version "0.1.0"
 }
 
 val commitSha: String by lazy {
@@ -30,12 +30,21 @@ tasks {
   }
 }
 
-//sharedLibrary {
-//  groovyVersion = "2.4.12"
+java {
+  sourceCompatibility = JavaVersion.VERSION_1_8
+}
+
+dependencies {
+  testImplementation("org.spockframework:spock-core:1.1-groovy-2.4")
+  testImplementation("org.assertj:assertj-core:3.8.0")
+}
+
+sharedLibrary {
+  groovyVersion = "2.4.12"
 //  coreVersion = "2.73"
 //  testHarnessVersion = "2.24"
 //  pluginDependencies {
 //    workflowCpsGlobalLibraryPluginVersion = "2.8"
 //    blueocean("blueocean-web", "1.2.0")
 //  }
-//}
+}
