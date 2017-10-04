@@ -14,8 +14,8 @@ jobs:
 
       - restore_cache:
           keys:
-          - home-cache-{{ checksum "build.gradle.kts" }}-{{ checksum "gradle.properties" }}-{{ checksum "gradle/junit5.gradle.kts" }}
-          - build-cache-{{ checksum "build.gradle.kts" }}-{{ checksum "gradle.properties" }}-{{ checksum "gradle/junit5.gradle.kts" }}
+          - home-cache-{{ checksum "build.gradle.kts" }}-{{ checksum "settings.gradle" }}
+          - build-cache-{{ checksum "build.gradle.kts" }}-{{ checksum "settings.gradle" }}
 
       - run:
           command: |
@@ -31,7 +31,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.gradle
-          key: home-cache-{{ checksum "build.gradle.kts" }}-{{ checksum "gradle.properties" }}-{{ checksum "gradle/junit5.gradle.kts" }}
+          key: home-cache-{{ checksum "build.gradle.kts" }}-{{ checksum "settings.gradle" }}
 
       - run:
           command: ./gradlew integrationTest build --max-workers 1 --stacktrace --scan
@@ -43,6 +43,6 @@ jobs:
       - save_cache:
           paths:
             - ~/shared-library-example/.gradle
-          key: build-cache-{{ checksum "build.gradle.kts" }}-{{ checksum "gradle.properties" }}-{{ checksum "gradle/junit5.gradle.kts" }}
+          key: build-cache-{{ checksum "build.gradle.kts" }}-{{ checksum "settings.gradle" }}
 
 
