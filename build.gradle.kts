@@ -35,12 +35,11 @@ tasks {
     configurations.filter { it.isCanBeResolved }.forEach { inputs.files(it) }
     outputs.file(downloadedDependenciesIndex)
     doFirst {
+      project.buildDir.mkdir()
       val fileNames = configurations.filter { it.isCanBeResolved }.flatMap {
         logger.info("Resolving configuration named ${it.name}")
         it.resolve()
-      }.map {
-        it.name
-      }.joinToString(separator = System.lineSeparator())
+      }.map { it.name }.joinToString(separator = System.lineSeparator())
       downloadedDependenciesIndex.bufferedWriter().use { it.write(fileNames) }
     }
   }
