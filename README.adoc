@@ -1,5 +1,5 @@
 = Jenkins Pipeline Shared Library Gradle Plugin
-:toc:
+:uri-shared-library-plugin: https://github.com/mkobit/jenkins-pipeline-shared-libraries-gradle-plugin
 :uri-jenkins-shared-library-docs: https://jenkins.io/doc/book/pipeline/shared-libraries/
 :uri-jenkins-pipeline-unit: https://github.com/lesfurets/JenkinsPipelineUnit
 :uri-build-status-image: https://circleci.com/gh/mkobit/jenkins-pipeline-shared-library-example/tree/master.svg?style=svg
@@ -9,7 +9,7 @@
 
 == Purpose
 
-This repository is an example of a Jenkins link:{uri-shared-library-docs}[Jenkins Pipeline Shared Library] that uses the `com.mkobit.jenkins.pipelines.shared-library` for development and testing of shared libraries.
+This repository is an example of a Jenkins link:{uri-shared-library-docs}[Jenkins Pipeline Shared Library] that uses the link:{uri-shared-library-plugin}[_Shared Library Gradle Plugin_] for development and testing of shared libraries.
 
 Explore this project by:
 
