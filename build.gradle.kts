@@ -3,8 +3,9 @@ import org.gradle.kotlin.dsl.version
 import java.io.ByteArrayOutputStream
 
 plugins {
-  id("com.gradle.build-scan") version "1.9"
+  id("com.gradle.build-scan") version "1.9.1"
   id("com.mkobit.jenkins.pipelines.shared-library") version "0.2.0"
+  id("com.github.ben-manes.versions") version "0.15.0"
 }
 
 val commitSha: String by lazy {
