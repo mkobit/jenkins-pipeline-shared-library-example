@@ -1,10 +1,10 @@
 package com.mkobit.libraryexample
 
+import com.mkobit.jenkins.pipelines.codegen.LocalLibraryRetriever
 import org.jenkinsci.plugins.workflow.libs.GlobalLibraries
 import org.jenkinsci.plugins.workflow.libs.LibraryConfiguration
 import org.jenkinsci.plugins.workflow.libs.LibraryRetriever
 import org.jvnet.hudson.test.JenkinsRule
-import testsupport.LocalLibraryRetriever
 
 final class RuleBootstrapper {
   private RuleBootstrapper() {

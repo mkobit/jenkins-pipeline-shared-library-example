@@ -15,5 +15,5 @@ Explore this project by:
 
 * Importing into IntelliJ
 * Activating the `resources/idea.gdsl` to see how the Jenkins steps auto-completion works
-* Build using `./gradlew build`
-* Run integration tests with `./gradlew integrationTest`
+* Build, test, and run integration tests with `./gradlew build`
+* See how test code is generated for simplifying tests (like `com.mkobit.jenkins.pipelines.codegen.LocalLibraryRetriever`)

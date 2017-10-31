@@ -3,9 +3,9 @@ import org.gradle.kotlin.dsl.version
 import java.io.ByteArrayOutputStream
 
 plugins {
-  id("com.gradle.build-scan") version "1.9.1"
-  id("com.mkobit.jenkins.pipelines.shared-library") version "0.2.0"
-  id("com.github.ben-manes.versions") version "0.15.0"
+  id("com.gradle.build-scan") version "1.10.1"
+  id("com.mkobit.jenkins.pipelines.shared-library") version "0.3.2"
+  id("com.github.ben-manes.versions") version "0.17.0"
 }
 
 val commitSha: String by lazy {
@@ -27,7 +27,7 @@ buildScan {
 
 tasks {
   "wrapper"(Wrapper::class) {
-    gradleVersion = "4.2.1"
+    gradleVersion = "4.3"
   }
 
   "downloadDependencies" {
@@ -58,9 +58,9 @@ dependencies {
 sharedLibrary {
   groovyVersion = "2.4.12"
   pluginDependencies(Action {
-    dependency("org.jenkinsci.plugins", "pipeline-model-api", "1.2.1")
+    dependency("org.jenkinsci.plugins", "pipeline-model-api", "1.2.2")
     dependency("org.jenkinsci.plugins", "pipeline-model-declarative-agent", "1.1.1")
-    dependency("org.jenkinsci.plugins", "pipeline-model-definition", "1.2.1")
-    dependency("org.jenkinsci.plugins", "pipeline-model-extensions", "1.2.1")
+    dependency("org.jenkinsci.plugins", "pipeline-model-definition", "1.2.2")
+    dependency("org.jenkinsci.plugins", "pipeline-model-extensions", "1.2.2")
   })
 }
