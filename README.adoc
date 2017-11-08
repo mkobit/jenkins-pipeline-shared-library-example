@@ -4,8 +4,12 @@
 :uri-jenkins-pipeline-unit: https://github.com/lesfurets/JenkinsPipelineUnit
 :uri-build-status-image: https://circleci.com/gh/mkobit/jenkins-pipeline-shared-library-example/tree/master.svg?style=svg
 :circle-ci-status-badge: image:{uri-build-status-image}["CircleCI", link="https://circleci.com/gh/mkobit/jenkins-pipeline-shared-library-example/tree/master"]
+:uri-zenhub-badge: https://raw.githubusercontent.com/ZenHubIO/support/master/zenhub-badge.png
+:version-badge: image:{uri-version-badge-image}["Plugin Version", link="{uri-gradle-plugin-portal}"]
+:zenhub-badge: image:{uri-zenhub-badge}["ZenHub Badge", link="https://www.zenhub.com/"]
 
 {circle-ci-status-badge}
+{zenhub-badge}
 
 == Purpose
 
