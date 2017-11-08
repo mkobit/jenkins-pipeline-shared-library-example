@@ -16,7 +16,7 @@ class LibraryResourceStepSpec extends Specification {
     RuleBootstrapper.setup(rule)
   }
 
-  def "say hello to name"() {
+  def "libraryResource can load resources in library"() {
     given:
     final CpsFlowDefinition flow = new CpsFlowDefinition('''
 final resource = libraryResource('com/mkobit/globallibraryresources/lorumipsum.txt')
