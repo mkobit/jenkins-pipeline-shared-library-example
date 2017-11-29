@@ -13,7 +13,7 @@
 
 == Purpose
 
-This repository is an example of a Jenkins link:{uri-shared-library-docs}[Jenkins Pipeline Shared Library] that uses the link:{uri-shared-library-plugin}[_Shared Library Gradle Plugin_] for development and testing of shared libraries.
+This repository is an example of a Jenkins link:{uri-jenkins-shared-library-docs}[Jenkins Pipeline Shared Library] that uses the link:{uri-shared-library-plugin}[_Shared Library Gradle Plugin_] for development and testing of shared libraries.
 
 Explore this project by:
 
