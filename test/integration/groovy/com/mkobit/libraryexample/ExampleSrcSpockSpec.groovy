@@ -18,20 +18,24 @@ class ExampleSrcSpockSpec extends Specification {
 
   def "say hello to name"() {
     given:
-    final CpsFlowDefinition flow = new CpsFlowDefinition('''
-import com.mkobit.libraryexample.ExampleSrc
-
-final exampleSrc = new ExampleSrc(this)
-exampleSrc.sayHelloTo('Bob')
-    ''', true)
-    final WorkflowJob workflowJob = rule.createProject(WorkflowJob, 'project')
+    CpsFlowDefinition flow = new CpsFlowDefinition(
+        '''
+          import com.mkobit.libraryexample.ExampleSrc
+          
+          final exampleSrc = new ExampleSrc(this)
+          exampleSrc.sayHelloTo('Bob')
+        '''.stripIndent(),
+        true
+    )
+    WorkflowJob workflowJob = rule.createProject(WorkflowJob, 'project')
     workflowJob.definition = flow
 
     when:
-    final QueueTaskFuture<WorkflowRun> futureRun = workflowJob.scheduleBuild2(0)
+    QueueTaskFuture<WorkflowRun> futureRun = workflowJob.scheduleBuild2(0)
 
     then:
-    final WorkflowRun run = rule.assertBuildStatusSuccess(futureRun)
+    // JenkinsRule has different assertion capabilities
+    WorkflowRun run = rule.assertBuildStatusSuccess(futureRun)
     rule.assertLogContains('Hello there Bob', run)
   }
 }
