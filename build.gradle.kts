@@ -3,7 +3,7 @@ import org.gradle.kotlin.dsl.version
 import java.io.ByteArrayOutputStream
 
 plugins {
-  id("com.gradle.build-scan") version "1.10.1"
+  id("com.gradle.build-scan") version "1.11"
   id("com.mkobit.jenkins.pipelines.shared-library") version "0.3.2"
   id("com.github.ben-manes.versions") version "0.17.0"
 }
