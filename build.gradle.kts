@@ -27,7 +27,7 @@ buildScan {
 
 tasks {
   "wrapper"(Wrapper::class) {
-    gradleVersion = "4.3"
+    gradleVersion = "4.4.1"
   }
 
   "downloadDependencies" {
