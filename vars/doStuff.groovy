@@ -1,7 +1,5 @@
-def execute() {
+def call() {
   node {
-    echo 'hello'
+    echo 'hello stuff'
   }
 }
-
-return this

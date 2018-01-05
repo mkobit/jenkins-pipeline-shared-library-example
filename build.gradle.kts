@@ -52,7 +52,7 @@ java {
 
 dependencies {
   testImplementation("org.spockframework:spock-core:1.1-groovy-2.4")
-  testImplementation("org.assertj:assertj-core:3.8.0")
+  testImplementation("org.assertj:assertj-core:3.9.0")
 }
 
 sharedLibrary {

@@ -21,10 +21,10 @@ class VarsExampleJunitTest {
   @Test
   void "testing library that uses declarative pipeline libraries"() {
     final CpsFlowDefinition flow = new CpsFlowDefinition('''
-import evenOrOdd
-
-evenOrOdd(env.BUILD_NUMBER as int)
-    ''', true)
+        import evenOrOdd
+        
+        evenOrOdd(env.BUILD_NUMBER as int)
+    '''.stripIndent(), true)
     final WorkflowJob workflowJob = rule.createProject(WorkflowJob, 'project')
     workflowJob.definition = flow
 
@@ -33,5 +33,18 @@ evenOrOdd(env.BUILD_NUMBER as int)
 
     final WorkflowRun secondResult = rule.buildAndAssertSuccess(workflowJob)
     rule.assertLogContains('The build number is even', secondResult)
+  }
+
+  @Test
+  void "testing library function"() {
+    final CpsFlowDefinition flow = new CpsFlowDefinition('''
+        import doStuff
+        
+        doStuff()
+    '''.stripIndent(), true)
+    final WorkflowJob workflowJob = rule.createProject(WorkflowJob, 'project')
+    workflowJob.definition = flow
+
+    rule.assertLogContains('hello stuff', rule.buildAndAssertSuccess(workflowJob))
   }
 }
