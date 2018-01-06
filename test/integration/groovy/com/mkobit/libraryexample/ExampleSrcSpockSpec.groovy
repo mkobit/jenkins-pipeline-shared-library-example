@@ -18,17 +18,13 @@ class ExampleSrcSpockSpec extends Specification {
 
   def "say hello to name"() {
     given:
-    CpsFlowDefinition flow = new CpsFlowDefinition(
-        '''
-          import com.mkobit.libraryexample.ExampleSrc
-          
-          final exampleSrc = new ExampleSrc(this)
-          exampleSrc.sayHelloTo('Bob')
-        '''.stripIndent(),
-        true
-    )
     WorkflowJob workflowJob = rule.createProject(WorkflowJob, 'project')
-    workflowJob.definition = flow
+    workflowJob.definition = new CpsFlowDefinition('''
+        import com.mkobit.libraryexample.ExampleSrc
+        
+        final exampleSrc = new ExampleSrc(this)
+        exampleSrc.sayHelloTo('Bob')
+      '''.stripIndent(), true)
 
     when:
     QueueTaskFuture<WorkflowRun> futureRun = workflowJob.scheduleBuild2(0)
@@ -37,5 +33,24 @@ class ExampleSrcSpockSpec extends Specification {
     // JenkinsRule has different assertion capabilities
     WorkflowRun run = rule.assertBuildStatusSuccess(futureRun)
     rule.assertLogContains('Hello there Bob', run)
+  }
+
+  def "calling a @NonCPS method"() {
+    given:
+    WorkflowJob workflowJob = rule.createProject(WorkflowJob, 'project')
+    workflowJob.definition = new CpsFlowDefinition('''
+      import com.mkobit.libraryexample.ExampleSrc
+      
+      final exampleSrc = new ExampleSrc(this)
+      echo "Numbers: ${exampleSrc.nonCpsDouble([1, 2])}"
+    '''.stripIndent(), true)
+
+    when:
+    QueueTaskFuture<WorkflowRun> futureRun = workflowJob.scheduleBuild2(0)
+
+    then:
+    // JenkinsRule has different assertion capabilities
+    WorkflowRun run = rule.assertBuildStatusSuccess(futureRun)
+    rule.assertLogContains('Numbers: [2, 4]', run)
   }
 }

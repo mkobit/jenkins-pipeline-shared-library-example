@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream
 
 plugins {
   id("com.gradle.build-scan") version "1.11"
-  id("com.mkobit.jenkins.pipelines.shared-library") version "0.3.2"
+  id("com.mkobit.jenkins.pipelines.shared-library") version "0.4.0"
   id("com.github.ben-manes.versions") version "0.17.0"
 }
 
@@ -29,21 +29,6 @@ tasks {
   "wrapper"(Wrapper::class) {
     gradleVersion = "4.4.1"
   }
-
-  "downloadDependencies" {
-    val downloadedDependenciesIndex = file("$buildDir/downloadedDependencies.txt")
-    description = "Downloads dependencies for caching and usage on Circle CI"
-    configurations.filter { it.isCanBeResolved }.forEach { inputs.files(it) }
-    outputs.file(downloadedDependenciesIndex)
-    doFirst {
-      project.buildDir.mkdir()
-      val fileNames = configurations.filter { it.isCanBeResolved }.flatMap {
-        logger.info("Resolving configuration named ${it.name}")
-        it.resolve()
-      }.map { it.name }.joinToString(separator = System.lineSeparator())
-      downloadedDependenciesIndex.bufferedWriter().use { it.write(fileNames) }
-    }
-  }
 }
 
 java {
@@ -56,11 +41,12 @@ dependencies {
 }
 
 sharedLibrary {
+  coreVersion = "2.95"
   groovyVersion = "2.4.12"
   pluginDependencies(Action {
-    dependency("org.jenkinsci.plugins", "pipeline-model-api", "1.2.2")
+    dependency("org.jenkinsci.plugins", "pipeline-model-api", "1.2.5")
     dependency("org.jenkinsci.plugins", "pipeline-model-declarative-agent", "1.1.1")
-    dependency("org.jenkinsci.plugins", "pipeline-model-definition", "1.2.2")
-    dependency("org.jenkinsci.plugins", "pipeline-model-extensions", "1.2.2")
+    dependency("org.jenkinsci.plugins", "pipeline-model-definition", "1.2.5")
+    dependency("org.jenkinsci.plugins", "pipeline-model-extensions", "1.2.5")
   })
 }

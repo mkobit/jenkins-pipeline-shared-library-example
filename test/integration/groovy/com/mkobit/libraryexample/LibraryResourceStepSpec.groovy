@@ -19,9 +19,9 @@ class LibraryResourceStepSpec extends Specification {
   def "libraryResource can load resources in library"() {
     given:
     final CpsFlowDefinition flow = new CpsFlowDefinition('''
-final resource = libraryResource('com/mkobit/globallibraryresources/lorumipsum.txt')
-echo "Resource Text: $resource"
-    ''', true)
+      final resource = libraryResource('com/mkobit/globallibraryresources/lorumipsum.txt')
+      echo "Resource Text: $resource"
+    '''.stripIndent(), true)
     final WorkflowJob workflowJob = rule.createProject(WorkflowJob, 'project')
     workflowJob.definition = flow
 

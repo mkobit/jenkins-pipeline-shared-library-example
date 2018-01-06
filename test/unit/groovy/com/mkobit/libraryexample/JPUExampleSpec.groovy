@@ -13,7 +13,7 @@ class JPUExampleSpec extends BasePipelineTest {
     super.setUp()
   }
 
-  // TODO
+  // TODO: see https://github.com/jenkinsci/JenkinsPipelineUnit/issues/70 for a local library loader
   @Test
   void "example unit test"() throws Exception {
   }
