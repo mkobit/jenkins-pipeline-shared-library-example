@@ -11,11 +11,15 @@ jobs:
     working_directory: ~/shared-library-example
     steps:
       - checkout
-
+      - run:
+          command: |
+            mkdir -p build
+            find settings.gradle build.gradle gradle -type f -exec sha256sum '{}' \; | tee build/circle-ci-key.txt
+          name: Generate Cache Key
       - restore_cache:
           keys:
-          - home-cache-{{ checksum "build.gradle.kts" }}-{{ checksum "settings.gradle" }}
-          - build-cache-{{ checksum "build.gradle.kts" }}-{{ checksum "settings.gradle" }}
+          - v1-home-cache-{{ checksum "build/circle-ci-key.txt" }}
+          - v1-home-cache-
 
       - run:
           command: |
@@ -25,24 +29,16 @@ jobs:
           name: Show Java Version
 
       - run:
-          command: ./gradlew downloadDependencies --max-workers 1 --info --stacktrace
-          name: Download Dependencies
+          command: ./gradlew build --max-workers 2 --stacktrace --scan
+          name: Build
 
       - save_cache:
           paths:
             - ~/.gradle
-          key: home-cache-{{ checksum "build.gradle.kts" }}-{{ checksum "settings.gradle" }}
-
-      - run:
-          command: ./gradlew integrationTest build --max-workers 1 --stacktrace --scan
-          name: Build
+          key: v1-home-cache-{{ checksum "build/circle-ci-key.txt" }}
+          when: always
 
       - store_test_results:
           path: ~/shared-library-example/build/test-results/
-
-      - save_cache:
-          paths:
-            - ~/shared-library-example/.gradle
-          key: build-cache-{{ checksum "build.gradle.kts" }}-{{ checksum "settings.gradle" }}
 
 
