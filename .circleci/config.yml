@@ -15,7 +15,6 @@ jobs:
       - restore_cache:
           keys:
           - home-cache-{{ checksum "build.gradle.kts" }}-{{ checksum "settings.gradle" }}
-          - build-cache-{{ checksum "build.gradle.kts" }}-{{ checksum "settings.gradle" }}
 
       - run:
           command: |
@@ -25,7 +24,7 @@ jobs:
           name: Show Java Version
 
       - run:
-          command: ./gradlew downloadDependencies --max-workers 1 --info --stacktrace
+          command: ./gradlew downloadDependencies --max-workers 2 --info --stacktrace
           name: Download Dependencies
 
       - save_cache:
@@ -34,15 +33,10 @@ jobs:
           key: home-cache-{{ checksum "build.gradle.kts" }}-{{ checksum "settings.gradle" }}
 
       - run:
-          command: ./gradlew integrationTest build --max-workers 1 --stacktrace --scan
+          command: ./gradlew integrationTest build --max-workers 2 --stacktrace --scan
           name: Build
 
       - store_test_results:
           path: ~/shared-library-example/build/test-results/
-
-      - save_cache:
-          paths:
-            - ~/shared-library-example/.gradle
-          key: build-cache-{{ checksum "build.gradle.kts" }}-{{ checksum "settings.gradle" }}
 
 
