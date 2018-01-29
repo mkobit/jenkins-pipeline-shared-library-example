@@ -14,7 +14,7 @@ jobs:
       - run:
           command: |
             mkdir -p build
-            find settings.gradle build.gradle.kts gradle -type f -exec sha256sum '{}' \; | tee build/circle-ci-key.txt
+            find settings.gradle.kts build.gradle.kts gradle -type f -exec sha256sum '{}' \; | tee build/circle-ci-key.txt
           name: Generate Cache Key
       - restore_cache:
           keys:
