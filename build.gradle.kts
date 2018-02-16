@@ -3,9 +3,14 @@ import org.gradle.kotlin.dsl.version
 import java.io.ByteArrayOutputStream
 
 plugins {
+  `jacoco`
   id("com.gradle.build-scan") version "1.11"
   id("com.mkobit.jenkins.pipelines.shared-library") version "0.4.0"
   id("com.github.ben-manes.versions") version "0.17.0"
+}
+
+jacoco {
+  toolVersion = "0.8.0"
 }
 
 val commitSha: String by lazy {
@@ -28,6 +33,24 @@ buildScan {
 tasks {
   "wrapper"(Wrapper::class) {
     gradleVersion = "4.4.1"
+  }
+  "integrationTest" {
+    extensions.findByType(JacocoTaskExtension::class.java)?.apply {
+      classDumpDir = file("$buildDir/jacoco/classpathdumps")
+    }
+  }
+  "jacocoIntegrationTestReport"(JacocoReport::class) {
+    reports {
+      csv.isEnabled = true
+      xml.isEnabled = true
+    }
+    executionData(tasks["integrationTest"])
+    val main by java.sourceSets
+    sourceDirectories = main.allSource
+    classDirectories = fileTree("$buildDir/jacoco/classpathdumps").apply {
+      // Replace class name below with dumped class name
+//      include("**/ExampleSrc.e4cd33b84ed6d041.class")
+    }
   }
 }
 

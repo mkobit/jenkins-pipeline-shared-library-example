@@ -13,6 +13,7 @@ final class RuleBootstrapper {
   /**
    * This demonstrates how you can can configure the {@link JenkinsRule} to use the local source code
    * as a {@link LibraryConfiguration}. In this example we are making it implicitly loaded.
+   * This method could be done in the setup of your favorite testing framework.
    */
   static void setup(JenkinsRule rule) {
     rule.timeout = 30
