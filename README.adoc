@@ -11,6 +11,8 @@
 {circle-ci-status-badge}
 {zenhub-badge}
 
+NOTE: Contributions for examples are very welcome!
+
 == Purpose
 
 This repository is an example of a Jenkins link:{uri-jenkins-shared-library-docs}[Jenkins Pipeline Shared Library] that uses the link:{uri-shared-library-plugin}[_Shared Library Gradle Plugin_] for development and testing of shared libraries.
