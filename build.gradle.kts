@@ -20,8 +20,8 @@ val commitSha: String by lazy {
 }
 
 buildScan {
-  setLicenseAgree("yes")
-  setLicenseAgreementUrl("https://gradle.com/terms-of-service")
+  setTermsOfServiceAgree("yes")
+  setTermsOfServiceUrl("https://gradle.com/terms-of-service")
   link("GitHub", "https://github.com/mkobit/jenkins-pipeline-shared-library-example")
   value("Revision", commitSha)
 }
