@@ -53,4 +53,27 @@ class ExampleSrcSpockSpec extends Specification {
     WorkflowRun run = rule.assertBuildStatusSuccess(futureRun)
     rule.assertLogContains('Numbers: [2, 4]', run)
   }
+
+  def "using 'lock' step from plugin"() {
+    given:
+    WorkflowJob workflowJob = rule.createProject(WorkflowJob, 'project')
+    workflowJob.definition = new CpsFlowDefinition('''
+        lock('myLock') {
+          echo 'Hello world during lock!'
+        }
+    '''.stripIndent(), true)
+
+    when:
+    QueueTaskFuture<WorkflowRun> futureRun = workflowJob.scheduleBuild2(0)
+
+    then:
+    // JenkinsRule has different assertion capabilities
+    WorkflowRun run = rule.assertBuildStatusSuccess(futureRun)
+    rule.assertLogContains('''
+        [Pipeline] lock
+        Trying to acquire lock on [myLock]
+        Resource [myLock] did not exist. Created.
+        Lock acquired on [myLock]
+    '''.stripIndent(), run)
+  }
 }

@@ -22,6 +22,6 @@ final class RuleBootstrapper {
     localLibrary.implicit = true
     localLibrary.defaultVersion = 'unused'
     localLibrary.allowVersionOverride = false
-    GlobalLibraries.get().setLibraries(Collections.singletonList(localLibrary))
+    GlobalLibraries.get().libraries = [localLibrary]
   }
 }

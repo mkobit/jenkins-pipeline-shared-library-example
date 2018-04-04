@@ -55,6 +55,7 @@ sharedLibrary {
   // TODO: retrieve downloaded plugin resource
   pluginDependencies(Action {
     dependency("org.jenkins-ci.plugins", "pipeline-build-step", "2.7")
+    dependency("org.6wind.jenkins", "lockable-resources", "2.2")
     dependency("org.jenkinsci.plugins", "pipeline-model-api", "1.2.5")
     dependency("org.jenkinsci.plugins", "pipeline-model-declarative-agent", "1.1.1")
     dependency("org.jenkinsci.plugins", "pipeline-model-definition", "1.2.5")
