@@ -4,8 +4,8 @@ import org.gradle.kotlin.dsl.version
 import java.io.ByteArrayOutputStream
 
 plugins {
-  id("com.gradle.build-scan") version "1.12.1"
-  id("com.mkobit.jenkins.pipelines.shared-library") version "0.5.0"
+  id("com.gradle.build-scan") version "1.13.1"
+  id("com.mkobit.jenkins.pipelines.shared-library") version "0.6.0"
   id("com.github.ben-manes.versions") version "0.17.0"
 }
 
@@ -51,7 +51,7 @@ jenkinsIntegration {
 
 sharedLibrary {
   // TODO: this will need to be altered when auto-mapping functionality is complete
-  coreVersion = jenkinsIntegration.downloadDirectory.file("core-version.txt").get().asFile.readText()
+  coreVersion.set(jenkinsIntegration.downloadDirectory.file("core-version.txt").map { it.asFile.readText().trim() })
   // TODO: retrieve downloaded plugin resource
   pluginDependencies(Action {
     dependency("org.jenkins-ci.plugins", "pipeline-build-step", "2.7")
