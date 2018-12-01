@@ -37,7 +37,7 @@ java {
 }
 
 dependencies {
-  val spock = "org.spockframework:spock-core:1.1-groovy-2.4"
+  val spock = "org.spockframework:spock-core:1.2-groovy-2.4"
   testImplementation(spock)
   testImplementation("org.assertj:assertj-core:3.11.1")
   integrationTestImplementation(spock)
