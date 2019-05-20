@@ -1,12 +1,10 @@
-import com.gradle.scan.plugin.BuildScanPlugin
 import com.mkobit.jenkins.pipelines.http.AnonymousAuthentication
-import org.gradle.kotlin.dsl.version
 import java.io.ByteArrayOutputStream
 
 plugins {
-  id("com.gradle.build-scan") version "2.0.2"
+  id("com.gradle.build-scan") version "2.3"
   id("com.mkobit.jenkins.pipelines.shared-library") version "0.8.0"
-  id("com.github.ben-manes.versions") version "0.20.0"
+  id("com.github.ben-manes.versions") version "0.21.0"
 }
 
 val commitSha: String by lazy {
@@ -20,15 +18,15 @@ val commitSha: String by lazy {
 }
 
 buildScan {
-  setTermsOfServiceAgree("yes")
-  setTermsOfServiceUrl("https://gradle.com/terms-of-service")
+  termsOfServiceAgree = "yes"
+  termsOfServiceUrl = "https://gradle.com/terms-of-service"
   link("GitHub", "https://github.com/mkobit/jenkins-pipeline-shared-library-example")
   value("Revision", commitSha)
 }
 
 tasks {
   wrapper {
-    gradleVersion = "5.0"
+    gradleVersion = "5.4.1"
   }
 }
 
