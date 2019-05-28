@@ -3,7 +3,7 @@ import java.io.ByteArrayOutputStream
 
 plugins {
   id("com.gradle.build-scan") version "2.3"
-  id("com.mkobit.jenkins.pipelines.shared-library") version "0.8.0"
+  id("com.mkobit.jenkins.pipelines.shared-library") version "0.9.1"
   id("com.github.ben-manes.versions") version "0.21.0"
 }
 
