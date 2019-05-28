@@ -11,7 +11,7 @@
 {circle-ci-status-badge}
 {zenhub-badge}
 
-NOTE: Contributions for examples are very welcome!
+NOTE: Contributions for examples are welcome!
 
 == Purpose
 
