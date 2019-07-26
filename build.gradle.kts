@@ -3,7 +3,7 @@ import java.io.ByteArrayOutputStream
 
 plugins {
   id("com.gradle.build-scan") version "2.3"
-  id("com.mkobit.jenkins.pipelines.shared-library") version "0.9.1"
+  id("com.mkobit.jenkins.pipelines.shared-library") version "0.10.0"
   id("com.github.ben-manes.versions") version "0.21.0"
 }
 
@@ -26,7 +26,7 @@ buildScan {
 
 tasks {
   wrapper {
-    gradleVersion = "5.4.1"
+    gradleVersion = "5.5.1"
   }
 }
 
@@ -54,7 +54,7 @@ sharedLibrary {
   pluginDependencies {
     dependency("org.jenkins-ci.plugins", "pipeline-build-step", "2.9")
     dependency("org.6wind.jenkins", "lockable-resources", "2.5")
-    val declarativePluginsVersion = "1.3.8"
+    val declarativePluginsVersion = "1.3.9"
     dependency("org.jenkinsci.plugins", "pipeline-model-api", declarativePluginsVersion)
     dependency("org.jenkinsci.plugins", "pipeline-model-declarative-agent", "1.1.1")
     dependency("org.jenkinsci.plugins", "pipeline-model-definition", declarativePluginsVersion)

@@ -1,44 +1,77 @@
-version: 2
-jobs:
-  build:
+version: 2.1
+
+executors:
+  java-8:
+    working_directory: ~/build-working-directory
     docker:
       - image: circleci/openjdk:8-jdk
-        environment:
-          JAVA_OPTS: -XX:+UseG1GC -Xmx1024m -Xms512m
-          # Disable Kotlin compiler daemon - https://discuss.kotlinlang.org/t/solved-disable-kotlin-compiler-process-keepalive/2622
-          GRADLE_OPTS: -Dkotlin.compiler.execution.strategy="in-process"
+  java-11:
+    working_directory: ~/build-working-directory
+    environment:
+      LC_ALL: en_us.UTF-8 # Override the default locale in the container. This is due to log4j2 formatter instantiation errors when 'LC_ALL: C.UTF-8' is used - https://issues.apache.org/jira/browse/LOG4J2-2435
+    docker:
+      - image: circleci/openjdk:11-jdk
 
-    working_directory: ~/shared-library-example
+commands:
+  gradle:
+    description: Runs './gradlew' command with the provided command
+    parameters:
+      command:
+        type: string
+        default: build
+      submit-build-scan:
+        type: boolean
+        default: false
     steps:
-      - checkout
       - run:
+          name: Run Gradle Command
+          command: ./gradlew << parameters.command >><<# parameters.submit-build-scan >> --scan<</ parameters.submit-build-scan >> --stacktrace
+      - store_test_results:
+          path: ~/build-working-directory/build/test-results/
+  restore-home-cache:
+    description: Restores the Gradle home cache.
+    steps:
+      - run:
+          name: Generate cache key
           command: |
             mkdir -p build
-            find settings.gradle.kts build.gradle.kts gradle -type f -exec sha256sum '{}' \; | tee build/circle-ci-key.txt
-          name: Generate Cache Key
+            find gradle.properties settings.gradle.kts build.gradle.kts gradle -type f -exec sha256sum '{}' \; | tee build/circle-ci-key.txt
       - restore_cache:
           keys:
-          - v1-home-cache-{{ checksum "build/circle-ci-key.txt" }}
-          - v1-home-cache-
-
+            - v2-home-cache-{{ checksum "build/circle-ci-key.txt" }}
+            - v2-home-cache-
+  save-home-cache:
+    description: Saves the Gradle home cache
+    steps:
       - run:
+          name: Generate cache key
           command: |
-            java -XshowSettings:vm -XX:+PrintCommandLineFlags -version
-            java -XshowSettings:vm -XX:+PrintCommandLineFlags -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -version
-            javac -version
-          name: Show Java Version
-
-      - run:
-          command: ./gradlew build --max-workers 2 --stacktrace --scan
-          name: Build
-
+            mkdir -p build
+            find gradle.properties settings.gradle.kts build.gradle.kts gradle -type f -exec sha256sum '{}' \; | tee build/circle-ci-key.txt
       - save_cache:
           paths:
             - ~/.gradle
-          key: v1-home-cache-{{ checksum "build/circle-ci-key.txt" }}
+          key: v2-home-cache-{{ checksum "build/circle-ci-key.txt" }}
           when: always
 
-      - store_test_results:
-          path: ~/shared-library-example/build/test-results/
+jobs:
+  build-java-8:
+    executor: java-8
+    steps:
+      - checkout
+      - restore-home-cache
+      - gradle
+      - save-home-cache
+  build-java-11:
+    executor: java-11
+    steps:
+      - checkout
+      - restore-home-cache
+      - gradle
 
-
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build-java-8
+      - build-java-11
