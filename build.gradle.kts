@@ -2,9 +2,8 @@ import com.mkobit.jenkins.pipelines.http.AnonymousAuthentication
 import java.io.ByteArrayOutputStream
 
 plugins {
-  id("com.gradle.build-scan") version "2.3"
   id("com.mkobit.jenkins.pipelines.shared-library") version "0.10.1"
-  id("com.github.ben-manes.versions") version "0.21.0"
+  id("com.github.ben-manes.versions") version "0.28.0"
 }
 
 val commitSha: String by lazy {
@@ -26,7 +25,7 @@ buildScan {
 
 tasks {
   wrapper {
-    gradleVersion = "5.5.1"
+    gradleVersion = "6.5"
   }
 }
 
@@ -37,7 +36,7 @@ java {
 dependencies {
   val spock = "org.spockframework:spock-core:1.2-groovy-2.4"
   testImplementation(spock)
-  testImplementation("org.assertj:assertj-core:3.12.2")
+  testImplementation("org.assertj:assertj-core:3.16.1")
   integrationTestImplementation(spock)
 }
 
