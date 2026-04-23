@@ -1,0 +1,15 @@
+[versions]
+assertj      = "3.26.3"
+foojay       = "1.0.0"
+openrewrite  = "6.26.0"
+spock        = "2.3-groovy-3.0"
+spotless     = "8.4.0"
+
+[libraries]
+assertj    = { module = "org.assertj:assertj-core",       version.ref = "assertj" }
+spock-core = { module = "org.spockframework:spock-core",  version.ref = "spock" }
+
+[plugins]
+openrewrite    = { id = "org.openrewrite.rewrite",                      version.ref = "openrewrite" }
+shared-library = { id = "com.mkobit.jenkins.pipelines.shared-library",  version = "0.10.1" }
+spotless       = { id = "com.diffplug.spotless",                        version.ref = "spotless" }

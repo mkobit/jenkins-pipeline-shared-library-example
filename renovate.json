@@ -1,0 +1,32 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "prConcurrentLimit": 3,
+  "packageRules": [
+    {
+      "description": "Jenkins BOM major LTS bumps require manual validation",
+      "matchManagers": ["gradle", "gradle-wrapper"],
+      "matchPackagePatterns": ["^io\\.jenkins\\.tools\\.bom:bom-"],
+      "groupName": "Jenkins BOM",
+      "automerge": false
+    },
+    {
+      "description": "Automerge patch library bumps after CI passes",
+      "matchUpdateTypes": ["patch"],
+      "matchManagers": ["gradle"],
+      "automerge": true
+    },
+    {
+      "description": "Automerge GHA SHA re-pins after CI passes",
+      "matchManagers": ["github-actions"],
+      "automerge": true
+    },
+    {
+      "description": "Gradle wrapper updates — validate checksum, do not automerge",
+      "matchManagers": ["gradle-wrapper"],
+      "automerge": false
+    }
+  ]
+}
