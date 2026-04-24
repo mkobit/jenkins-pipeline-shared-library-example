@@ -1,5 +1,6 @@
 plugins {
   alias(libs.plugins.shared.library)
+  alias(libs.plugins.openrewrite)
   alias(libs.plugins.spotless)
 }
 
