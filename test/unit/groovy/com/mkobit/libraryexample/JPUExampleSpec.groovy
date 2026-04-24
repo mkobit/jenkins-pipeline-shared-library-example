@@ -13,8 +13,58 @@ class JPUExampleSpec extends BasePipelineTest {
     super.setUp()
   }
 
-  // TODO: see https://github.com/jenkinsci/JenkinsPipelineUnit/issues/70 for a local library loader
   @Test
-  void "example unit test"() throws Exception {
+  void "doStuff runs successfully"() {
+    def script = loadScript('vars/doStuff.groovy')
+    script.call()
+    assertJobStatusSuccess()
+  }
+
+  @Test
+  void "evenOrOdd executes even pipeline for even build number"() {
+    def script = loadScript('vars/evenOrOdd.groovy')
+    script.call(2)
+    assertJobStatusSuccess()
+  }
+
+  @Test
+  void "evenOrOdd executes odd pipeline for odd build number"() {
+    def script = loadScript('vars/evenOrOdd.groovy')
+    script.call(1)
+    assertJobStatusSuccess()
+  }
+
+  @Test
+  void "withRetry succeeds on first attempt"() {
+    def script = loadScript('vars/withRetry.groovy')
+    boolean executed = false
+    script.call(3) { executed = true }
+    assert executed
+    assertJobStatusSuccess()
+  }
+
+  @Test
+  void "withRetry retries on failure and succeeds within limit"() {
+    def script = loadScript('vars/withRetry.groovy')
+    int attempts = 0
+    script.call(3) {
+      attempts++
+      if (attempts < 3) {
+        throw new RuntimeException("simulated failure on attempt ${attempts}")
+      }
+    }
+    assert attempts == 3
+    assertJobStatusSuccess()
+  }
+
+  @Test
+  void "withRetry rethrows after exhausting all attempts"() {
+    def script = loadScript('vars/withRetry.groovy')
+    try {
+      script.call(2) { throw new RuntimeException("always fails") }
+      assert false : "expected exception not thrown"
+    } catch (RuntimeException e) {
+      assert e.message == "always fails"
+    }
   }
 }
