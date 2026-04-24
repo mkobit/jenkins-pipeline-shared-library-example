@@ -1,17 +1,7 @@
-// TODO(M5b): restore plugin application via composite build once 0.11.0 is published.
-// com.mkobit.jenkins.pipelines.shared-library 0.10.1 uses JavaPluginConvention which
-// was removed in Gradle 9; the plugin cannot be applied until M1 migration is complete.
-
 plugins {
-  groovy
+  alias(libs.plugins.shared.library)
   id("com.diffplug.spotless") version "8.4.0"
   id("org.openrewrite.rewrite") version "6.26.0"
-}
-
-java {
-  toolchain {
-    languageVersion = JavaLanguageVersion.of(17)
-  }
 }
 
 rewrite {
@@ -19,6 +9,13 @@ rewrite {
 }
 
 dependencies {
+  jenkinsPlugin(platform(libs.jenkins.bom))
+  jenkinsPlugin("org.jenkins-ci.plugins.workflow:workflow-api")
+  jenkinsPlugin("org.jenkins-ci.plugins.workflow:workflow-basic-steps")
+  jenkinsPlugin("org.jenkins-ci.plugins.workflow:workflow-cps")
+  jenkinsPlugin("org.jenkins-ci.plugins.workflow:workflow-job")
+  jenkinsPlugin("org.jenkins-ci.plugins.workflow:workflow-multibranch")
+
   testImplementation(libs.spock.core)
   testImplementation(libs.assertj)
 }

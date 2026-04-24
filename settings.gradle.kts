@@ -1,4 +1,7 @@
 pluginManagement {
+  // Substitutes the published plugin with the local source build for composite-build development.
+  // Comment out when testing against a published release.
+  includeBuild("../jenkins-pipeline-shared-libraries-gradle-plugin")
   repositories {
     gradlePluginPortal()
   }
