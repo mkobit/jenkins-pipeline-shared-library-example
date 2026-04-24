@@ -2,7 +2,6 @@
 assertj      = "3.26.3"
 foojay       = "1.0.0"
 jenkins-bom  = "5054.v620b_5d2b_d5e6"
-openrewrite  = "6.26.0"
 spock        = "2.3-groovy-3.0"
 spotless     = "8.4.0"
 
@@ -12,6 +11,6 @@ jenkins-bom = { module = "io.jenkins.tools.bom:bom-2.479.x",   version.ref = "je
 spock-core  = { module = "org.spockframework:spock-core",       version.ref = "spock" }
 
 [plugins]
-openrewrite    = { id = "org.openrewrite.rewrite",                      version.ref = "openrewrite" }
-shared-library = { id = "com.mkobit.jenkins.pipelines.shared-library",  version = "0.11.0" }
-spotless       = { id = "com.diffplug.spotless",                        version.ref = "spotless" }
+foojay         = { id = "org.gradle.toolchains.foojay-resolver-convention", version.ref = "foojay" }
+shared-library = { id = "com.mkobit.jenkins.pipelines.shared-library",      version = "0.11.0" }
+spotless       = { id = "com.diffplug.spotless",                             version.ref = "spotless" }

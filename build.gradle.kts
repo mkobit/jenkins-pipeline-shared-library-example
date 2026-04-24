@@ -1,11 +1,12 @@
 plugins {
   alias(libs.plugins.shared.library)
-  id("com.diffplug.spotless") version "8.4.0"
-  id("org.openrewrite.rewrite") version "6.26.0"
+  alias(libs.plugins.spotless)
 }
 
-rewrite {
-  activeRecipe("org.openrewrite.gradle.MigrateToGradle9")
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(17)
+  }
 }
 
 dependencies {
