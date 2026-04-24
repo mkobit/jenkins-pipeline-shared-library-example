@@ -24,8 +24,13 @@ dependencies {
 }
 
 codenarc {
-  toolVersion = "3.5.0"
+  toolVersion = libs.versions.codenarc.get()
   configFile = file("config/codenarc/codenarc.xml")
+}
+
+tasks.wrapper {
+  gradleVersion = "9.4.1"
+  distributionType = Wrapper.DistributionType.ALL
 }
 
 spotless {

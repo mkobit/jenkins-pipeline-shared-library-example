@@ -32,4 +32,4 @@ jobs:
           distribution: temurin
       - uses: gradle/actions/setup-gradle@v6
       - name: Check
-        run: ./gradlew check --continue
+        run: ./gradlew build --continue

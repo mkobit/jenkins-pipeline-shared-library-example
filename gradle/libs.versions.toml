@@ -1,5 +1,6 @@
 [versions]
 assertj      = "3.26.3"
+codenarc     = "3.7.0"
 foojay       = "1.0.0"
 jenkins-bom  = "5054.v620b_5d2b_d5e6"
 openrewrite  = "6.26.0"
