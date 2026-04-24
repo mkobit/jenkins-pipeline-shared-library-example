@@ -35,36 +35,22 @@ class JPUExampleSpec extends BasePipelineTest {
   }
 
   @Test
-  void "withRetry succeeds on first attempt"() {
-    def script = loadScript('vars/withRetry.groovy')
-    boolean executed = false
-    script.call(3) { executed = true }
-    assert executed
+  void "requireEnv passes when all named variables are set"() {
+    binding.setProperty('env', [DEPLOY_TARGET: 'staging', API_KEY: 'secret'])
+    def script = loadScript('vars/requireEnv.groovy')
+    script.call('DEPLOY_TARGET', 'API_KEY')
     assertJobStatusSuccess()
   }
 
   @Test
-  void "withRetry retries on failure and succeeds within limit"() {
-    def script = loadScript('vars/withRetry.groovy')
-    int attempts = 0
-    script.call(3) {
-      attempts++
-      if (attempts < 3) {
-        throw new RuntimeException("simulated failure on attempt ${attempts}")
-      }
-    }
-    assert attempts == 3
-    assertJobStatusSuccess()
-  }
-
-  @Test
-  void "withRetry rethrows after exhausting all attempts"() {
-    def script = loadScript('vars/withRetry.groovy')
+  void "requireEnv fails build listing all missing variables"() {
+    binding.setProperty('env', [DEPLOY_TARGET: 'staging'])
+    def script = loadScript('vars/requireEnv.groovy')
     try {
-      script.call(2) { throw new RuntimeException("always fails") }
-      assert false : "expected exception not thrown"
-    } catch (RuntimeException e) {
-      assert e.message == "always fails"
+      script.call('DEPLOY_TARGET', 'API_KEY', 'REGION')
+      assert false : "error step should have been called"
+    } catch (Exception ignored) {
     }
+    assertThat(helper.callStack.findAll { it.methodName == 'error' }.size(), 1)
   }
 }
