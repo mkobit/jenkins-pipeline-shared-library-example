@@ -3,6 +3,7 @@ plugins {
   alias(libs.plugins.openrewrite)
   alias(libs.plugins.spotless)
   codenarc
+  kotlin("jvm") version "2.0.21"
 }
 
 java {
@@ -22,6 +23,8 @@ dependencies {
 
   testImplementation(libs.spock.core)
   testImplementation(libs.assertj)
+  testImplementation(libs.kotest.runner)
+  testImplementation(libs.kotest.assertions)
   integrationTestImplementation(libs.spock.core)
   integrationTestRuntimeOnly(libs.junit.vintage.engine)
 }
