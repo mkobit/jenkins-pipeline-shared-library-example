@@ -1,6 +1,6 @@
 def call(String... names) {
-  def missing = names.findAll { name -> !env[name] }
-  if (missing) {
-    error "Required environment variables not set: ${missing.join(', ')}"
-  }
+	def missing = names.findAll { name -> !env[name] }
+	if (missing) {
+		error "Required environment variables not set: ${missing.join(', ')}"
+	}
 }

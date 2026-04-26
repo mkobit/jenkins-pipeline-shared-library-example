@@ -1,6 +1,7 @@
 [versions]
 assertj               = "3.26.3"
 codenarc              = "3.7.0"
+junit5                = "5.10.0"
 foojay                = "1.0.0"
 jenkins-bom           = "5054.v620b_5d2b_d5e6"
 openrewrite           = "6.26.0"
@@ -9,7 +10,8 @@ spock                 = "2.3-groovy-3.0"
 spotless              = "8.4.0"
 
 [libraries]
-assertj             = { module = "org.assertj:assertj-core",                     version.ref = "assertj" }
+assertj               = { module = "org.assertj:assertj-core",                     version.ref = "assertj" }
+junit-vintage-engine  = { module = "org.junit.vintage:junit-vintage-engine",       version.ref = "junit5" }
 jenkins-bom         = { module = "io.jenkins.tools.bom:bom-2.479.x",            version.ref = "jenkins-bom" }
 pipeline-groovy-lib = { module = "io.jenkins.plugins:pipeline-groovy-lib",      version.ref = "pipeline-groovy-lib" }
 spock-core          = { module = "org.spockframework:spock-core",                version.ref = "spock" }
