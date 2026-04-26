@@ -26,11 +26,6 @@ dependencies {
   integrationTestRuntimeOnly(libs.junit.vintage.engine)
 }
 
-// JPU 1.29 transitively brings groovy-all:2.4 which conflicts with Spock's Groovy 3 AST transform.
-configurations.named("testImplementation") {
-  exclude(group = "org.codehaus.groovy", module = "groovy-all")
-}
-
 codenarc {
   toolVersion = libs.versions.codenarc.get()
   configFile = file("config/codenarc/codenarc.xml")

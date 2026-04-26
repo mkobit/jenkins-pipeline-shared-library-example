@@ -5,7 +5,7 @@ junit5                = "5.10.0"
 foojay                = "1.0.0"
 jenkins-bom           = "5054.v620b_5d2b_d5e6"
 openrewrite           = "6.26.0"
-pipeline-groovy-lib   = "751.v709f84f7d768"
+pipeline-groovy-lib   = "752.vdddedf804e72"
 spock                 = "2.3-groovy-3.0"
 spotless              = "8.4.0"
 
