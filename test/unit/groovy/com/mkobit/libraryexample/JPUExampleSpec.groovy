@@ -1,20 +1,17 @@
 package com.mkobit.libraryexample
 
-import com.lesfurets.jenkins.unit.BasePipelineTest
+import com.lesfurets.jenkins.unit.declarative.DeclarativePipelineTest
 import spock.lang.Specification
 
 class JPUExampleSpec extends Specification {
 
-	// BasePipelineTest registers pipeline step mocks (echo, sh, node, stage, etc.);
-	// using composition and calling setUp() manually avoids the JUnit 4 annotations
-	// that exist on the subclass while still getting the full initialization.
-	BasePipelineTest base = new BasePipelineTest() {}
+	// DeclarativePipelineTest registers the `pipeline {}` keyword and all declarative
+	// step mocks; composition avoids JUnit 4 lifecycle annotations incompatible with Spock 2.
+	DeclarativePipelineTest base = new DeclarativePipelineTest() {}
 
 	def setup() {
 		base.scriptRoots += 'vars'
 		base.setUp()
-		// Declarative Pipeline keyword; mock as no-op so the closure body is never executed.
-		base.helper.registerAllowedMethod("pipeline", [Closure.class], { Closure c -> })
 		// JPU 1.29 defaults error(String) to null (no-op). Override so it actually fails the build.
 		base.helper.registerAllowedMethod("error", [String.class], { String s -> throw new RuntimeException(s) })
 	}
