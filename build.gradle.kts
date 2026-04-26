@@ -13,6 +13,7 @@ java {
 
 dependencies {
   jenkinsPlugin(platform(libs.jenkins.bom))
+  jenkinsPlugin(libs.pipeline.groovy.lib)
   jenkinsPlugin("org.jenkins-ci.plugins.workflow:workflow-api")
   jenkinsPlugin("org.jenkins-ci.plugins.workflow:workflow-basic-steps")
   jenkinsPlugin("org.jenkins-ci.plugins.workflow:workflow-cps")
@@ -21,6 +22,7 @@ dependencies {
 
   testImplementation(libs.spock.core)
   testImplementation(libs.assertj)
+  integrationTestImplementation(libs.spock.core)
 }
 
 // JPU 1.29 transitively brings groovy-all:2.4 which conflicts with Spock's Groovy 3 AST transform.
