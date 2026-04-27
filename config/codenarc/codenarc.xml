@@ -14,6 +14,10 @@
     <exclude name="VariableTypeRequired"/>
     <exclude name="ParameterTypeRequired"/>
     <exclude name="NoDef"/>
+    <!-- conflicts with UnnecessaryReturnKeyword from unnecessary.xml -->
+    <exclude name="ImplicitReturnStatement"/>
+    <!-- false positive: Jenkins pipeline scripts passed as string literals intentionally contain ${} expressions -->
+    <exclude name="GStringExpressionWithinString"/>
   </ruleset-ref>
   <ruleset-ref path="rulesets/exceptions.xml"/>
   <ruleset-ref path="rulesets/groovyism.xml"/>

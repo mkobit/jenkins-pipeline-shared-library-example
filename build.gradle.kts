@@ -20,12 +20,16 @@ dependencies {
   jenkinsPlugin("org.jenkins-ci.plugins.workflow:workflow-cps")
   jenkinsPlugin("org.jenkins-ci.plugins.workflow:workflow-job")
   jenkinsPlugin("org.jenkins-ci.plugins.workflow:workflow-multibranch")
+  jenkinsPlugin("org.jenkins-ci.plugins.workflow:workflow-durable-task-step")
+  jenkinsPlugin("org.jenkinsci.plugins:pipeline-model-definition")
+  jenkinsPlugin("org.6wind.jenkins:lockable-resources")
 
   testImplementation(libs.spock.core)
   testImplementation(libs.assertj)
   testImplementation(libs.kotest.runner)
   testImplementation(libs.kotest.assertions)
   integrationTestImplementation(libs.spock.core)
+  integrationTestImplementation(libs.spock.junit4)
   integrationTestRuntimeOnly(libs.junit.vintage.engine)
 }
 
@@ -42,7 +46,7 @@ tasks.wrapper {
 
 spotless {
   groovy {
-    greclipse()
+    greclipse().configFile("config/greclipse.properties")
     target("src/**/*.groovy", "vars/**/*.groovy", "test/**/*.groovy")
   }
   kotlinGradle {

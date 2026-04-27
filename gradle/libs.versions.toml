@@ -18,6 +18,7 @@ kotest-assertions   = { module = "io.kotest:kotest-assertions-core",            
 kotest-runner       = { module = "io.kotest:kotest-runner-junit5",               version.ref = "kotest" }
 pipeline-groovy-lib = { module = "io.jenkins.plugins:pipeline-groovy-lib",      version.ref = "pipeline-groovy-lib" }
 spock-core          = { module = "org.spockframework:spock-core",                version.ref = "spock" }
+spock-junit4        = { module = "org.spockframework:spock-junit4",              version.ref = "spock" }
 
 [plugins]
 foojay         = { id = "org.gradle.toolchains.foojay-resolver-convention", version.ref = "foojay" }

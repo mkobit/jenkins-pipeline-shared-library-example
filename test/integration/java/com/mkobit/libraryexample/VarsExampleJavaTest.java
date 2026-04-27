@@ -31,8 +31,7 @@ public class VarsExampleJavaTest {
 
     @Test
     public void doStuffStepRunsSuccessfully() throws Exception {
-        CpsFlowDefinition flow = new CpsFlowDefinition(
-                "import doStuff\ndoStuff()", true);
+        CpsFlowDefinition flow = new CpsFlowDefinition("doStuff()", false);
         WorkflowJob job = rule.createProject(WorkflowJob.class, "java-test");
         job.setDefinition(flow);
 
