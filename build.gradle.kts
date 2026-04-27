@@ -14,13 +14,10 @@ java {
 
 dependencies {
   jenkinsPlugin(platform(libs.jenkins.bom))
-  jenkinsPlugin(libs.pipeline.groovy.lib)
-  jenkinsPlugin("org.jenkins-ci.plugins.workflow:workflow-api")
-  jenkinsPlugin("org.jenkins-ci.plugins.workflow:workflow-basic-steps")
-  jenkinsPlugin("org.jenkins-ci.plugins.workflow:workflow-cps")
-  jenkinsPlugin("org.jenkins-ci.plugins.workflow:workflow-job")
+  // pipeline-groovy-lib, workflow-job, workflow-basic-steps, and
+  // workflow-durable-task-step are provided by the plugin by default.
+  // workflow-cps, workflow-api, and their deps are transitives of pipeline-groovy-lib.
   jenkinsPlugin("org.jenkins-ci.plugins.workflow:workflow-multibranch")
-  jenkinsPlugin("org.jenkins-ci.plugins.workflow:workflow-durable-task-step")
   jenkinsPlugin("org.jenkinsci.plugins:pipeline-model-definition")
   jenkinsPlugin("org.6wind.jenkins:lockable-resources")
 
