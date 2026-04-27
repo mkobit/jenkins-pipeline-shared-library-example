@@ -236,6 +236,11 @@ gradle-app.setting
 
 # End of https://www.gitignore.io/api/vim,osx,java,linux,gradle,intellij,intellij+iml,intellij+all
 
+### Jenkins test harness ###
+# TemporaryDirectoryAllocator.DEFAULT writes embedded Jenkins home to ./target/
+# This is a Maven convention; redirect to build/ tracked in plugin backlog.
+target/
+
 ### Claude Code ###
 .claude/settings.local.json
 .claude/.agents/
