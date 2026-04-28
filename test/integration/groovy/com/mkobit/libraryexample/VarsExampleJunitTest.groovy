@@ -24,7 +24,7 @@ class VarsExampleJunitTest {
     void "testing library that uses declarative pipeline libraries"() {
         final CpsFlowDefinition flow = new CpsFlowDefinition('''
         evenOrOdd(env.BUILD_NUMBER as int)
-    '''.stripIndent(), false)
+    '''.stripIndent(), true)
         final WorkflowJob workflowJob = rule.createProject(WorkflowJob, 'project')
         workflowJob.definition = flow
 
@@ -39,7 +39,7 @@ class VarsExampleJunitTest {
     void "testing library function"() {
         final CpsFlowDefinition flow = new CpsFlowDefinition('''
         doStuff()
-    '''.stripIndent(), false)
+    '''.stripIndent(), true)
         final WorkflowJob workflowJob = rule.createProject(WorkflowJob, 'project')
         workflowJob.definition = flow
 

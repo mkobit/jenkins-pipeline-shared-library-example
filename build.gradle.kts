@@ -37,8 +37,11 @@ dependencies {
   testImplementation(libs.assertj)
   testImplementation(libs.kotest.runner)
   testImplementation(libs.kotest.assertions)
-  integrationTestImplementation(libs.spock.core)
-  integrationTestImplementation(libs.spock.junit4)
+  // groovy-all:2.4.21 is the Groovy runtime supplied by Jenkins itself at integration-test time.
+  // Adding it compile-only gives the Groovy compiler a 2.4 toolchain so the compiled test
+  // bytecode matches the runtime; this also prevents groovy:3.x from leaking onto the runtime
+  // classpath and conflicting with Jenkins' CPS sandbox transformer (compiled for Groovy 2.4).
+  integrationTestCompileOnly(libs.groovy.core)
   integrationTestRuntimeOnly(libs.junit.vintage.engine)
 }
 

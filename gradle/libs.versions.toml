@@ -11,6 +11,7 @@ spotless              = "8.4.0"
 
 [libraries]
 assertj               = { module = "org.assertj:assertj-core",                     version.ref = "assertj" }
+groovy-core           = { module = "org.codehaus.groovy:groovy",                   version = "2.4.21" }
 junit-vintage-engine  = { module = "org.junit.vintage:junit-vintage-engine",       version.ref = "junit5" }
 jenkins-bom         = { module = "io.jenkins.tools.bom:bom-2.479.x",            version.ref = "jenkins-bom" }
 kotest-assertions   = { module = "io.kotest:kotest-assertions-core",             version.ref = "kotest" }
