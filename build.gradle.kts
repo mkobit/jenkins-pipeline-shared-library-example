@@ -12,8 +12,20 @@ java {
   }
 }
 
+// Allow CI to inject a different Jenkins LTS line via -PjenkinsVersion, -PjenkinsBom,
+// and -PjenkinsTestHarnessVersion for cross-version compatibility testing.
+sharedLibrary {
+  (findProperty("jenkinsVersion") as String?)?.let { jenkins.version.set(it) }
+  (findProperty("jenkinsTestHarnessVersion") as String?)?.let { jenkins.testHarnessVersion.set(it) }
+}
+
 dependencies {
-  jenkinsPlugin(platform(libs.jenkins.bom))
+  val overrideBom = findProperty("jenkinsBom") as String?
+  if (overrideBom != null) {
+    jenkinsPlugin(platform(overrideBom))
+  } else {
+    jenkinsPlugin(platform(libs.jenkins.bom))
+  }
   // pipeline-groovy-lib, workflow-job, workflow-basic-steps, and
   // workflow-durable-task-step are provided by the plugin by default.
   // workflow-cps, workflow-api, and their deps are transitives of pipeline-groovy-lib.
