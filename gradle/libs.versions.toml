@@ -6,7 +6,6 @@ foojay                = "1.0.0"
 jenkins-bom           = "5054.v620b_5d2b_d5e6"
 kotest                = "5.9.1"
 openrewrite           = "6.26.0"
-pipeline-groovy-lib   = "752.vdddedf804e72"
 spock                 = "2.3-groovy-3.0"
 spotless              = "8.4.0"
 
@@ -16,7 +15,6 @@ junit-vintage-engine  = { module = "org.junit.vintage:junit-vintage-engine",    
 jenkins-bom         = { module = "io.jenkins.tools.bom:bom-2.479.x",            version.ref = "jenkins-bom" }
 kotest-assertions   = { module = "io.kotest:kotest-assertions-core",             version.ref = "kotest" }
 kotest-runner       = { module = "io.kotest:kotest-runner-junit5",               version.ref = "kotest" }
-pipeline-groovy-lib = { module = "io.jenkins.plugins:pipeline-groovy-lib",      version.ref = "pipeline-groovy-lib" }
 spock-core          = { module = "org.spockframework:spock-core",                version.ref = "spock" }
 spock-junit4        = { module = "org.spockframework:spock-junit4",              version.ref = "spock" }
 
