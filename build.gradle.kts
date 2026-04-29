@@ -54,11 +54,18 @@ codenarc {
   reportFormat = "text"
 }
 
+// kotlin("jvm") does not know about our non-standard source layout; configure explicitly.
 testing {
   suites {
+    named<JvmTestSuite>("test") {
+      sources {
+        extensions.configure<SourceDirectorySet>("kotlin") {
+          setSrcDirs(listOf("test/unit/kotlin"))
+        }
+      }
+    }
     named<JvmTestSuite>("integrationTest") {
       sources {
-        // kotlin("jvm") does not know about our non-standard source layout; configure explicitly.
         extensions.configure<SourceDirectorySet>("kotlin") {
           setSrcDirs(listOf("test/integration/kotlin"))
         }
