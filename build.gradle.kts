@@ -1,3 +1,6 @@
+import org.gradle.api.file.SourceDirectorySet
+import org.gradle.api.plugins.jvm.JvmTestSuite
+
 plugins {
   alias(libs.plugins.shared.library)
   alias(libs.plugins.openrewrite)
@@ -49,6 +52,19 @@ codenarc {
   toolVersion = libs.versions.codenarc.get()
   configFile = file("config/codenarc/codenarc.xml")
   reportFormat = "text"
+}
+
+testing {
+  suites {
+    named<JvmTestSuite>("integrationTest") {
+      sources {
+        // kotlin("jvm") does not know about our non-standard source layout; configure explicitly.
+        extensions.configure<SourceDirectorySet>("kotlin") {
+          setSrcDirs(listOf("test/integration/kotlin"))
+        }
+      }
+    }
+  }
 }
 
 tasks.wrapper {
