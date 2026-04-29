@@ -85,13 +85,13 @@ class ExampleSrcGroovyTest {
         rule.assertLogContains('Choice param: choice1', defaults)
 
         QueueTaskFuture<WorkflowRun> second = ParameterizedJobMixIn.scheduleBuild2(
-            workflowJob, 0,
-            new ParametersAction(
+                workflowJob, 0,
+                new ParametersAction(
                 string.createValue('mySpecified'),
                 bool.createValue(true.toString()),
                 choice.createValue('choice2')
-            )
-        ).future as QueueTaskFuture<WorkflowRun>
+                )
+                ).future as QueueTaskFuture<WorkflowRun>
         WorkflowRun withParams = rule.assertBuildStatusSuccess(second)
         rule.assertLogContains('String param: mySpecified', withParams)
         rule.assertLogContains('Boolean param: true', withParams)
