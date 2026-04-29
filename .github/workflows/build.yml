@@ -26,19 +26,19 @@ jobs:
       matrix:
         java: [17, 21]
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           path: example
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           repository: mkobit/jenkins-pipeline-shared-libraries-gradle-plugin
           ref: the-phoenix-project
           path: plugin
-      - uses: actions/setup-java@v5
+      - uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654
         with:
           java-version: ${{ matrix.java }}
           distribution: temurin
-      - uses: gradle/actions/setup-gradle@v6
+      - uses: gradle/actions/setup-gradle@50e97c2cd7a37755bbfafc9c5b7cafaece252f6e
       - name: Build
         working-directory: example
         run: ./gradlew build --include-build ../plugin --continue
