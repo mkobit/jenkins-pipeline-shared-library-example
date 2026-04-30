@@ -1,25 +1,28 @@
-= Jenkins Pipeline Shared Library Gradle Plugin
+= Jenkins Pipeline Shared Library Example
 :uri-shared-library-plugin: https://github.com/mkobit/jenkins-pipeline-shared-libraries-gradle-plugin
 :uri-jenkins-shared-library-docs: https://jenkins.io/doc/book/pipeline/shared-libraries/
-:uri-jenkins-pipeline-unit: https://github.com/lesfurets/JenkinsPipelineUnit
-:uri-build-status-image: https://circleci.com/gh/mkobit/jenkins-pipeline-shared-library-example/tree/master.svg?style=svg
-:circle-ci-status-badge: image:{uri-build-status-image}["CircleCI", link="https://circleci.com/gh/mkobit/jenkins-pipeline-shared-library-example/tree/master"]
-:uri-zenhub-badge: https://raw.githubusercontent.com/ZenHubIO/support/master/zenhub-badge.png
-:version-badge: image:{uri-version-badge-image}["Plugin Version", link="{uri-gradle-plugin-portal}"]
-:zenhub-badge: image:{uri-zenhub-badge}["ZenHub Badge", link="https://www.zenhub.com/"]
+:uri-build-badge: https://github.com/mkobit/jenkins-pipeline-shared-library-example/actions/workflows/build.yml/badge.svg?branch=the-phoenix-project
+:uri-build-link: https://github.com/mkobit/jenkins-pipeline-shared-library-example/actions/workflows/build.yml
+:build-badge: image:{uri-build-badge}["Build", link="{uri-build-link}"]
 
-{circle-ci-status-badge}
-{zenhub-badge}
-
-NOTE: Contributions for examples are welcome!
+{build-badge}
 
 == Purpose
 
-This repository is an example of a Jenkins link:{uri-jenkins-shared-library-docs}[Jenkins Pipeline Shared Library] that uses the link:{uri-shared-library-plugin}[_Shared Library Gradle Plugin_] for development and testing of shared libraries.
+An example link:{uri-jenkins-shared-library-docs}[Jenkins Pipeline Shared Library] built with the link:{uri-shared-library-plugin}[Shared Library Gradle Plugin].
 
-Explore this project by:
+Use this as a reference for:
 
-* Importing into IntelliJ
-* Activating the `resources/idea.gdsl` to see how the Jenkins steps auto-completion works
-* Build, test, and run integration tests with `./gradlew build`
-* See how test code is generated for simplifying tests (like `com.mkobit.jenkins.pipelines.codegen.LocalLibraryRetriever`)
+* Structuring a shared library project (`src/`, `vars/`, `resources/`)
+* Writing JPU unit tests (`test/unit/`) in Groovy, Java, or Kotlin
+* Writing `JenkinsRule` integration tests (`test/integration/`) with sandbox enabled
+* Wiring the plugin with a Jenkins BOM and additional plugins
+
+== Running
+
+[source,shell]
+----
+./gradlew build          # compile + unit tests
+./gradlew integrationTest  # JenkinsRule tests (downloads Jenkins WAR on first run)
+./gradlew check          # both
+----
