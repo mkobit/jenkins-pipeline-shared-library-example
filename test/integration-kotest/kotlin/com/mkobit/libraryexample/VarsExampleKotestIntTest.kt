@@ -6,38 +6,46 @@ import io.kotest.matchers.shouldNotBe
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition
 import org.jenkinsci.plugins.workflow.job.WorkflowJob
 import org.jenkinsci.plugins.workflow.libs.GlobalLibraries
+import org.junit.runner.Description
 import org.jvnet.hudson.test.JenkinsRule
 
+// Kotest runs on JUnit Platform (JUnit 5). JenkinsRule.before() requires testDescription
+// to be set (normally done via JUnit 4 @Rule wiring). Set it directly via reflection
+// before each test, since there is no @Rule lifecycle in JUnit Platform contexts.
 class VarsExampleKotestIntTest :
-    FunSpec({
-        val rule = JenkinsRule()
+  FunSpec({
+    lateinit var rule: JenkinsRule
 
-        beforeEach {
-            rule.before()
-            rule.timeout = 30
-            GlobalLibraries.get().libraries =
-                listOf(LocalLibraryRetriever.implicitLibrary("testLibrary"))
-        }
+    beforeEach {
+      rule = JenkinsRule()
+      val descField = JenkinsRule::class.java.getDeclaredField("testDescription")
+      descField.isAccessible = true
+      descField.set(
+        rule,
+        Description.createSuiteDescription(VarsExampleKotestIntTest::class.java),
+      )
+      rule.before()
+      rule.timeout = 30
+      GlobalLibraries.get().libraries =
+        listOf(LocalLibraryRetriever.implicitLibrary("testLibrary"))
+    }
 
-        afterEach { rule.after() }
+    afterEach { rule.after() }
 
-        test("doStuff step logs expected output") {
-            val job = rule.createProject(WorkflowJob::class.java, "kotest-doStuff")
-            job.definition = CpsFlowDefinition("doStuff()", true)
+    test("doStuff step logs expected output") {
+      rule.jenkins shouldNotBe null
+      val job = rule.createProject(WorkflowJob::class.java, "kotest-doStuff")
+      job.definition = CpsFlowDefinition("doStuff()", true)
 
-            val run = rule.buildAndAssertSuccess(job)
-            rule.assertLogContains("hello stuff", run)
-        }
+      val run = rule.buildAndAssertSuccess(job)
+      rule.assertLogContains("hello stuff", run)
+    }
 
-        test("evenOrOdd step identifies odd build numbers") {
-            val job = rule.createProject(WorkflowJob::class.java, "kotest-evenOdd")
-            job.definition = CpsFlowDefinition("evenOrOdd(1)", true)
+    test("evenOrOdd step identifies odd build numbers") {
+      val job = rule.createProject(WorkflowJob::class.java, "kotest-evenOdd")
+      job.definition = CpsFlowDefinition("evenOrOdd(1)", true)
 
-            val run = rule.buildAndAssertSuccess(job)
-            rule.assertLogContains("The build number is odd", run)
-        }
-
-        test("Jenkins instance is available") {
-            rule.jenkins shouldNotBe null
-        }
-    })
+      val run = rule.buildAndAssertSuccess(job)
+      rule.assertLogContains("The build number is odd", run)
+    }
+  })

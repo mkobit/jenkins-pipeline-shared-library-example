@@ -12,9 +12,10 @@ spotless              = "8.4.0"
 [libraries]
 assertj               = { module = "org.assertj:assertj-core",                     version.ref = "assertj" }
 groovy-core           = { module = "org.codehaus.groovy:groovy",                   version = "2.4.21" }
-junit-jupiter-api     = { module = "org.junit.jupiter:junit-jupiter-api",          version.ref = "junit-jupiter" }
-junit-jupiter-engine  = { module = "org.junit.jupiter:junit-jupiter-engine",       version.ref = "junit-jupiter" }
-junit-vintage-engine  = { module = "org.junit.vintage:junit-vintage-engine",       version.ref = "junit-jupiter" }
+junit-jupiter-api      = { module = "org.junit.jupiter:junit-jupiter-api",          version.ref = "junit-jupiter" }
+junit-jupiter-engine   = { module = "org.junit.jupiter:junit-jupiter-engine",       version.ref = "junit-jupiter" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-jupiter" }
+junit-vintage-engine   = { module = "org.junit.vintage:junit-vintage-engine",       version.ref = "junit-jupiter" }
 jenkins-bom         = { module = "io.jenkins.tools.bom:bom-2.479.x",            version.ref = "jenkins-bom" }
 kotest-assertions   = { module = "io.kotest:kotest-assertions-core",             version.ref = "kotest" }
 kotest-runner       = { module = "io.kotest:kotest-runner-junit5",               version.ref = "kotest" }

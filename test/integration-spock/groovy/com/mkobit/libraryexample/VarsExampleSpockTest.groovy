@@ -5,8 +5,9 @@ import groovy.transform.CompileDynamic
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition
 import org.jenkinsci.plugins.workflow.job.WorkflowJob
 import org.jenkinsci.plugins.workflow.libs.GlobalLibraries
-import org.junit.Rule
+import org.junit.runner.Description
 import org.jvnet.hudson.test.JenkinsRule
+import spock.lang.Shared
 import spock.lang.Specification
 
 // sandbox=false is required when using Spock 2.x on Jenkins 2.479.x LTS.
@@ -14,14 +15,33 @@ import spock.lang.Specification
 // was compiled for Groovy 2.4 AST API and fails with a Groovy 3.x runtime context
 // when sandbox=true. Using sandbox=false runs the CPS-transformed pipeline as trusted
 // code, which is correct for shared library source owned by your organisation.
+//
+// Spock 2.x runs on JUnit Platform which does not honour JUnit 4 @Rule / @ClassRule
+// lifecycle wiring — JenkinsRule.before() is never called by the rule mechanism.
+// We manage the Jenkins lifecycle explicitly in setupSpec/cleanupSpec: create the
+// Description JenkinsRule expects (via reflection) and call before()/after() directly.
 @CompileDynamic
 class VarsExampleSpockTest extends Specification {
 
-    @Rule JenkinsRule rule = new JenkinsRule()
+    @Shared
+    JenkinsRule rule
 
-    def setup() {
+    def setupSpec() {
+        rule = new JenkinsRule()
+        // JenkinsRule.before() calls recipe() which reads testDescription for annotations.
+        // Without @Rule wiring, testDescription is null; set it directly.
+        def descField = JenkinsRule.getDeclaredField('testDescription')
+        descField.accessible = true
+        descField.set(rule, Description.createSuiteDescription(VarsExampleSpockTest))
+        rule.before()
         rule.timeout = 30
-        GlobalLibraries.get().libraries = [LocalLibraryRetriever.implicitLibrary('testLibrary')]
+        GlobalLibraries.get().libraries = [
+            LocalLibraryRetriever.implicitLibrary('testLibrary')
+        ]
+    }
+
+    def cleanupSpec() {
+        rule?.after()
     }
 
     def 'doStuff step logs expected output'() {

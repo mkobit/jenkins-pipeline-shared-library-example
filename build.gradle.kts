@@ -74,9 +74,9 @@ testing {
       }
     }
 
-    // JUnit Jupiter (JUnit 5) integration tests — Java, sandbox=true.
+    // JUnit Jupiter (JUnit 6) integration tests — Java, sandbox=true.
     register<JvmTestSuite>("integrationTestJunit5") {
-      useJUnitJupiter()
+      sharedLibrary.jenkinsTestRunnerSuite(this)
       sources {
         java.setSrcDirs(listOf("test/integration-junit5/java"))
       }
@@ -85,9 +85,11 @@ testing {
         implementation(sourceSets["integrationTest"].output.classesDirs)
         implementation(libs.junit.jupiter.api)
         runtimeOnly(libs.junit.jupiter.engine)
+        runtimeOnly(libs.junit.platform.launcher)
       }
       targets.all {
         testTask.configure {
+          useJUnitPlatform()
           mustRunAfter(tasks.named("integrationTest"))
         }
       }
@@ -100,6 +102,7 @@ testing {
     // API. Using sandbox=false avoids the transformer entirely — correct for trusted library
     // code and the standard workaround when using Spock 2.x on Jenkins 2.479.x LTS.
     register<JvmTestSuite>("integrationTestSpock") {
+      sharedLibrary.jenkinsTestRunnerSuite(this)
       sources {
         groovy.setSrcDirs(listOf("test/integration-spock/groovy"))
       }
@@ -107,7 +110,6 @@ testing {
         implementation(sourceSets["integrationTest"].output.classesDirs)
         implementation(libs.spock.core)
         compileOnly(libs.groovy.core)
-        runtimeOnly(libs.junit.vintage.engine)
       }
       targets.all {
         testTask.configure {
@@ -118,6 +120,7 @@ testing {
 
     // Kotest integration tests — Kotlin, sandbox=true.
     register<JvmTestSuite>("integrationTestKotest") {
+      sharedLibrary.jenkinsTestRunnerSuite(this)
       useJUnitJupiter()
       sources {
         extensions.configure<SourceDirectorySet>("kotlin") {
