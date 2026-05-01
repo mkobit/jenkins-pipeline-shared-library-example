@@ -1,18 +1,20 @@
 [versions]
 assertj               = "3.26.3"
 codenarc              = "3.7.0"
-junit5                = "5.10.0"
+junit-jupiter         = "6.0.3"
 foojay                = "1.0.0"
 jenkins-bom           = "5054.v620b_5d2b_d5e6"
-kotest                = "5.9.1"
+kotest                = "6.1.11"
 openrewrite           = "6.26.0"
-spock                 = "2.3-groovy-3.0"
+spock                 = "2.4-groovy-3.0"
 spotless              = "8.4.0"
 
 [libraries]
 assertj               = { module = "org.assertj:assertj-core",                     version.ref = "assertj" }
 groovy-core           = { module = "org.codehaus.groovy:groovy",                   version = "2.4.21" }
-junit-vintage-engine  = { module = "org.junit.vintage:junit-vintage-engine",       version.ref = "junit5" }
+junit-jupiter-api     = { module = "org.junit.jupiter:junit-jupiter-api",          version.ref = "junit-jupiter" }
+junit-jupiter-engine  = { module = "org.junit.jupiter:junit-jupiter-engine",       version.ref = "junit-jupiter" }
+junit-vintage-engine  = { module = "org.junit.vintage:junit-vintage-engine",       version.ref = "junit-jupiter" }
 jenkins-bom         = { module = "io.jenkins.tools.bom:bom-2.479.x",            version.ref = "jenkins-bom" }
 kotest-assertions   = { module = "io.kotest:kotest-assertions-core",             version.ref = "kotest" }
 kotest-runner       = { module = "io.kotest:kotest-runner-junit5",               version.ref = "kotest" }

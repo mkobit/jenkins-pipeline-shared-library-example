@@ -1,12 +1,13 @@
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.plugins.jvm.JvmTestSuite
+import org.gradle.api.tasks.compile.GroovyCompile
 
 plugins {
   alias(libs.plugins.shared.library)
   alias(libs.plugins.openrewrite)
   alias(libs.plugins.spotless)
   codenarc
-  kotlin("jvm") version "2.0.21"
+  kotlin("jvm") version "2.2.21"
 }
 
 java {
@@ -40,12 +41,6 @@ dependencies {
   testImplementation(libs.assertj)
   testImplementation(libs.kotest.runner)
   testImplementation(libs.kotest.assertions)
-  // groovy-all:2.4.21 is the Groovy runtime supplied by Jenkins itself at integration-test time.
-  // Adding it compile-only gives the Groovy compiler a 2.4 toolchain so the compiled test
-  // bytecode matches the runtime; this also prevents groovy:3.x from leaking onto the runtime
-  // classpath and conflicting with Jenkins' CPS sandbox transformer (compiled for Groovy 2.4).
-  integrationTestCompileOnly(libs.groovy.core)
-  integrationTestRuntimeOnly(libs.junit.vintage.engine)
 }
 
 codenarc {
@@ -70,8 +65,90 @@ testing {
           setSrcDirs(listOf("test/integration/kotlin"))
         }
       }
+      dependencies {
+        // groovy:2.4.21 compile-only: targets the runtime Jenkins bundles, preventing
+        // groovy:3.x from leaking onto the runtime classpath and conflicting with the
+        // CPS sandbox transformer (compiled for Groovy 2.4 AST API).
+        compileOnly(libs.groovy.core)
+        runtimeOnly(libs.junit.vintage.engine)
+      }
+    }
+
+    // JUnit Jupiter (JUnit 5) integration tests — Java, sandbox=true.
+    register<JvmTestSuite>("integrationTestJunit5") {
+      useJUnitJupiter()
+      sources {
+        java.setSrcDirs(listOf("test/integration-junit5/java"))
+      }
+      dependencies {
+        // LocalLibraryRetriever is generated and compiled by the integrationTest source set.
+        implementation(sourceSets["integrationTest"].output.classesDirs)
+        implementation(libs.junit.jupiter.api)
+        runtimeOnly(libs.junit.jupiter.engine)
+      }
+      targets.all {
+        testTask.configure {
+          mustRunAfter(tasks.named("integrationTest"))
+        }
+      }
+    }
+
+    // Spock 2.x integration tests — Groovy, sandbox=false.
+    // Spock 2.x brings groovy:3.x onto the runtime classpath; groovy-all:2.4.21 is also
+    // present (injected by the plugin for SandboxInterceptor). The two Groovy versions
+    // conflict when sandbox=true because SandboxTransformer was compiled for Groovy 2.4 AST
+    // API. Using sandbox=false avoids the transformer entirely — correct for trusted library
+    // code and the standard workaround when using Spock 2.x on Jenkins 2.479.x LTS.
+    register<JvmTestSuite>("integrationTestSpock") {
+      sources {
+        groovy.setSrcDirs(listOf("test/integration-spock/groovy"))
+      }
+      dependencies {
+        implementation(sourceSets["integrationTest"].output.classesDirs)
+        implementation(libs.spock.core)
+        compileOnly(libs.groovy.core)
+        runtimeOnly(libs.junit.vintage.engine)
+      }
+      targets.all {
+        testTask.configure {
+          mustRunAfter(tasks.named("integrationTestJunit5"))
+        }
+      }
+    }
+
+    // Kotest integration tests — Kotlin, sandbox=true.
+    register<JvmTestSuite>("integrationTestKotest") {
+      useJUnitJupiter()
+      sources {
+        extensions.configure<SourceDirectorySet>("kotlin") {
+          setSrcDirs(listOf("test/integration-kotest/kotlin"))
+        }
+      }
+      dependencies {
+        implementation(sourceSets["integrationTest"].output.classesDirs)
+        implementation(libs.kotest.runner)
+        implementation(libs.kotest.assertions)
+      }
+      targets.all {
+        testTask.configure {
+          mustRunAfter(tasks.named("integrationTestSpock"))
+        }
+      }
     }
   }
+}
+
+// Gradle's Groovy plugin does not auto-populate groovyClasspath for dynamically registered suites.
+tasks.named<GroovyCompile>("compileIntegrationTestSpockGroovy") {
+  groovyClasspath = configurations["integrationTestSpockCompileClasspath"]
+}
+
+tasks.named("check") {
+  dependsOn(
+    tasks.named("integrationTestJunit5"),
+    tasks.named("integrationTestSpock"),
+    tasks.named("integrationTestKotest"),
+  )
 }
 
 tasks.wrapper {
@@ -83,6 +160,10 @@ spotless {
   groovy {
     greclipse().configFile("config/greclipse.properties")
     target("src/**/*.groovy", "vars/**/*.groovy", "test/**/*.groovy")
+  }
+  kotlin {
+    ktlint()
+    target("test/**/*.kt")
   }
   kotlinGradle {
     ktlint()
