@@ -1,9 +1,10 @@
 name: Build
 
 on:
+  # TODO: remove push trigger once branch protection requires PRs for all changes,
+  #       so CI only runs once per commit (via pull_request), not twice.
   push:
     branches:
-      - the-phoenix-project
       - main
   pull_request:
   workflow_dispatch:
@@ -11,7 +12,7 @@ on:
 permissions: {}
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
 
 jobs:
@@ -29,10 +30,26 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           path: example
+
+      # Resolve which plugin branch to test against:
+      #   1. same branch name as the current example branch (coordinated cross-repo changes)
+      #   2. main (fallback for example-only changes)
+      - name: Resolve plugin ref
+        id: plugin-ref
+        run: |
+          BRANCH="${{ github.head_ref || github.ref_name }}"
+          if git ls-remote --exit-code \
+               https://github.com/mkobit/jenkins-pipeline-shared-libraries-gradle-plugin.git \
+               "refs/heads/$BRANCH" > /dev/null 2>&1; then
+            echo "ref=$BRANCH" >> "$GITHUB_OUTPUT"
+          else
+            echo "ref=main" >> "$GITHUB_OUTPUT"
+          fi
+
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           repository: mkobit/jenkins-pipeline-shared-libraries-gradle-plugin
-          ref: the-phoenix-project
+          ref: ${{ steps.plugin-ref.outputs.ref }}
           path: plugin
       - uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654
         with:
