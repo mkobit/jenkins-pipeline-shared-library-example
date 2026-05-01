@@ -1,7 +1,7 @@
 = Jenkins Pipeline Shared Library Example
 :uri-shared-library-plugin: https://github.com/mkobit/jenkins-pipeline-shared-libraries-gradle-plugin
 :uri-jenkins-shared-library-docs: https://jenkins.io/doc/book/pipeline/shared-libraries/
-:uri-build-badge: https://github.com/mkobit/jenkins-pipeline-shared-library-example/actions/workflows/build.yml/badge.svg?branch=the-phoenix-project
+:uri-build-badge: https://github.com/mkobit/jenkins-pipeline-shared-library-example/actions/workflows/build.yml/badge.svg?branch=main
 :uri-build-link: https://github.com/mkobit/jenkins-pipeline-shared-library-example/actions/workflows/build.yml
 :build-badge: image:{uri-build-badge}["Build", link="{uri-build-link}"]
 
@@ -15,14 +15,19 @@ Use this as a reference for:
 
 * Structuring a shared library project (`src/`, `vars/`, `resources/`)
 * Writing JPU unit tests (`test/unit/`) in Groovy, Java, or Kotlin
-* Writing `JenkinsRule` integration tests (`test/integration/`) with sandbox enabled
+* Writing `JenkinsRule` integration tests in multiple frameworks:
+** `test/integration/` — JUnit 4 (Groovy, Java, Kotlin), `sandbox=true`
+** `test/integration-junit5/` — JUnit Jupiter, `sandbox=true`
+** `test/integration-spock/` — Spock 2.x, `sandbox=false` (required on Jenkins 2.479.x LTS)
+** `test/integration-kotest/` — Kotest, `sandbox=true`
 * Wiring the plugin with a Jenkins BOM and additional plugins
+* Registering extra integration test suites via `sharedLibrary.jenkinsTestRunnerSuite(suite)`
 
 == Running
 
 [source,shell]
 ----
 ./gradlew build          # compile + unit tests
-./gradlew integrationTest  # JenkinsRule tests (downloads Jenkins WAR on first run)
-./gradlew check          # both
+./gradlew integrationTest  # built-in JenkinsRule suite (downloads Jenkins WAR on first run)
+./gradlew check          # all suites
 ----
