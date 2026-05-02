@@ -1,5 +1,29 @@
 version: 2
 updates:
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+    ignore:
+      # Jenkins BOM and pinned groovy-all are kept in sync with the Jenkins LTS
+      # line manually — Dependabot should not propose bumps for these.
+      - dependency-name: "io.jenkins.tools.bom:*"
+      - dependency-name: "org.codehaus.groovy:groovy"
+      # The shared-library plugin version is managed across both repos together.
+      - dependency-name: "com.mkobit.jenkins.pipelines.shared-library"
+    groups:
+      kotest:
+        patterns:
+          - "io.kotest:*"
+      junit:
+        patterns:
+          - "org.junit.*:*"
+      spock:
+        patterns:
+          - "org.spockframework:*"
+
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
