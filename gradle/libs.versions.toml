@@ -4,6 +4,7 @@ codenarc              = "3.7.0"
 junit-jupiter         = "6.0.3"
 foojay                = "1.0.0"
 jenkins-bom           = "5054.v620b_5d2b_d5e6"
+kotlin                = "2.2.21"
 kotest                = "6.1.11"
 openrewrite           = "6.26.0"
 spock                 = "2.4-groovy-3.0"
@@ -24,6 +25,7 @@ spock-junit4        = { module = "org.spockframework:spock-junit4",             
 
 [plugins]
 foojay         = { id = "org.gradle.toolchains.foojay-resolver-convention", version.ref = "foojay" }
+kotlin-jvm     = { id = "org.jetbrains.kotlin.jvm",                         version.ref = "kotlin" }
 openrewrite    = { id = "org.openrewrite.rewrite",                           version.ref = "openrewrite" }
 shared-library = { id = "com.mkobit.jenkins.pipelines.shared-library",      version = "0.11.0" }
 spotless       = { id = "com.diffplug.spotless",                             version.ref = "spotless" }

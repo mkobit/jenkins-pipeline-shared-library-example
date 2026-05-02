@@ -1,8 +1,4 @@
 pluginManagement {
-  val localPluginBuild = file("../jenkins-pipeline-shared-libraries-gradle-plugin")
-  if (localPluginBuild.exists()) {
-    includeBuild(localPluginBuild)
-  }
   repositories {
     gradlePluginPortal()
   }

@@ -5,7 +5,6 @@ import groovy.transform.CompileDynamic
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition
 import org.jenkinsci.plugins.workflow.job.WorkflowJob
 import org.jenkinsci.plugins.workflow.libs.GlobalLibraries
-import org.junit.runner.Description
 import org.jvnet.hudson.test.JenkinsRule
 import spock.lang.Shared
 import spock.lang.Specification
@@ -17,22 +16,30 @@ import spock.lang.Specification
 // code, which is correct for shared library source owned by your organisation.
 //
 // Spock 2.x runs on JUnit Platform which does not honour JUnit 4 @Rule / @ClassRule
-// lifecycle wiring — JenkinsRule.before() is never called by the rule mechanism.
-// We manage the Jenkins lifecycle explicitly in setupSpec/cleanupSpec: create the
-// Description JenkinsRule expects (via reflection) and call before()/after() directly.
+// lifecycle wiring. SpockJenkinsRule overrides recipe() to skip the JUnit 4 Description
+// lookup, making before()/after() safe to call directly from setupSpec/cleanupSpec.
+// Migrate to RealJenkinsFixture (jenkins-test-harness fixtures package) once the harness
+// version bundled in the BOM includes it.
+//
+// @CompileDynamic is intentional: Spock 2.x AST transformations run on Groovy 3 AST
+// and can fail under @CompileStatic on a Specification subclass.
 @CompileDynamic
 class VarsExampleSpockTest extends Specification {
+
+    // JenkinsRule.recipe() reads testDescription (a JUnit 4 concept) to wire test
+    // annotations like @LocalData. Skipping it makes JenkinsRule framework-agnostic.
+    private static class SpockJenkinsRule extends JenkinsRule {
+        @Override
+        void recipe() throws Exception {
+            recipeLoadCurrentPlugin()
+        }
+    }
 
     @Shared
     JenkinsRule rule
 
     def setupSpec() {
-        rule = new JenkinsRule()
-        // JenkinsRule.before() calls recipe() which reads testDescription for annotations.
-        // Without @Rule wiring, testDescription is null; set it directly.
-        def descField = JenkinsRule.getDeclaredField('testDescription')
-        descField.accessible = true
-        descField.set(rule, Description.createSuiteDescription(VarsExampleSpockTest))
+        rule = new SpockJenkinsRule()
         rule.before()
         rule.timeout = 30
         GlobalLibraries.get().libraries = [

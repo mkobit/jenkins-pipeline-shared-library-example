@@ -8,6 +8,10 @@ on:
       - main
   pull_request:
   workflow_dispatch:
+    inputs:
+      plugin-ref:
+        description: "Plugin branch/tag to test against (default: main)"
+        default: main
 
 permissions: {}
 
@@ -31,17 +35,17 @@ jobs:
         with:
           path: example
 
-      # Resolve which plugin branch to test against:
-      #   1. same branch name as the current example branch (coordinated cross-repo changes)
-      #   2. main (fallback for example-only changes)
+      # Plugin ref selection:
+      #   workflow_dispatch → explicit input (default: main)
+      #   the-phoenix-project branch → always use the matching branch (coordinated changes)
+      #   everything else → main
       - name: Resolve plugin ref
         id: plugin-ref
         run: |
-          BRANCH="${{ github.head_ref || github.ref_name }}"
-          if git ls-remote --exit-code \
-               https://github.com/mkobit/jenkins-pipeline-shared-libraries-gradle-plugin.git \
-               "refs/heads/$BRANCH" > /dev/null 2>&1; then
-            echo "ref=$BRANCH" >> "$GITHUB_OUTPUT"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "ref=${{ inputs.plugin-ref }}" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.head_ref || github.ref_name }}" = "the-phoenix-project" ]; then
+            echo "ref=the-phoenix-project" >> "$GITHUB_OUTPUT"
           else
             echo "ref=main" >> "$GITHUB_OUTPUT"
           fi

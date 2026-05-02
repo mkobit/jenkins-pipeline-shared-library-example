@@ -7,7 +7,7 @@ plugins {
   alias(libs.plugins.openrewrite)
   alias(libs.plugins.spotless)
   codenarc
-  kotlin("jvm") version "2.2.21"
+  alias(libs.plugins.kotlin.jvm)
 }
 
 java {
@@ -82,7 +82,7 @@ testing {
       }
       dependencies {
         // LocalLibraryRetriever is generated and compiled by the integrationTest source set.
-        implementation(sourceSets["integrationTest"].output.classesDirs)
+        implementation(sourceSets.getByName("integrationTest").output.classesDirs)
         implementation(libs.junit.jupiter.api)
         runtimeOnly(libs.junit.jupiter.engine)
         runtimeOnly(libs.junit.platform.launcher)
@@ -143,7 +143,7 @@ testing {
 
 // Gradle's Groovy plugin does not auto-populate groovyClasspath for dynamically registered suites.
 tasks.named<GroovyCompile>("compileIntegrationTestSpockGroovy") {
-  groovyClasspath = configurations["integrationTestSpockCompileClasspath"]
+  groovyClasspath = configurations.getByName("integrationTestSpockCompileClasspath")
 }
 
 tasks.named("check") {
@@ -163,6 +163,10 @@ spotless {
   groovy {
     greclipse().configFile("config/greclipse.properties")
     target("src/**/*.groovy", "vars/**/*.groovy", "test/**/*.groovy")
+  }
+  java {
+    googleJavaFormat()
+    target("test/**/*.java", "src/**/*.java")
   }
   kotlin {
     ktlint()

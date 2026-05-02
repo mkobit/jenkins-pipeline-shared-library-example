@@ -14,6 +14,5 @@ updates:
         patterns:
           - "gradle/*"
       third-party-actions:
-        exclude-patterns:
-          - "actions/*"
-          - "gradle/*"
+        patterns:
+          - "*"

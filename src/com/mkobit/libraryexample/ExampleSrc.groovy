@@ -1,9 +1,7 @@
 package com.mkobit.libraryexample
 
 import com.cloudbees.groovy.cps.NonCPS
-import groovy.transform.CompileDynamic
 
-@CompileDynamic
 class ExampleSrc {
 
     private final Object script

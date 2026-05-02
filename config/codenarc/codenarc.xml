@@ -18,6 +18,9 @@
     <exclude name="ImplicitReturnStatement"/>
     <!-- false positive: Jenkins pipeline scripts passed as string literals intentionally contain ${} expressions -->
     <exclude name="GStringExpressionWithinString"/>
+    <!-- Jenkins shared library src classes cannot be @CompileStatic: they use CPS-transformed
+         dynamic dispatch and interact with the pipeline context via dynamic Groovy -->
+    <exclude name="CompileStatic"/>
   </ruleset-ref>
   <ruleset-ref path="rulesets/exceptions.xml"/>
   <ruleset-ref path="rulesets/groovyism.xml"/>
