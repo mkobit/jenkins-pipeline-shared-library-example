@@ -2,9 +2,12 @@ package com.mkobit.libraryexample
 
 import com.cloudbees.groovy.cps.NonCPS
 
-class ExampleSrc {
+class ExampleSrc implements Serializable {
 
-    private final Object script
+    private static final long serialVersionUID = 1L
+    // transient: the pipeline context is not serializable; callers must recreate
+    // ExampleSrc instances if the pipeline is suspended and resumed.
+    private transient Object script
 
     ExampleSrc(final Object script) {
         this.script = Objects.requireNonNull(script)

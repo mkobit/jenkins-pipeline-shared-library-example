@@ -28,4 +28,16 @@
   <ruleset-ref path="rulesets/unnecessary.xml"/>
   <ruleset-ref path="rulesets/unused.xml"/>
 
+  <!-- Jenkins CPS / Serializable rules (Enhanced Classpath Rules — requires Jenkins
+       JARs on CodeNarc's compilationClasspath, which the shared-library plugin
+       provides automatically when both plugins are applied together). -->
+  <ruleset-ref path="rulesets/jenkins.xml">
+    <!-- vars/ scripts are implicit Groovy Script subclasses; the CPS interpreter
+         handles their serialization transparently, so ClassNotSerializable is a
+         false positive on files in vars/. Apply it only to src/ classes. -->
+    <rule-config name="ClassNotSerializable">
+      <property name="doNotApplyToFilesMatching" value=".*/vars/.*"/>
+    </rule-config>
+  </ruleset-ref>
+
 </ruleset>
