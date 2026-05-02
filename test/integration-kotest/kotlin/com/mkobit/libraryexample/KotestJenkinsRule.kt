@@ -4,8 +4,7 @@ import org.jvnet.hudson.test.JenkinsRule
 
 // JenkinsRule.recipe() reads a JUnit 4 Description to process test annotations (@LocalData etc.).
 // Overriding it to skip that lookup makes JenkinsRule usable under JUnit Platform runners like
-// Kotest. Migrate to RealJenkinsFixture (jenkins-test-harness fixtures package) once the harness
-// version bundled in the BOM includes it.
+// Kotest without any JUnit 4 framework dependency.
 internal class KotestJenkinsRule : JenkinsRule() {
   override fun recipe() = recipeLoadCurrentPlugin()
 }

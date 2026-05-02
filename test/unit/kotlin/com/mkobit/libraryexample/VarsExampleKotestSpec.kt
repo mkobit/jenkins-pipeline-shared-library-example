@@ -22,7 +22,7 @@ class VarsExampleKotestSpec :
     beforeEach {
       base =
         object : DeclarativePipelineTest() {}.also { t ->
-          (t.scriptRoots as MutableList<String>).add("vars")
+          t.setScriptRoots(*t.scriptRoots, "vars")
           t.setUp()
           t.helper.registerAllowedMethod(
             "error",
