@@ -1,9 +1,5 @@
 pluginManagement {
-  // When used standalone or via --include-build, the sibling directory provides the plugin.
-  // When included in the root composite, this is deduplicated with the root's includeBuild.
-  if (file("../jenkins-pipeline-shared-libraries-gradle-plugin").isDirectory) {
-    includeBuild("../jenkins-pipeline-shared-libraries-gradle-plugin")
-  }
+  includeBuild("../jenkins-pipeline-shared-libraries-gradle-plugin")
   repositories {
     gradlePluginPortal()
   }
