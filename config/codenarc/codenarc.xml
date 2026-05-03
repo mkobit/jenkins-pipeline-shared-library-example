@@ -30,14 +30,51 @@
 
   <!-- Jenkins CPS / Serializable rules (Enhanced Classpath Rules — requires Jenkins
        JARs on CodeNarc's compilationClasspath, which the shared-library plugin
-       provides automatically when both plugins are applied together). -->
+       provides automatically when both plugins are applied together).
+
+       All Jenkins rules default to applyToFileNames='Jenkinsfile', so they must be
+       explicitly configured to run on shared library .groovy source files. -->
   <ruleset-ref path="rulesets/jenkins.xml">
-    <!-- vars/ scripts are implicit Groovy Script subclasses; the CPS interpreter
-         handles their serialization transparently, so ClassNotSerializable is a
-         false positive on files in vars/. Apply it only to src/ classes. -->
+
     <rule-config name="ClassNotSerializable">
-      <property name="doNotApplyToFilesMatching" value=".*/vars/.*"/>
+      <property name="applyToFileNames" value="*.groovy"/>
+      <!-- vars/ scripts and test classes are not subject to CPS serialization requirements -->
+      <property name="doNotApplyToFilesMatching" value=".*/vars/.*|.*/test/.*"/>
     </rule-config>
+
+    <rule-config name="ClosureInGString">
+      <property name="applyToFileNames" value="*.groovy"/>
+    </rule-config>
+
+    <!-- cpsPackages: this rule only fires for classes whose package starts with one of
+         the configured prefixes. Without it, the rule silently skips all packaged classes
+         and only fires in the default package (a bare Jenkinsfile).
+         cpsPackages is a List<String> and cannot be set via XML property value; configure
+         it in build.gradle.kts instead:
+           tasks.withType<CodeNarc>().configureEach {
+               doFirst { (rules.find { it.name == "CpsCallFromNonCpsMethod" } as? AbstractRule)
+                   ?.setProperty("cpsPackages", listOf("com.mkobit")) }
+           } -->
+    <rule-config name="CpsCallFromNonCpsMethod">
+      <property name="applyToFileNames" value="*.groovy"/>
+    </rule-config>
+
+    <rule-config name="ExpressionInCpsMethodNotSerializable">
+      <property name="applyToFileNames" value="*.groovy"/>
+    </rule-config>
+
+    <rule-config name="ForbiddenCallInCpsMethod">
+      <property name="applyToFileNames" value="*.groovy"/>
+    </rule-config>
+
+    <rule-config name="ObjectOverrideOnlyNonCpsMethods">
+      <property name="applyToFileNames" value="*.groovy"/>
+    </rule-config>
+
+    <rule-config name="ParameterOrReturnTypeNotSerializable">
+      <property name="applyToFileNames" value="*.groovy"/>
+    </rule-config>
+
   </ruleset-ref>
 
 </ruleset>
