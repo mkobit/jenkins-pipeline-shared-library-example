@@ -5,7 +5,7 @@ updates:
     schedule:
       interval: "weekly"
     cooldown:
-      default-days: 7
+      default-days: 30
     ignore:
       # Jenkins BOM and pinned groovy-all are kept in sync with the Jenkins LTS
       # line manually — Dependabot should not propose bumps for these.
