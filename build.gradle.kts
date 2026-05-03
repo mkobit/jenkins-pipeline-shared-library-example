@@ -90,7 +90,6 @@ testing {
       targets.all {
         testTask.configure {
           useJUnitPlatform()
-          mustRunAfter(tasks.named("integrationTest"))
         }
       }
     }
@@ -111,11 +110,6 @@ testing {
         implementation(libs.spock.core)
         compileOnly(libs.groovy.core)
       }
-      targets.all {
-        testTask.configure {
-          mustRunAfter(tasks.named("integrationTestJunit5"))
-        }
-      }
     }
 
     // Kotest integration tests — Kotlin, sandbox=true.
@@ -131,11 +125,6 @@ testing {
         implementation(sourceSets["integrationTest"].output.classesDirs)
         implementation(libs.kotest.runner)
         implementation(libs.kotest.assertions)
-      }
-      targets.all {
-        testTask.configure {
-          mustRunAfter(tasks.named("integrationTestSpock"))
-        }
       }
     }
   }
