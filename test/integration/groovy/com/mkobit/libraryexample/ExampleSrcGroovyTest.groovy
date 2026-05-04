@@ -11,7 +11,6 @@ import jenkins.model.ParameterizedJobMixIn
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition
 import org.jenkinsci.plugins.workflow.job.WorkflowJob
 import org.jenkinsci.plugins.workflow.job.WorkflowRun
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.jvnet.hudson.test.JenkinsRule
@@ -21,11 +20,6 @@ class ExampleSrcGroovyTest {
 
     @Rule
     public JenkinsRule rule = new JenkinsRule()
-
-    @Before
-    void setUp() {
-        RuleBootstrapper.setup(rule)
-    }
 
     @Test
     void sayHelloToName() {

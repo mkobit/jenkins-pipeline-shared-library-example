@@ -1,10 +1,8 @@
 package com.mkobit.libraryexample
 
-import com.mkobit.jenkins.pipelines.testing.LocalLibraryRetriever
 import io.kotest.core.spec.style.FunSpec
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition
 import org.jenkinsci.plugins.workflow.job.WorkflowJob
-import org.jenkinsci.plugins.workflow.libs.GlobalLibraries
 import org.jvnet.hudson.test.JenkinsRule
 
 class VarsExampleKotestIntTest :
@@ -15,7 +13,6 @@ class VarsExampleKotestIntTest :
       rule = KotestJenkinsRule()
       rule.timeout = 30
       rule.before()
-      GlobalLibraries.get().libraries = listOf(LocalLibraryRetriever.implicitLibrary())
     }
 
     afterEach { rule.after() }

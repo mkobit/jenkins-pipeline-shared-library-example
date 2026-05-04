@@ -1,14 +1,10 @@
 package com.mkobit.libraryexample;
 
-import com.mkobit.jenkins.pipelines.testing.LocalLibraryRetriever;
 import hudson.model.Item;
-import java.util.Collections;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
-import org.jenkinsci.plugins.workflow.libs.GlobalLibraries;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
@@ -21,13 +17,6 @@ import org.jvnet.hudson.test.JenkinsRule;
 public class VarsExampleJavaTest {
 
   @Rule public JenkinsRule rule = new JenkinsRule();
-
-  @Before
-  public void configureGlobalLibraries() {
-    rule.timeout = 30;
-    GlobalLibraries.get()
-        .setLibraries(Collections.singletonList(LocalLibraryRetriever.implicitLibrary()));
-  }
 
   @Test
   public void doStuffStepRunsSuccessfully() throws Exception {

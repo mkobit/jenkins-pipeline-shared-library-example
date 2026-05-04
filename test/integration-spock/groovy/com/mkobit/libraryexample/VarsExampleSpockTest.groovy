@@ -1,10 +1,8 @@
 package com.mkobit.libraryexample
 
-import com.mkobit.jenkins.pipelines.testing.LocalLibraryRetriever
 import groovy.transform.CompileDynamic
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition
 import org.jenkinsci.plugins.workflow.job.WorkflowJob
-import org.jenkinsci.plugins.workflow.libs.GlobalLibraries
 import org.jvnet.hudson.test.JenkinsRule
 import spock.lang.Shared
 import spock.lang.Specification
@@ -42,9 +40,6 @@ class VarsExampleSpockTest extends Specification {
         rule = new SpockJenkinsRule()
         rule.before()
         rule.timeout = 30
-        GlobalLibraries.get().libraries = [
-            LocalLibraryRetriever.implicitLibrary()
-        ]
     }
 
     def cleanupSpec() {

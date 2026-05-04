@@ -1,6 +1,5 @@
 package com.mkobit.libraryexample
 
-import com.mkobit.jenkins.pipelines.testing.LocalLibraryRetriever
 import hudson.model.BooleanParameterDefinition
 import hudson.model.ChoiceParameterDefinition
 import hudson.model.ParametersAction
@@ -11,7 +10,6 @@ import jenkins.model.ParameterizedJobMixIn
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition
 import org.jenkinsci.plugins.workflow.job.WorkflowJob
 import org.jenkinsci.plugins.workflow.job.WorkflowRun
-import org.jenkinsci.plugins.workflow.libs.GlobalLibraries
 import org.jvnet.hudson.test.JenkinsRule
 
 class ExampleSrcKotestIntTest :
@@ -22,7 +20,6 @@ class ExampleSrcKotestIntTest :
       rule = KotestJenkinsRule()
       rule.timeout = 30
       rule.before()
-      GlobalLibraries.get().libraries = listOf(LocalLibraryRetriever.implicitLibrary())
     }
 
     afterEach { rule.after() }

@@ -4,7 +4,6 @@ import groovy.transform.CompileDynamic
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition
 import org.jenkinsci.plugins.workflow.job.WorkflowJob
 import org.jenkinsci.plugins.workflow.job.WorkflowRun
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.jvnet.hudson.test.JenkinsRule
@@ -14,11 +13,6 @@ class VarsExampleJunitTest {
 
     @Rule
     public JenkinsRule rule = new JenkinsRule()
-
-    @Before
-    void configureGlobalGitLibraries() {
-        RuleBootstrapper.setup(rule)
-    }
 
     @Test
     void "testing library that uses declarative pipeline libraries"() {
