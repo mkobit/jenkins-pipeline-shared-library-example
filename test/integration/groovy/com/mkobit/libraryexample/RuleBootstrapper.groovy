@@ -13,7 +13,7 @@ final class RuleBootstrapper {
     static void setup(JenkinsRule rule) {
         rule.timeout = 30
         GlobalLibraries.get().libraries = [
-            LocalLibraryRetriever.implicitLibrary('testLibrary')
+            LocalLibraryRetriever.implicitLibrary()
         ]
     }
 }

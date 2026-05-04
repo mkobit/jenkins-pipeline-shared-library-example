@@ -15,8 +15,7 @@ class VarsExampleJUnit6Test {
 
   private static void configureLibrary(JenkinsRule rule) {
     rule.timeout = 30;
-    GlobalLibraries.get()
-        .setLibraries(List.of(LocalLibraryRetriever.implicitLibrary("testLibrary")));
+    GlobalLibraries.get().setLibraries(List.of(LocalLibraryRetriever.implicitLibrary()));
   }
 
   @Test

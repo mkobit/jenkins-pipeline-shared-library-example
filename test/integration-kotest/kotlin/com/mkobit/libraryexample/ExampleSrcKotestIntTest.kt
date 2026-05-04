@@ -22,7 +22,7 @@ class ExampleSrcKotestIntTest :
       rule = KotestJenkinsRule()
       rule.timeout = 30
       rule.before()
-      GlobalLibraries.get().libraries = listOf(LocalLibraryRetriever.implicitLibrary("testLibrary"))
+      GlobalLibraries.get().libraries = listOf(LocalLibraryRetriever.implicitLibrary())
     }
 
     afterEach { rule.after() }

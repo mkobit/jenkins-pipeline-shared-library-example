@@ -26,8 +26,7 @@ public class VarsExampleJavaTest {
   public void configureGlobalLibraries() {
     rule.timeout = 30;
     GlobalLibraries.get()
-        .setLibraries(
-            Collections.singletonList(LocalLibraryRetriever.implicitLibrary("testLibrary")));
+        .setLibraries(Collections.singletonList(LocalLibraryRetriever.implicitLibrary()));
   }
 
   @Test
