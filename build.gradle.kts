@@ -82,7 +82,7 @@ testing {
       }
       dependencies {
         // LocalLibraryRetriever is generated and compiled by the integrationTest source set.
-        implementation(sourceSets.getByName("integrationTest").output.classesDirs)
+        implementation(sourceSets["integrationTest"].output.classesDirs)
         implementation(libs.junit.jupiter.api)
         runtimeOnly(libs.junit.jupiter.engine)
         runtimeOnly(libs.junit.platform.launcher)
@@ -135,7 +135,7 @@ tasks.named<GroovyCompile>("compileIntegrationTestSpockGroovy") {
   groovyClasspath = configurations.getByName("integrationTestSpockCompileClasspath")
 }
 
-tasks.named("check") {
+tasks.check {
   dependsOn(
     tasks.named("integrationTestJunit5"),
     tasks.named("integrationTestSpock"),
