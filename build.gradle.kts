@@ -125,6 +125,7 @@ testing {
         implementation(sourceSets["integrationTest"].output.classesDirs)
         implementation(libs.kotest.runner)
         implementation(libs.kotest.assertions)
+        implementation(libs.coroutines.core)
       }
     }
   }

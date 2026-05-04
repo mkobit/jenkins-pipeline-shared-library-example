@@ -6,18 +6,18 @@ import org.jenkinsci.plugins.workflow.job.WorkflowJob
 class VarsExampleKotestIntTest :
   JenkinsFunSpec({
     test("doStuff step logs expected output") {
-      val job = rule.createProject(WorkflowJob::class.java, "kotest-doStuff")
-      job.definition = CpsFlowDefinition("doStuff()", true)
-
-      val run = rule.buildAndAssertSuccess(job)
-      rule.assertLogContains("hello stuff", run)
+      jenkins { r ->
+        val job = r.createProject(WorkflowJob::class.java, "kotest-doStuff")
+        job.definition = CpsFlowDefinition("doStuff()", true)
+        r.assertLogContains("hello stuff", r.buildAndAssertSuccess(job))
+      }
     }
 
     test("evenOrOdd step identifies odd build numbers") {
-      val job = rule.createProject(WorkflowJob::class.java, "kotest-evenOdd")
-      job.definition = CpsFlowDefinition("evenOrOdd(1)", true)
-
-      val run = rule.buildAndAssertSuccess(job)
-      rule.assertLogContains("The build number is odd", run)
+      jenkins { r ->
+        val job = r.createProject(WorkflowJob::class.java, "kotest-evenOdd")
+        job.definition = CpsFlowDefinition("evenOrOdd(1)", true)
+        r.assertLogContains("The build number is odd", r.buildAndAssertSuccess(job))
+      }
     }
   })

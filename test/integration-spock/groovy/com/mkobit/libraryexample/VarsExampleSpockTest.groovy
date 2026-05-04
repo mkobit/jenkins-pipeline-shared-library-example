@@ -14,25 +14,25 @@ class VarsExampleSpockTest extends JenkinsSpec {
 
     def 'doStuff step logs expected output'() {
         given:
-        def job = rule.createProject(WorkflowJob, 'spock-doStuff')
+        def job = jenkins.createProject(WorkflowJob, 'spock-doStuff')
         job.definition = new CpsFlowDefinition('doStuff()', false)
 
         when:
-        def run = rule.buildAndAssertSuccess(job)
+        def run = jenkins.buildAndAssertSuccess(job)
 
         then:
-        rule.assertLogContains('hello stuff', run)
+        jenkins.assertLogContains('hello stuff', run)
     }
 
     def 'evenOrOdd step identifies odd build numbers'() {
         given:
-        def job = rule.createProject(WorkflowJob, 'spock-evenOdd')
+        def job = jenkins.createProject(WorkflowJob, 'spock-evenOdd')
         job.definition = new CpsFlowDefinition('evenOrOdd(1)', false)
 
         when:
-        def run = rule.buildAndAssertSuccess(job)
+        def run = jenkins.buildAndAssertSuccess(job)
 
         then:
-        rule.assertLogContains('The build number is odd', run)
+        jenkins.assertLogContains('The build number is odd', run)
     }
 }

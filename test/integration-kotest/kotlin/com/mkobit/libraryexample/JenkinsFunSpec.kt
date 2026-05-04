@@ -1,25 +1,23 @@
 package com.mkobit.libraryexample
 
 import io.kotest.core.spec.style.FunSpec
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.jvnet.hudson.test.JenkinsRule
+import org.jvnet.hudson.test.fixtures.JenkinsSessionFixture
 
-// JenkinsRule.recipe() reads a JUnit 4 Description to process test annotations (@LocalData etc.).
-// Overriding it to call only recipeLoadCurrentPlugin() makes JenkinsRule safe to use from
-// Kotest's beforeSpec/afterSpec without any JUnit 4 framework dependency.
 abstract class JenkinsFunSpec(
   body: JenkinsFunSpec.() -> Unit,
 ) : FunSpec() {
-  val rule: JenkinsRule =
-    object : JenkinsRule() {
-      override fun recipe() = recipeLoadCurrentPlugin()
-    }
+  private val fixture = JenkinsSessionFixture()
+
+  // fixture.then() is a synchronous blocking call (Jetty startup + shutdown).
+  // withContext(Dispatchers.IO) prevents it from starving Kotest's coroutine dispatcher.
+  suspend fun jenkins(block: (JenkinsRule) -> Unit) = withContext(Dispatchers.IO) { fixture.then { r -> block(r) } }
 
   init {
-    beforeSpec {
-      rule.timeout = 30
-      rule.before()
-    }
-    afterSpec { rule.after() }
+    beforeSpec { fixture.setUp(this::class.java.name, "integration") }
+    afterSpec { fixture.tearDown() }
     body()
   }
 }
