@@ -5,25 +5,13 @@ import hudson.model.ChoiceParameterDefinition
 import hudson.model.ParametersAction
 import hudson.model.ParametersDefinitionProperty
 import hudson.model.StringParameterDefinition
-import io.kotest.core.spec.style.FunSpec
 import jenkins.model.ParameterizedJobMixIn
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition
 import org.jenkinsci.plugins.workflow.job.WorkflowJob
 import org.jenkinsci.plugins.workflow.job.WorkflowRun
-import org.jvnet.hudson.test.JenkinsRule
 
 class ExampleSrcKotestIntTest :
-  FunSpec({
-    lateinit var rule: JenkinsRule
-
-    beforeEach {
-      rule = KotestJenkinsRule()
-      rule.timeout = 30
-      rule.before()
-    }
-
-    afterEach { rule.after() }
-
+  JenkinsFunSpec({
     test("sayHelloTo prints greeting") {
       val job = rule.createProject(WorkflowJob::class.java, "say-hello")
       job.definition =

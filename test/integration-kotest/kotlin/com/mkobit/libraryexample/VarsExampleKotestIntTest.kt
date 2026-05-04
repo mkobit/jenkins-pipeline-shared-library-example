@@ -1,22 +1,10 @@
 package com.mkobit.libraryexample
 
-import io.kotest.core.spec.style.FunSpec
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition
 import org.jenkinsci.plugins.workflow.job.WorkflowJob
-import org.jvnet.hudson.test.JenkinsRule
 
 class VarsExampleKotestIntTest :
-  FunSpec({
-    lateinit var rule: JenkinsRule
-
-    beforeEach {
-      rule = KotestJenkinsRule()
-      rule.timeout = 30
-      rule.before()
-    }
-
-    afterEach { rule.after() }
-
+  JenkinsFunSpec({
     test("doStuff step logs expected output") {
       val job = rule.createProject(WorkflowJob::class.java, "kotest-doStuff")
       job.definition = CpsFlowDefinition("doStuff()", true)
