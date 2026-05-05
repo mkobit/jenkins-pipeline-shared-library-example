@@ -158,14 +158,15 @@ tasks.named<GroovyCompile>("compileIntegrationTestSpockGroovy") {
 }
 
 // scripts/ is not a Gradle source set; check it separately with NoDef enforced.
-val codenarcScripts = tasks.register<CodeNarc>("codenarcScripts") {
-  source = fileTree("scripts") { include("**/*.groovy") }
-  configFile = file("config/codenarc/codenarc-scripts.xml")
-  codenarcClasspath = configurations.getByName("codenarc")
-  reports {
-    text.required.set(true)
+val codenarcScripts =
+  tasks.register<CodeNarc>("codenarcScripts") {
+    source = fileTree("scripts") { include("**/*.groovy") }
+    configFile = file("config/codenarc/codenarc-scripts.xml")
+    codenarcClasspath = configurations.getByName("codenarc")
+    reports {
+      text.required.set(true)
+    }
   }
-}
 
 tasks.check {
   dependsOn(
