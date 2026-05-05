@@ -5,7 +5,9 @@ updates:
     schedule:
       interval: "weekly"
     cooldown:
-      default-days: 30
+      # Gradle wrapper and test-framework bumps can land quickly; Jenkins plugin
+      # dependencies managed by the BOM are in the ignore list below.
+      default-days: 14
     ignore:
       # Jenkins BOM and pinned groovy-all are kept in sync with the Jenkins LTS
       # line manually — Dependabot should not propose bumps for these.

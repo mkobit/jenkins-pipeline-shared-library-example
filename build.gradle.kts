@@ -168,8 +168,6 @@ val codenarcScripts = tasks.register<CodeNarc>("codenarcScripts") {
   codenarcClasspath = configurations.getByName("codenarc")
   reports {
     text.required.set(true)
-    xml.required.set(false)
-    html.required.set(false)
   }
 }
 
