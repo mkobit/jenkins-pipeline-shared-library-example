@@ -1,8 +1,12 @@
 name: Compatibility build
 
 # Tests this example repo against a specific plugin source branch via composite build.
-# Used for coordinated plugin + example development. Template forks should use build.yml
-# (quick-start) which builds against the published plugin instead.
+# Used for coordinated plugin + example development.
+#
+# NOTE FOR TEMPLATE FORKS: you do not need this workflow.
+# Delete it and use build.yml instead, which resolves the published plugin from the
+# Gradle Plugin Portal without requiring a plugin source checkout.
+# Keep this file only if you are developing the plugin itself alongside the example.
 
 on:
   push:
