@@ -1,4 +1,4 @@
-= Jenkins Pipeline Shared Library Example
+= Jenkins Pipeline Shared Library example
 :uri-shared-library-plugin: https://github.com/mkobit/jenkins-pipeline-shared-libraries-gradle-plugin
 :uri-jenkins-shared-library-docs: https://jenkins.io/doc/book/pipeline/shared-libraries/
 :uri-build-badge: https://github.com/mkobit/jenkins-pipeline-shared-library-example/actions/workflows/build.yml/badge.svg?branch=main
@@ -7,28 +7,118 @@
 
 {build-badge}
 
-== Purpose
+An example link:{uri-jenkins-shared-library-docs}[Jenkins Pipeline Shared Library] built with the link:{uri-shared-library-plugin}[Shared Library Gradle plugin].
 
-An example link:{uri-jenkins-shared-library-docs}[Jenkins Pipeline Shared Library] built with the link:{uri-shared-library-plugin}[Shared Library Gradle Plugin].
+Use this as a reference for structuring a shared library project, writing tests in multiple JVM languages and frameworks, and wiring the plugin with a Jenkins BOM.
 
-Use this as a reference for:
+== Project layout
 
-* Structuring a shared library project (`src/`, `vars/`, `resources/`)
-* Writing JPU unit tests (`test/unit/`) in Groovy, Java, or Kotlin
-* Writing `JenkinsRule` integration tests in multiple frameworks:
-** `test/integration/` — JUnit 4 (Java, Kotlin), `sandbox=true`
-** `test/integration-junit5/` — JUnit Jupiter, `sandbox=true`
-** `test/integration-spock/` — Spock 2.x, `sandbox=false` (required on Jenkins 2.479.x LTS)
-** `test/integration-kotest/` — Kotest, `sandbox=true`
-** `test/smoke/` — smoke test suite via `jenkinsTestRunnerSuite()`
-* Wiring the plugin with a Jenkins BOM and additional plugins
-* Registering extra integration test suites via `sharedLibrary.jenkinsTestRunnerSuite(suite)`
+----
+src/com/mkobit/libraryexample/   ← shared library classes (Jenkins SCM requirement)
+vars/                            ← pipeline step scripts
+resources/                       ← files loaded via libraryResource()
+scripts/                         ← utility scripts for development and ops
+test/
+  unit/groovy/                   ← JenkinsPipelineUnit (fast, no Jenkins)
+  unit/kotlin/                   ← Kotlin unit tests with Kotest
+  integration/groovy/            ← JUnit 4 / GroovyJenkinsRule, sandbox=true
+  integration/java/              ← JUnit 4 / Java, sandbox=true
+  integration/kotlin/            ← JUnit 4 / Kotlin, sandbox=true
+  integration-junit5/java/       ← JUnit Jupiter / Java, sandbox=true
+  integration-spock/groovy/      ← Spock 2.x / Groovy, sandbox=false (2.479.x constraint)
+  integration-kotest/kotlin/     ← Kotest / Kotlin, sandbox=true
+  smoke/java/                    ← smoke test via a custom-named suite
+----
 
-== Running
+== Running tests
 
 [source,shell]
 ----
-./gradlew build          # compile + unit tests
-./gradlew integrationTest  # built-in JenkinsRule suite (downloads Jenkins WAR on first run)
-./gradlew check          # all suites
+./gradlew test                      # JPU unit tests only (fast)
+./gradlew integrationTest           # built-in JenkinsRule suite (downloads WAR on first run)
+./gradlew integrationTestJunit5     # JUnit Jupiter suite
+./gradlew integrationTestSpock      # Spock 2.x suite
+./gradlew integrationTestKotest     # Kotest suite
+./gradlew smokeTest                 # smoke test
+./gradlew check                     # all suites (runs everything)
+----
+
+Jenkins downloads the WAR and plugins on first run; subsequent runs use the Gradle module cache.
+
+== Test framework patterns
+
+=== JenkinsPipelineUnit (unit tests)
+
+The `test` suite uses link:https://github.com/lesfurets/JenkinsPipelineUnit[JenkinsPipelineUnit] to exercise pipeline step dispatch without a Jenkins instance.
+Tests are fast and suitable for pure Groovy logic.
+
+=== JenkinsRule (integration tests)
+
+The `integrationTest` suite runs an embedded Jenkins instance via `JenkinsRule`.
+The plugin generates `LocalLibraryRetriever.java` and registers the local library automatically via `SharedLibraryAutoRegistrar` — no `GlobalLibraries.get()` call is needed in test code.
+
+The `sandbox=true` flag in `CpsFlowDefinition` mirrors production Jenkins behaviour and is the recommended default for all integration tests except Spock 2.x on Jenkins 2.479.x (see note below).
+
+=== Spock 2.x and `sandbox=false`
+
+Spock 2.x brings Groovy 3.x onto the test runtime.
+On Jenkins 2.479.x, this conflicts with the bundled `groovy-all:2.4.21` when `sandbox=true`.
+The `integrationTestSpock` suite uses `sandbox=false` as a workaround.
+This is a known limitation of the 2.479.x LTS line; 2.492.x+ resolves the conflict.
+
+=== Spock base class (`JenkinsSpec`)
+
+All Spock integration tests extend `JenkinsSpec`, a base class that owns the `JenkinsSessionFixture` lifecycle:
+
+[source,groovy]
+----
+class MySpec extends JenkinsSpec {
+    def 'my step executes'() {
+        given:
+        jenkins { JenkinsRule r ->
+            def job = r.createProject(WorkflowJob, 'test')
+            job.definition = new CpsFlowDefinition('myStep()', false)
+            r.buildAndAssertSuccess(job)
+        }
+    }
+}
+----
+
+=== Kotest base class (`JenkinsFunSpec`)
+
+All Kotest integration tests extend `JenkinsFunSpec`, which wraps `JenkinsSessionFixture` in a coroutine-friendly `jenkins {}` block:
+
+[source,kotlin]
+----
+class MyKotestSpec : JenkinsFunSpec({
+    test("my step executes") {
+        jenkins { rule ->
+            val job = rule.createProject(WorkflowJob::class.java, "test")
+            job.definition = CpsFlowDefinition("myStep()", true)
+            rule.buildAndAssertSuccess(job)
+        }
+    }
+})
+----
+
+== Adapting this example
+
+To use this project as a starting point for your own shared library:
+
+1. Replace `src/com/mkobit/libraryexample/` with your own package structure.
+2. Update `vars/` with your pipeline step scripts.
+3. Update the `rootProject.name` in `settings.gradle.kts` — this becomes the default Jenkins library name.
+4. Swap the Jenkins BOM version in `gradle/libs.versions.toml` for your target LTS line.
+5. Add extra Jenkins plugins via `jenkinsPlugin("group:artifact")` in `build.gradle.kts`.
+
+== Scripts
+
+`scripts/export-jenkins-catalog.groovy` runs in the Jenkins Script Console and exports all installed plugins as a `jenkins.versions.toml` Gradle version catalog.
+Save the output to `gradle/jenkins.versions.toml` and wire it via `versionCatalogs { create("jenkinsPlugins") { ... } }` to reference plugins as typed accessors.
+
+[source,shell]
+----
+# Run on a live Jenkins instance to generate the catalog:
+# Manage Jenkins → Script Console → paste and run scripts/export-jenkins-catalog.groovy
+# Then save the output as gradle/jenkins.versions.toml
 ----
