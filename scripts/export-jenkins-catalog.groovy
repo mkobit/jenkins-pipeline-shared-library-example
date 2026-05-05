@@ -29,11 +29,11 @@ import java.time.Instant
 
 // Convert a plugin short name (kebab-case) to a TOML key (dots for nesting, safe characters).
 // "workflow-job" → "workflow.job", "pipeline-model-api" → "pipeline.model.api"
-def tomlKey(String shortName) {
+String tomlKey(String shortName) {
   shortName.replaceAll('-', '.')
 }
 
-def plugins = Jenkins.instance.pluginManager.plugins
+final plugins = Jenkins.instance.pluginManager.plugins
   .findAll { PluginWrapper p -> p.isActive() && !p.isDeleted() }
   .collect { PluginWrapper p ->
     [
@@ -44,11 +44,11 @@ def plugins = Jenkins.instance.pluginManager.plugins
   }
   .sort { it.shortName }
 
-def versions = plugins
+final versions = plugins
   .collect { p -> "${tomlKey(p.shortName)} = \"${p.version}\"" }
   .join('\n')
 
-def libraries = plugins
+final libraries = plugins
   .collect { p ->
     p.groupId == 'unknown'
       ? "# WARNING: no Group-Id in manifest for ${p.shortName} — add group manually\n" +
@@ -58,7 +58,7 @@ def libraries = plugins
   .join('\n')
 
 // Only include plugins with a known group in the bundle (unknown-group entries are comments).
-def bundleEntries = plugins
+final bundleEntries = plugins
   .findAll { p -> p.groupId != 'unknown' }
   .collect { p -> "    \"${tomlKey(p.shortName)}\"" }
   .join(',\n')

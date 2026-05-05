@@ -1,5 +1,6 @@
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.plugins.jvm.JvmTestSuite
+import org.gradle.api.plugins.quality.CodeNarc
 import org.gradle.api.tasks.compile.GroovyCompile
 
 plugins {
@@ -160,12 +161,25 @@ tasks.named<GroovyCompile>("compileIntegrationTestSpockGroovy") {
   groovyClasspath = configurations.getByName("integrationTestSpockCompileClasspath")
 }
 
+// scripts/ is not a Gradle source set; check it separately with NoDef enforced.
+val codenarcScripts = tasks.register<CodeNarc>("codenarcScripts") {
+  source = fileTree("scripts") { include("**/*.groovy") }
+  configFile = file("config/codenarc/codenarc-scripts.xml")
+  codenarcClasspath = configurations.getByName("codenarc")
+  reports {
+    text.required.set(true)
+    xml.required.set(false)
+    html.required.set(false)
+  }
+}
+
 tasks.check {
   dependsOn(
     tasks.named("integrationTestJunit5"),
     tasks.named("integrationTestSpock"),
     tasks.named("integrationTestKotest"),
     tasks.named("smokeTest"),
+    codenarcScripts,
   )
 }
 

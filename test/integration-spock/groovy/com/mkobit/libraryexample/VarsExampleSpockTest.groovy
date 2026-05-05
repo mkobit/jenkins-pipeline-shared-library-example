@@ -13,26 +13,26 @@ import org.jenkinsci.plugins.workflow.job.WorkflowJob
 class VarsExampleSpockTest extends JenkinsSpec {
 
     def 'doStuff step logs expected output'() {
-        given:
-        def job = jenkins.createProject(WorkflowJob, 'spock-doStuff')
-        job.definition = new CpsFlowDefinition('doStuff()', false)
-
         when:
-        def run = jenkins.buildAndAssertSuccess(job)
+        jenkins { j ->
+            def job = j.createProject(WorkflowJob, 'spock-doStuff')
+            job.definition = new CpsFlowDefinition('doStuff()', false)
+            j.assertLogContains('hello stuff', j.buildAndAssertSuccess(job))
+        }
 
         then:
-        jenkins.assertLogContains('hello stuff', run)
+        noExceptionThrown()
     }
 
     def 'evenOrOdd step identifies odd build numbers'() {
-        given:
-        def job = jenkins.createProject(WorkflowJob, 'spock-evenOdd')
-        job.definition = new CpsFlowDefinition('evenOrOdd(1)', false)
-
         when:
-        def run = jenkins.buildAndAssertSuccess(job)
+        jenkins { j ->
+            def job = j.createProject(WorkflowJob, 'spock-evenOdd')
+            job.definition = new CpsFlowDefinition('evenOrOdd(1)', false)
+            j.assertLogContains('The build number is odd', j.buildAndAssertSuccess(job))
+        }
 
         then:
-        jenkins.assertLogContains('The build number is odd', run)
+        noExceptionThrown()
     }
 }

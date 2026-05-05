@@ -10,11 +10,12 @@ import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition
 import org.jenkinsci.plugins.workflow.job.WorkflowJob
 import org.jenkinsci.plugins.workflow.job.WorkflowRun
 
+// JenkinsFunSpec: test-support base class wrapping JenkinsSessionFixture for Kotest FunSpec
 class ExampleSrcKotestIntTest :
   JenkinsFunSpec({
     test("sayHelloTo prints greeting") {
-      jenkins { r ->
-        val job = r.createProject(WorkflowJob::class.java, "say-hello")
+      jenkins { j ->
+        val job = j.createProject(WorkflowJob::class.java, "say-hello")
         job.definition =
           CpsFlowDefinition(
             """
@@ -24,13 +25,13 @@ class ExampleSrcKotestIntTest :
             """.trimIndent(),
             true,
           )
-        r.assertLogContains("Hello there Bob", r.buildAndAssertSuccess(job))
+        j.assertLogContains("Hello there Bob", j.buildAndAssertSuccess(job))
       }
     }
 
     test("nonCpsDouble doubles each integer") {
-      jenkins { r ->
-        val job = r.createProject(WorkflowJob::class.java, "non-cps")
+      jenkins { j ->
+        val job = j.createProject(WorkflowJob::class.java, "non-cps")
         job.definition =
           CpsFlowDefinition(
             """
@@ -40,13 +41,13 @@ class ExampleSrcKotestIntTest :
             """.trimIndent(),
             true,
           )
-        r.assertLogContains("Numbers: [2, 4]", r.buildAndAssertSuccess(job))
+        j.assertLogContains("Numbers: [2, 4]", j.buildAndAssertSuccess(job))
       }
     }
 
     test("lock step from plugin runs successfully") {
-      jenkins { r ->
-        val job = r.createProject(WorkflowJob::class.java, "lock-step")
+      jenkins { j ->
+        val job = j.createProject(WorkflowJob::class.java, "lock-step")
         job.definition =
           CpsFlowDefinition(
             """
@@ -56,13 +57,13 @@ class ExampleSrcKotestIntTest :
             """.trimIndent(),
             true,
           )
-        r.assertLogContains("Hello world during lock!", r.buildAndAssertSuccess(job))
+        j.assertLogContains("Hello world during lock!", j.buildAndAssertSuccess(job))
       }
     }
 
     test("parameterized project uses default and overridden values") {
-      jenkins { r ->
-        val job = r.createProject(WorkflowJob::class.java, "parameterized")
+      jenkins { j ->
+        val job = j.createProject(WorkflowJob::class.java, "parameterized")
         val string = StringParameterDefinition("myString", "myDefault")
         val bool = BooleanParameterDefinition("myBoolean", false, "boolean parameter description")
         val choice =
@@ -82,14 +83,14 @@ class ExampleSrcKotestIntTest :
             true,
           )
 
-        val defaults = r.buildAndAssertSuccess(job)
-        r.assertLogContains("String param: myDefault", defaults)
-        r.assertLogContains("Boolean param: false", defaults)
-        r.assertLogContains("Choice param: choice1", defaults)
+        val defaults = j.buildAndAssertSuccess(job)
+        j.assertLogContains("String param: myDefault", defaults)
+        j.assertLogContains("Boolean param: false", defaults)
+        j.assertLogContains("Choice param: choice1", defaults)
 
         @Suppress("UNCHECKED_CAST")
         val withParams =
-          r.assertBuildStatusSuccess(
+          j.assertBuildStatusSuccess(
             checkNotNull(
               ParameterizedJobMixIn.scheduleBuild2(
                 job,
@@ -102,9 +103,9 @@ class ExampleSrcKotestIntTest :
               ),
             ).future as java.util.concurrent.Future<WorkflowRun>,
           )
-        r.assertLogContains("String param: mySpecified", withParams)
-        r.assertLogContains("Boolean param: true", withParams)
-        r.assertLogContains("Choice param: choice2", withParams)
+        j.assertLogContains("String param: mySpecified", withParams)
+        j.assertLogContains("Boolean param: true", withParams)
+        j.assertLogContains("Choice param: choice2", withParams)
       }
     }
   })
