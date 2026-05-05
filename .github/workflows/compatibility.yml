@@ -5,8 +5,6 @@ name: Compatibility build
 # (quick-start) which builds against the published plugin instead.
 
 on:
-  # TODO: remove push trigger once branch protection requires PRs for all changes,
-  #       so CI only runs once per commit (via pull_request), not twice.
   push:
     branches:
       - main
