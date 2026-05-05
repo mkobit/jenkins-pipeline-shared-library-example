@@ -67,10 +67,6 @@ testing {
         }
       }
       dependencies {
-        // groovy:2.4.21 compile-only: targets the runtime Jenkins bundles, preventing
-        // groovy:3.x from leaking onto the runtime classpath and conflicting with the
-        // CPS sandbox transformer (compiled for Groovy 2.4 AST API).
-        compileOnly(libs.groovy.core)
         runtimeOnly(libs.junit.vintage.engine)
       }
     }
