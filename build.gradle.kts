@@ -128,6 +128,30 @@ testing {
         implementation(libs.coroutines.core)
       }
     }
+
+    // Smoke test — single JUnit 5 Java test demonstrating a custom-named suite wired via
+    // jenkinsTestRunnerSuite(); fast sanity check that the library auto-registers and one
+    // pipeline step executes successfully.
+    register<JvmTestSuite>("smokeTest") {
+      sharedLibrary.jenkinsTestRunnerSuite(this)
+      sources {
+        java.setSrcDirs(listOf("test/smoke/java"))
+      }
+      dependencies {
+        // SharedLibraryAutoRegistrar (and its annotation-indexer index) is compiled by the
+        // integrationTest source set; including its classesDirs brings auto-registration into
+        // this suite without duplicating code generation.
+        implementation(sourceSets["integrationTest"].output.classesDirs)
+        implementation(libs.junit.jupiter.api)
+        runtimeOnly(libs.junit.jupiter.engine)
+        runtimeOnly(libs.junit.platform.launcher)
+      }
+      targets.all {
+        testTask.configure {
+          useJUnitPlatform()
+        }
+      }
+    }
   }
 }
 
@@ -141,6 +165,7 @@ tasks.check {
     tasks.named("integrationTestJunit5"),
     tasks.named("integrationTestSpock"),
     tasks.named("integrationTestKotest"),
+    tasks.named("smokeTest"),
   )
 }
 
