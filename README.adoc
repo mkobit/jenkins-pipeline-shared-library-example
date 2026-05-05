@@ -16,10 +16,11 @@ Use this as a reference for:
 * Structuring a shared library project (`src/`, `vars/`, `resources/`)
 * Writing JPU unit tests (`test/unit/`) in Groovy, Java, or Kotlin
 * Writing `JenkinsRule` integration tests in multiple frameworks:
-** `test/integration/` — JUnit 4 (Groovy, Java, Kotlin), `sandbox=true`
+** `test/integration/` — JUnit 4 (Java, Kotlin), `sandbox=true`
 ** `test/integration-junit5/` — JUnit Jupiter, `sandbox=true`
 ** `test/integration-spock/` — Spock 2.x, `sandbox=false` (required on Jenkins 2.479.x LTS)
 ** `test/integration-kotest/` — Kotest, `sandbox=true`
+** `test/smoke/` — smoke test suite via `jenkinsTestRunnerSuite()`
 * Wiring the plugin with a Jenkins BOM and additional plugins
 * Registering extra integration test suites via `sharedLibrary.jenkinsTestRunnerSuite(suite)`
 
