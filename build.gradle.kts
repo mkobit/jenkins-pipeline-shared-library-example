@@ -162,7 +162,7 @@ val codenarcScripts =
   tasks.register<CodeNarc>("codenarcScripts") {
     source = fileTree("scripts") { include("**/*.groovy") }
     configFile = file("config/codenarc/codenarc-scripts.xml")
-    codenarcClasspath = configurations.getByName("codenarc")
+    codenarcClasspath = configurations.codenarc.get()
     reports {
       text.required.set(true)
     }
