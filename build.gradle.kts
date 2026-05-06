@@ -79,7 +79,7 @@ testing {
       }
       dependencies {
         // LocalLibraryRetriever is generated and compiled by the integrationTest source set.
-        implementation(sourceSets["integrationTest"].output.classesDirs)
+        implementation(sourceSets.integrationTest.get().output.classesDirs)
         implementation(libs.junit.jupiter.api)
         runtimeOnly(libs.junit.jupiter.engine)
         runtimeOnly(libs.junit.platform.launcher)
@@ -103,7 +103,7 @@ testing {
         groovy.setSrcDirs(listOf("test/integration-spock/groovy"))
       }
       dependencies {
-        implementation(sourceSets["integrationTest"].output.classesDirs)
+        implementation(sourceSets.integrationTest.get().output.classesDirs)
         implementation(libs.spock.core)
         compileOnly(libs.groovy.core)
       }
@@ -119,7 +119,7 @@ testing {
         }
       }
       dependencies {
-        implementation(sourceSets["integrationTest"].output.classesDirs)
+        implementation(sourceSets.integrationTest.get().output.classesDirs)
         implementation(libs.kotest.runner)
         implementation(libs.kotest.assertions)
         implementation(libs.coroutines.core)
@@ -138,7 +138,7 @@ testing {
         // SharedLibraryAutoRegistrar (and its annotation-indexer index) is compiled by the
         // integrationTest source set; including its classesDirs brings auto-registration into
         // this suite without duplicating code generation.
-        implementation(sourceSets["integrationTest"].output.classesDirs)
+        implementation(sourceSets.integrationTest.get().output.classesDirs)
         implementation(libs.junit.jupiter.api)
         runtimeOnly(libs.junit.jupiter.engine)
         runtimeOnly(libs.junit.platform.launcher)
