@@ -46,7 +46,7 @@ dependencies {
 
 codenarc {
   toolVersion = libs.versions.codenarc.get()
-  configFile = file("config/codenarc/codenarc.xml")
+  configFile = file("config/codenarc/codenarc-src.xml")
   reportFormat = "text"
 }
 

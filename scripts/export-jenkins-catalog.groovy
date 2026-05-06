@@ -33,7 +33,7 @@ String tomlKey(String shortName) {
   shortName.replaceAll('-', '.')
 }
 
-final List<Map<String, String>> plugins = Jenkins.instance.pluginManager.plugins
+final List<Map<String, String>> allPlugins = Jenkins.instance.pluginManager.plugins
   .findAll { PluginWrapper p -> p.active && !p.deleted }
   .collect { PluginWrapper p ->
     [
@@ -44,22 +44,28 @@ final List<Map<String, String>> plugins = Jenkins.instance.pluginManager.plugins
   }
   .sort { Map<String, String> p -> p.shortName }
 
+// Plugins without a Group-Id in their manifest cannot produce a valid module coordinate.
+// Print them as warnings and exclude them from the catalog.
+final List<Map<String, String>> unknownPlugins = allPlugins.findAll { it.groupId == 'unknown' }
+if (unknownPlugins) {
+  unknownPlugins.each { Map<String, String> p ->
+    System.err.println("WARNING: no Group-Id in manifest for ${p.shortName} — add manually if needed")
+  }
+}
+
+final List<Map<String, String>> plugins = allPlugins.findAll { it.groupId != 'unknown' }
+
 final String versions = plugins
   .collect { Map<String, String> p -> "${tomlKey(p.shortName)} = \"${p.version}\"" }
   .join('\n')
 
 final String libraries = plugins
   .collect { Map<String, String> p ->
-    p.groupId == 'unknown'
-      ? "# WARNING: no Group-Id in manifest for ${p.shortName} — add group manually\n" +
-        "# ${tomlKey(p.shortName)} = { module = \"?:${p.shortName}\", version.ref = \"${tomlKey(p.shortName)}\" }"
-      : "${tomlKey(p.shortName)} = { module = \"${p.groupId}:${p.shortName}\", version.ref = \"${tomlKey(p.shortName)}\" }"
+    "${tomlKey(p.shortName)} = { module = \"${p.groupId}:${p.shortName}\", version.ref = \"${tomlKey(p.shortName)}\" }"
   }
   .join('\n')
 
-// Only include plugins with a known group in the bundle (unknown-group entries are comments).
 final String bundleEntries = plugins
-  .findAll { Map<String, String> p -> p.groupId != 'unknown' }
   .collect { Map<String, String> p -> "    \"${tomlKey(p.shortName)}\"" }
   .join(',\n')
 

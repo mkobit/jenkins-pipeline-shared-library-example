@@ -13,7 +13,7 @@ updates:
       # line manually — Dependabot should not propose bumps for these.
       - dependency-name: "io.jenkins.tools.bom:*"
       - dependency-name: "org.codehaus.groovy:groovy"
-      # The shared-library plugin version is managed across both repos together.
+      # This project owns the shared-library plugin; pin updates manually.
       - dependency-name: "com.mkobit.jenkins.pipelines.shared-library"
     groups:
       kotest:
