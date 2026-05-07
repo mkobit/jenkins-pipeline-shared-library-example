@@ -3,7 +3,6 @@ assertj               = "3.26.3"
 codenarc              = "3.7.0"
 junit-jupiter         = "6.0.3"
 foojay                = "1.0.0"
-jenkins-bom           = "5054.v620b_5d2b_d5e6"
 coroutines            = "1.10.2"
 kotlin                = "2.2.21"
 kotest                = "6.1.11"
@@ -19,7 +18,6 @@ junit-jupiter-api      = { module = "org.junit.jupiter:junit-jupiter-api",      
 junit-jupiter-engine   = { module = "org.junit.jupiter:junit-jupiter-engine",       version.ref = "junit-jupiter" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-jupiter" }
 junit-vintage-engine   = { module = "org.junit.vintage:junit-vintage-engine",       version.ref = "junit-jupiter" }
-jenkins-bom         = { module = "io.jenkins.tools.bom:bom-2.479.x",            version.ref = "jenkins-bom" }
 coroutines-core     = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotest-assertions   = { module = "io.kotest:kotest-assertions-core",             version.ref = "kotest" }
 kotest-runner       = { module = "io.kotest:kotest-runner-junit5",               version.ref = "kotest" }
