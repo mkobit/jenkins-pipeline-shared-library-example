@@ -19,7 +19,7 @@ class VarsExampleKotlinTest {
   @Test
   fun canCreateAndRunPipelineJob() {
     val job = rule.createProject(WorkflowJob::class.java, "kotlin-test")
-    job.definition = CpsFlowDefinition("echo 'hello from Kotlin test'", false)
+    job.definition = CpsFlowDefinition("echo 'hello from Kotlin test'", true)
     val run = rule.buildAndAssertSuccess(job)
     rule.assertLogContains("hello from Kotlin test", run)
   }
