@@ -52,12 +52,12 @@ codenarc {
 // Configure built-in suites — kotlin("jvm") doesn't know about our non-standard source layout.
 testing {
   suites {
-    val test by getting(JvmTestSuite::class) {
+    named<JvmTestSuite>("test") {
       sources {
         kotlin.setSrcDirs(listOf("test/unit/kotlin"))
       }
     }
-    val integrationTest by getting(JvmTestSuite::class) {
+    named<JvmTestSuite>("integrationTest") {
       sources {
         kotlin.setSrcDirs(listOf("test/integration/kotlin"))
       }
@@ -68,87 +68,92 @@ testing {
   }
 }
 
-val integrationTestJunit5 by testing.suites.registering(JvmTestSuite::class) {
-  sharedLibrary.jenkinsTestRunnerSuite(this)
-  sources {
-    java.setSrcDirs(listOf("test/integration-junit5/java"))
-  }
-  dependencies {
-    // LocalLibraryRetriever is generated and compiled by the integrationTest source set.
-    implementation(
-      sourceSets.integrationTest
-        .get()
-        .output.classesDirs,
-    )
-    implementation(libs.junit.jupiter.api)
-    runtimeOnly(libs.junit.jupiter.engine)
-    runtimeOnly(libs.junit.platform.launcher)
-  }
-  targets.all {
-    testTask.configure {
-      useJUnitPlatform()
+// Register extra suites at the project level to capture typed providers for check wiring.
+val integrationTestJunit5 =
+  testing.suites.register<JvmTestSuite>("integrationTestJunit5") {
+    sharedLibrary.jenkinsTestRunnerSuite(this)
+    sources {
+      java.setSrcDirs(listOf("test/integration-junit5/java"))
+    }
+    dependencies {
+      // LocalLibraryRetriever is generated and compiled by the integrationTest source set.
+      implementation(
+        sourceSets.integrationTest
+          .get()
+          .output.classesDirs,
+      )
+      implementation(libs.junit.jupiter.api)
+      runtimeOnly(libs.junit.jupiter.engine)
+      runtimeOnly(libs.junit.platform.launcher)
+    }
+    targets.all {
+      testTask.configure {
+        useJUnitPlatform()
+      }
     }
   }
-}
 
 // sandbox=false: Spock 2.x (groovy:3.x) conflicts with groovy-all:2.4.x injected by the plugin
 // for SandboxTransformer (compiled against Groovy 2.4 AST); avoids the transformer entirely.
-val integrationTestSpock by testing.suites.registering(JvmTestSuite::class) {
-  sharedLibrary.jenkinsTestRunnerSuite(this)
-  sources {
-    groovy.setSrcDirs(listOf("test/integration-spock/groovy"))
-  }
-  dependencies {
-    implementation(
-      sourceSets.integrationTest
-        .get()
-        .output.classesDirs,
-    )
-    implementation(libs.spock.core)
-    compileOnly(libs.groovy.core)
-  }
-}
-
-val integrationTestKotest by testing.suites.registering(JvmTestSuite::class) {
-  sharedLibrary.jenkinsTestRunnerSuite(this)
-  useJUnitJupiter()
-  sources {
-    kotlin.setSrcDirs(listOf("test/integration-kotest/kotlin"))
-  }
-  dependencies {
-    implementation(
-      sourceSets.integrationTest
-        .get()
-        .output.classesDirs,
-    )
-    implementation(libs.kotest.runner)
-    implementation(libs.kotest.assertions)
-    implementation(libs.coroutines.core)
-  }
-}
-
-val smokeTest by testing.suites.registering(JvmTestSuite::class) {
-  sharedLibrary.jenkinsTestRunnerSuite(this)
-  sources {
-    java.setSrcDirs(listOf("test/smoke/java"))
-  }
-  dependencies {
-    // SharedLibraryAutoRegistrar and its annotation-indexer index live in integrationTest classesDirs.
-    implementation(
-      sourceSets.integrationTest
-        .get()
-        .output.classesDirs,
-    )
-    implementation(libs.junit.jupiter.api)
-    runtimeOnly(libs.junit.jupiter.engine)
-    runtimeOnly(libs.junit.platform.launcher)
-  }
-  targets.all {
-    testTask.configure {
-      useJUnitPlatform()
+val integrationTestSpock =
+  testing.suites.register<JvmTestSuite>("integrationTestSpock") {
+    sharedLibrary.jenkinsTestRunnerSuite(this)
+    sources {
+      groovy.setSrcDirs(listOf("test/integration-spock/groovy"))
+    }
+    dependencies {
+      implementation(
+        sourceSets.integrationTest
+          .get()
+          .output.classesDirs,
+      )
+      implementation(libs.spock.core)
+      compileOnly(libs.groovy.core)
     }
   }
-}
+
+val integrationTestKotest =
+  testing.suites.register<JvmTestSuite>("integrationTestKotest") {
+    sharedLibrary.jenkinsTestRunnerSuite(this)
+    useJUnitJupiter()
+    sources {
+      kotlin.setSrcDirs(listOf("test/integration-kotest/kotlin"))
+    }
+    dependencies {
+      implementation(
+        sourceSets.integrationTest
+          .get()
+          .output.classesDirs,
+      )
+      implementation(libs.kotest.runner)
+      implementation(libs.kotest.assertions)
+      implementation(libs.coroutines.core)
+    }
+  }
+
+val smokeTest =
+  testing.suites.register<JvmTestSuite>("smokeTest") {
+    sharedLibrary.jenkinsTestRunnerSuite(this)
+    sources {
+      java.setSrcDirs(listOf("test/smoke/java"))
+    }
+    dependencies {
+      // SharedLibraryAutoRegistrar and its annotation-indexer index live in integrationTest classesDirs.
+      implementation(
+        sourceSets.integrationTest
+          .get()
+          .output.classesDirs,
+      )
+      implementation(libs.junit.jupiter.api)
+      runtimeOnly(libs.junit.jupiter.engine)
+      runtimeOnly(libs.junit.platform.launcher)
+    }
+    targets.all {
+      testTask.configure {
+        useJUnitPlatform()
+      }
+    }
+  }
 
 // Gradle's Groovy plugin does not auto-populate groovyClasspath for dynamically registered suites.
 tasks.named<GroovyCompile>("compileIntegrationTestSpockGroovy") {
