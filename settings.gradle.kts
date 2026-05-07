@@ -1,7 +1,4 @@
 pluginManagement {
-  if (file("../jenkins-pipeline-shared-libraries-gradle-plugin").isDirectory) {
-    includeBuild("../jenkins-pipeline-shared-libraries-gradle-plugin")
-  }
   repositories {
     gradlePluginPortal()
   }
