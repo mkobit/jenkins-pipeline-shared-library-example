@@ -206,7 +206,7 @@ spotless {
   }
   java {
     googleJavaFormat()
-    target("test/**/*.java", "src/**/*.java")
+    target("test/**/*.java")
   }
   kotlin {
     ktlint()
