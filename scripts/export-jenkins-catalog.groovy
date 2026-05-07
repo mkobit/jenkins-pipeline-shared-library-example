@@ -46,14 +46,14 @@ final List<Map<String, String>> allPlugins = Jenkins.instance.pluginManager.plug
 
 // Plugins without a Group-Id in their manifest cannot produce a valid module coordinate.
 // Print them as warnings and exclude them from the catalog.
-final List<Map<String, String>> unknownPlugins = allPlugins.findAll { it.groupId == 'unknown' }
+final List<Map<String, String>> unknownPlugins = allPlugins.findAll { Map<String, String> p -> p.groupId == 'unknown' }
 if (unknownPlugins) {
   unknownPlugins.each { Map<String, String> p ->
     System.err.println("WARNING: no Group-Id in manifest for ${p.shortName} — add manually if needed")
   }
 }
 
-final List<Map<String, String>> plugins = allPlugins.findAll { it.groupId != 'unknown' }
+final List<Map<String, String>> plugins = allPlugins.findAll { Map<String, String> p -> p.groupId != 'unknown' }
 
 final String versions = plugins
   .collect { Map<String, String> p -> "${tomlKey(p.shortName)} = \"${p.version}\"" }
