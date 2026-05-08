@@ -27,4 +27,13 @@ class VarsExampleJUnit6Test {
     WorkflowRun run = rule.buildAndAssertSuccess(job);
     rule.assertLogContains("The build number is odd", run);
   }
+
+  @Test
+  void libraryResourceLoadsContent(JenkinsRule rule) throws Exception {
+    var job = rule.createProject(WorkflowJob.class, "junit6-library-resource");
+    job.setDefinition(new CpsFlowDefinition("loadGreeting()", true));
+
+    WorkflowRun run = rule.buildAndAssertSuccess(job);
+    rule.assertLogContains("Hello from libraryResource!", run);
+  }
 }
