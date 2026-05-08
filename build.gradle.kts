@@ -45,6 +45,12 @@ tasks.named<CodeNarc>("codenarcScripts") {
   config = resources.text.fromFile("config/codenarc/codenarc-scripts.xml")
 }
 
+// TODO: file issue — bare accessor syntax (e.g. `test { }`, `integrationTest { }`) does not
+//   compile inside `testing.suites { }` even though both suites are registered before this build
+//   script evaluates (java plugin + shared-library plugin). Investigate whether Gradle's KTS
+//   accessor generator handles PolymorphicDomainObjectContainer<TestSuite> differently from other
+//   containers like sourceSets or tasks, and whether `by getting` (deprecated) is the only
+//   alternative or if there is a non-deprecated generated-accessor path.
 testing {
   suites {
     named<JvmTestSuite>("test") {
