@@ -47,12 +47,12 @@ tasks.named<CodeNarc>("codenarcScripts") {
 
 testing {
   suites {
-    val test by getting(JvmTestSuite::class) {
+    named<JvmTestSuite>("test") {
       sources {
         kotlin.setSrcDirs(listOf("test/unit/kotlin"))
       }
     }
-    val integrationTest by getting(JvmTestSuite::class) {
+    named<JvmTestSuite>("integrationTest") {
       sources {
         kotlin.setSrcDirs(listOf("test/integration/kotlin"))
       }
