@@ -17,9 +17,6 @@ java {
 }
 
 dependencies {
-  // pipeline-groovy-lib, workflow-job, workflow-basic-steps, workflow-durable-task-step, and
-  // the Jenkins BOM are provided by the plugin by default. Override via project properties:
-  //   -PjenkinsVersion=2.528.3  -PjenkinsBomVersion=6398.v...  -PjenkinsTestHarnessVersion=...
   jenkinsPlugin("org.jenkins-ci.plugins.workflow:workflow-multibranch")
   jenkinsPlugin("org.jenkinsci.plugins:pipeline-model-definition")
   jenkinsPlugin("org.6wind.jenkins:lockable-resources")
@@ -30,45 +27,46 @@ dependencies {
   testImplementation(libs.kotest.assertions)
 }
 
+val scriptsSourceSet = sourceSets.create("scripts") {
+  groovy.setSrcDirs(listOf("scripts"))
+  java.setSrcDirs(emptyList<String>())
+  resources.setSrcDirs(emptyList<String>())
+}
+tasks.named("compileScriptsGroovy") { enabled = false }
+
 codenarc {
   toolVersion = libs.versions.codenarc.get()
   configFile = file("config/codenarc/codenarc-src.xml")
   reportFormat = "text"
+  sourceSets = sourceSets + listOf(scriptsSourceSet)
 }
 
-// Configure built-in suites — kotlin("jvm") doesn't know about our non-standard source layout.
+tasks.named<CodeNarc>("codenarcScripts") {
+  config = resources.text.fromFile("config/codenarc/codenarc-scripts.xml")
+}
+
 testing {
   suites {
-    named<JvmTestSuite>("test") {
+    val test by getting(JvmTestSuite::class) {
       sources {
         kotlin.setSrcDirs(listOf("test/unit/kotlin"))
       }
     }
-    named<JvmTestSuite>("integrationTest") {
+    val integrationTest by getting(JvmTestSuite::class) {
       sources {
         kotlin.setSrcDirs(listOf("test/integration/kotlin"))
-      }
-      dependencies {
-        runtimeOnly(libs.junit.vintage.engine)
       }
     }
   }
 }
 
-// Register extra suites at the project level to capture typed providers for check wiring.
 val integrationTestJunit5 =
   testing.suites.register<JvmTestSuite>("integrationTestJunit5") {
-    sharedLibrary.jenkinsTestRunnerSuite(this)
+    sharedLibrary.useJenkinsTestRunnerSuite(this)
     sources {
       java.setSrcDirs(listOf("test/integration-junit5/java"))
     }
     dependencies {
-      // LocalLibraryRetriever is generated and compiled by the integrationTest source set.
-      implementation(
-        sourceSets.integrationTest
-          .get()
-          .output.classesDirs,
-      )
       implementation(libs.junit.jupiter.api)
       runtimeOnly(libs.junit.jupiter.engine)
       runtimeOnly(libs.junit.platform.launcher)
@@ -84,16 +82,11 @@ val integrationTestJunit5 =
 // for SandboxTransformer (compiled against Groovy 2.4 AST); avoids the transformer entirely.
 val integrationTestSpock =
   testing.suites.register<JvmTestSuite>("integrationTestSpock") {
-    sharedLibrary.jenkinsTestRunnerSuite(this)
+    sharedLibrary.useJenkinsTestRunnerSuite(this)
     sources {
       groovy.setSrcDirs(listOf("test/integration-spock/groovy"))
     }
     dependencies {
-      implementation(
-        sourceSets.integrationTest
-          .get()
-          .output.classesDirs,
-      )
       implementation(libs.spock.core)
       compileOnly(libs.groovy.core)
     }
@@ -101,17 +94,12 @@ val integrationTestSpock =
 
 val integrationTestKotest =
   testing.suites.register<JvmTestSuite>("integrationTestKotest") {
-    sharedLibrary.jenkinsTestRunnerSuite(this)
+    sharedLibrary.useJenkinsTestRunnerSuite(this)
     useJUnitJupiter()
     sources {
       kotlin.setSrcDirs(listOf("test/integration-kotest/kotlin"))
     }
     dependencies {
-      implementation(
-        sourceSets.integrationTest
-          .get()
-          .output.classesDirs,
-      )
       implementation(libs.kotest.runner)
       implementation(libs.kotest.assertions)
       implementation(libs.coroutines.core)
@@ -120,17 +108,11 @@ val integrationTestKotest =
 
 val smokeTest =
   testing.suites.register<JvmTestSuite>("smokeTest") {
-    sharedLibrary.jenkinsTestRunnerSuite(this)
+    sharedLibrary.useJenkinsTestRunnerSuite(this)
     sources {
       java.setSrcDirs(listOf("test/smoke/java"))
     }
     dependencies {
-      // SharedLibraryAutoRegistrar and its annotation-indexer index live in integrationTest classesDirs.
-      implementation(
-        sourceSets.integrationTest
-          .get()
-          .output.classesDirs,
-      )
       implementation(libs.junit.jupiter.api)
       runtimeOnly(libs.junit.jupiter.engine)
       runtimeOnly(libs.junit.platform.launcher)
@@ -142,24 +124,12 @@ val smokeTest =
     }
   }
 
-// Gradle's Groovy plugin does not auto-populate groovyClasspath for dynamically registered suites.
 tasks.named<GroovyCompile>("compileIntegrationTestSpockGroovy") {
   groovyClasspath = configurations.getByName("integrationTestSpockCompileClasspath")
 }
 
-// scripts/ is not a Gradle source set; check it separately with NoDef enforced.
-val codenarcScripts =
-  tasks.register<CodeNarc>("codenarcScripts") {
-    source = fileTree("scripts") { include("**/*.groovy") }
-    configFile = file("config/codenarc/codenarc-scripts.xml")
-    codenarcClasspath = configurations.codenarc.get()
-    reports {
-      text.required.set(true)
-    }
-  }
-
 tasks.check {
-  dependsOn(integrationTestJunit5, integrationTestSpock, integrationTestKotest, smokeTest, codenarcScripts)
+  dependsOn(integrationTestJunit5, integrationTestSpock, integrationTestKotest, smokeTest)
 }
 
 tasks.wrapper {
