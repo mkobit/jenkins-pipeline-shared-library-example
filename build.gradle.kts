@@ -45,12 +45,14 @@ tasks.named<CodeNarc>("codenarcScripts") {
   config = resources.text.fromFile("config/codenarc/codenarc-scripts.xml")
 }
 
-// TODO: file issue — bare accessor syntax (e.g. `test { }`, `integrationTest { }`) does not
-//   compile inside `testing.suites { }` even though both suites are registered before this build
-//   script evaluates (java plugin + shared-library plugin). Investigate whether Gradle's KTS
-//   accessor generator handles PolymorphicDomainObjectContainer<TestSuite> differently from other
-//   containers like sourceSets or tasks, and whether `by getting` (deprecated) is the only
-//   alternative or if there is a non-deprecated generated-accessor path.
+// TODO: file Gradle issue — bare accessor syntax (e.g. `test { }`, `integrationTest { }`) does
+//   not compile inside `testing.suites { }` even though both suites are known before this script
+//   evaluates. Root cause: Gradle's KTS accessor generator produces accessors for SourceSetContainer,
+//   TaskContainer, and NamedDomainObjectContainer<KotlinSourceSet> but NOT for
+//   ExtensiblePolymorphicDomainObjectContainer<TestSuite> (the actual type of testing.suites).
+//   Likely because TestSuite is abstract/polymorphic and the generator can't statically determine
+//   the concrete element type. `named<JvmTestSuite>()` and the deprecated `by getting` are the
+//   only current options.
 testing {
   suites {
     named<JvmTestSuite>("test") {
