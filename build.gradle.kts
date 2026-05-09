@@ -1,6 +1,8 @@
 import org.gradle.api.plugins.jvm.JvmTestSuite
 import org.gradle.api.plugins.quality.CodeNarc
 import org.gradle.api.tasks.compile.GroovyCompile
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestStackTraceFilter
 
 plugins {
   alias(libs.plugins.shared.library)
@@ -25,13 +27,15 @@ dependencies {
   testImplementation(libs.assertj)
   testImplementation(libs.kotest.runner)
   testImplementation(libs.kotest.assertions)
+  testImplementation(libs.kotest.decoroutinator)
 }
 
-val scriptsSourceSet = sourceSets.create("scripts") {
-  groovy.setSrcDirs(listOf("scripts"))
-  java.setSrcDirs(emptyList<String>())
-  resources.setSrcDirs(emptyList<String>())
-}
+val scriptsSourceSet =
+  sourceSets.create("scripts") {
+    groovy.setSrcDirs(listOf("scripts"))
+    java.setSrcDirs(emptyList<String>())
+    resources.setSrcDirs(emptyList<String>())
+  }
 tasks.named("compileScriptsGroovy") { enabled = false }
 
 codenarc {
@@ -107,6 +111,7 @@ val integrationTestKotest =
     dependencies {
       implementation(libs.kotest.runner)
       implementation(libs.kotest.assertions)
+      implementation(libs.kotest.decoroutinator)
       implementation(libs.coroutines.core)
     }
   }
@@ -128,6 +133,17 @@ val smokeTest =
       }
     }
   }
+
+tasks.withType<Test>().configureEach {
+  testLogging {
+    events("failed", "skipped")
+    showExceptions = true
+    showCauses = true
+    showStackTraces = true
+    exceptionFormat = TestExceptionFormat.FULL
+    stackTraceFilters = setOf(TestStackTraceFilter.TRUNCATE)
+  }
+}
 
 tasks.named<GroovyCompile>("compileIntegrationTestSpockGroovy") {
   groovyClasspath = configurations.getByName("integrationTestSpockCompileClasspath")

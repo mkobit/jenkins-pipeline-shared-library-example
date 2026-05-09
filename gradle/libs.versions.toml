@@ -19,8 +19,9 @@ junit-jupiter-engine   = { module = "org.junit.jupiter:junit-jupiter-engine",   
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-jupiter" }
 junit-vintage-engine   = { module = "org.junit.vintage:junit-vintage-engine",       version.ref = "junit-jupiter" }
 coroutines-core     = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
-kotest-assertions   = { module = "io.kotest:kotest-assertions-core",             version.ref = "kotest" }
-kotest-runner       = { module = "io.kotest:kotest-runner-junit5",               version.ref = "kotest" }
+kotest-assertions     = { module = "io.kotest:kotest-assertions-core",             version.ref = "kotest" }
+kotest-decoroutinator = { module = "io.kotest:kotest-extensions-decoroutinator",   version.ref = "kotest" }
+kotest-runner         = { module = "io.kotest:kotest-runner-junit5",               version.ref = "kotest" }
 spock-core          = { module = "org.spockframework:spock-core",                version.ref = "spock" }
 spock-junit4        = { module = "org.spockframework:spock-junit4",              version.ref = "spock" }
 
