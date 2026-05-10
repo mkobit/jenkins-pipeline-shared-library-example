@@ -18,6 +18,14 @@ java {
   }
 }
 
+val scriptsSourceSet =
+  sourceSets.create("scripts") {
+    groovy.setSrcDirs(listOf("scripts"))
+    java.setSrcDirs(emptyList<String>())
+    resources.setSrcDirs(emptyList<String>())
+  }
+tasks.named("compileScriptsGroovy") { enabled = false }
+
 codenarc {
   toolVersion = libs.versions.codenarc.get()
   configFile = file("config/codenarc/codenarc-src.xml")
@@ -29,22 +37,7 @@ dependencies {
   jenkinsPlugin("org.jenkins-ci.plugins.workflow:workflow-multibranch")
   jenkinsPlugin("org.jenkinsci.plugins:pipeline-model-definition")
   jenkinsPlugin("org.6wind.jenkins:lockable-resources")
-
-  testImplementation(libs.spock.core)
-  testImplementation(libs.assertj)
-  testImplementation(libs.kotest.engine)
-  testRuntimeOnly(libs.kotest.runner)
-  testImplementation(libs.kotest.assertions)
-  testImplementation(libs.kotest.decoroutinator)
 }
-
-val scriptsSourceSet =
-  sourceSets.create("scripts") {
-    groovy.setSrcDirs(listOf("scripts"))
-    java.setSrcDirs(emptyList<String>())
-    resources.setSrcDirs(emptyList<String>())
-  }
-tasks.named("compileScriptsGroovy") { enabled = false }
 
 tasks.named<CodeNarc>("codenarcScripts") {
   config = resources.text.fromFile("config/codenarc/codenarc-scripts.xml")
@@ -60,6 +53,16 @@ testing {
     named<JvmTestSuite>("test") {
       sources {
         kotlin.setSrcDirs(listOf("test/unit/kotlin"))
+      }
+      dependencies {
+        implementation(libs.spock.core)
+        implementation(libs.assertj)
+        implementation(libs.kotest.engine)
+        runtimeOnly(libs.kotest.runner)
+        implementation(libs.kotest.assertions)
+        implementation(libs.kotest.decoroutinator)
+        implementation(libs.jenkins.pipeline.unit)
+        implementation(libs.groovy.core)
       }
     }
     named<JvmTestSuite>("integrationTest") {

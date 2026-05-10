@@ -116,16 +116,16 @@ class IntegrationSpec extends JenkinsSpec {
             j.assertLogContains('Choice param: choice1', defaults)
 
             def withParams = j.assertBuildStatusSuccess(
-                ParameterizedJobMixIn.scheduleBuild2(
+                    ParameterizedJobMixIn.scheduleBuild2(
                     job,
                     0,
                     new ParametersAction(
-                        stringParam.createValue('mySpecified'),
-                        boolParam.createValue('true'),
-                        choiceParam.createValue('choice2')
+                    stringParam.createValue('mySpecified'),
+                    boolParam.createValue('true'),
+                    choiceParam.createValue('choice2')
                     )
-                ).future.get()
-            )
+                    ).future.get()
+                    )
             j.assertLogContains('String param: mySpecified', withParams)
             j.assertLogContains('Boolean param: true', withParams)
             j.assertLogContains('Choice param: choice2', withParams)

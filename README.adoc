@@ -13,68 +13,41 @@ Use this as a reference for structuring a shared library project, writing tests 
 
 == Project layout
 
-----
-src/com/mkobit/libraryexample/   ← shared library classes (Jenkins SCM requirement)
-vars/                            ← pipeline step scripts
-resources/                       ← files loaded via libraryResource()
-scripts/                         ← utility scripts for development and ops
-test/
-  unit/groovy/                   ← JenkinsPipelineUnit (fast, no Jenkins)
-  unit/kotlin/                   ← Kotlin unit tests with Kotest
-  integration/groovy/            ← JUnit 4 / GroovyJenkinsRule, sandbox=true
-  integration/java/              ← JUnit 4 / Java, sandbox=true
-  integration/kotlin/            ← JUnit 4 / Kotlin, sandbox=true
-  integration-junit5/java/       ← JUnit Jupiter / Java, sandbox=true
-  integration-spock/groovy/      ← Spock 2.x / Groovy, sandbox=false (2.479.x constraint)
-  integration-kotest/kotlin/     ← Kotest / Kotlin, sandbox=true
-  smoke/java/                    ← smoke test via a custom-named suite
-----
+* link:src/[`src/`] ← shared library classes
+* link:vars/[`vars/`] ← pipeline step scripts
+* link:resources/[`resources/`] ← library resource files
+* link:test/[`test/`] ← test suites using popular libraries:
+** link:test/unit/[`unit/`] ← link:https://github.com/lesfurets/JenkinsPipelineUnit[JenkinsPipelineUnit] (fast Groovy/Kotlin tests)
+** link:test/integration-junit/[`integration-junit/`] ← Java tests with JUnit Jupiter
+** link:test/integration-spock/[`integration-spock/`] ← Groovy tests with Spock 2.x
+** link:test/integration-kotest/[`integration-kotest/`] ← Kotlin tests with Kotest
+** link:test/smoke/[`smoke/`] ← Java smoke tests
 
 == Running tests
 
 [source,shell]
 ----
 ./gradlew test                      # JPU unit tests only (fast)
-./gradlew integrationTest           # built-in JenkinsRule suite (downloads WAR on first run)
-./gradlew integrationTestJunit5     # JUnit Jupiter suite
+./gradlew integrationTest           # built-in JenkinsRule suite
+./gradlew integrationTestJunit      # JUnit Jupiter suite
 ./gradlew integrationTestSpock      # Spock 2.x suite
 ./gradlew integrationTestKotest     # Kotest suite
 ./gradlew smokeTest                 # smoke test
 ./gradlew check                     # all suites (runs everything)
 ----
 
-Jenkins downloads the WAR and plugins on first run; subsequent runs use the Gradle module cache.
-
 == Test framework patterns
-
-=== JenkinsPipelineUnit (unit tests)
-
-The `test` suite uses link:https://github.com/lesfurets/JenkinsPipelineUnit[JenkinsPipelineUnit] to exercise pipeline step dispatch without a Jenkins instance.
-Tests are fast and suitable for pure Groovy logic.
-
-=== JenkinsRule (integration tests)
-
-The `integrationTest` suite runs an embedded Jenkins instance via `JenkinsRule`.
-The plugin generates `LocalLibraryRetriever.java` and registers the local library automatically via `SharedLibraryAutoRegistrar` — no `GlobalLibraries.get()` call is needed in test code.
-
-The `sandbox=true` flag in `CpsFlowDefinition` mirrors production Jenkins behaviour and is the recommended default for all integration tests except Spock 2.x on Jenkins 2.479.x (see note below).
-
-=== Spock 2.x and `sandbox=false`
-
-Spock 2.x brings Groovy 3.x onto the test runtime.
-On Jenkins 2.479.x, this conflicts with the bundled `groovy-all:2.4.21` when `sandbox=true`.
-The `integrationTestSpock` suite uses `sandbox=false` as a workaround.
-This is a known limitation of the 2.479.x LTS line; 2.492.x+ resolves the conflict.
 
 === Spock base class (`JenkinsSpec`)
 
-All Spock integration tests extend `JenkinsSpec`, a base class that owns the `JenkinsSessionFixture` lifecycle:
+All Spock integration tests extend `JenkinsSpec` from `testsupport.spock`:
 
 [source,groovy]
 ----
+import testsupport.spock.JenkinsSpec
+
 class MySpec extends JenkinsSpec {
     def 'my step executes'() {
-        given:
         jenkins { JenkinsRule r ->
             def job = r.createProject(WorkflowJob, 'test')
             job.definition = new CpsFlowDefinition('myStep()', false)
@@ -86,10 +59,12 @@ class MySpec extends JenkinsSpec {
 
 === Kotest base class (`JenkinsFunSpec`)
 
-All Kotest integration tests extend `JenkinsFunSpec`, which wraps `JenkinsSessionFixture` in a coroutine-friendly `jenkins {}` block:
+All Kotest integration tests extend `JenkinsFunSpec` from `testsupport.kotest`:
 
 [source,kotlin]
 ----
+import testsupport.kotest.JenkinsFunSpec
+
 class MyKotestSpec : JenkinsFunSpec({
     test("my step executes") {
         jenkins { rule ->

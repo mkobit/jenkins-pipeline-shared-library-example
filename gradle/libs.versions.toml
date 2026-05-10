@@ -3,6 +3,7 @@ assertj               = "3.26.3"
 codenarc              = "3.7.0"
 junit-jupiter         = "6.0.3"
 foojay                = "1.0.0"
+jenkins-pipeline-unit = "1.29"
 coroutines            = "1.10.2"
 kotlin                = "2.2.21"
 kotest                = "6.1.11"
@@ -15,6 +16,7 @@ assertj               = { module = "org.assertj:assertj-core",                  
 # TODO: remove once jenkins-core transitively supplies groovy on the test classpath without a pinned version
 groovy-core           = { module = "org.codehaus.groovy:groovy",                   version = "2.4.21" }
 junit-jupiter-api      = { module = "org.junit.jupiter:junit-jupiter-api",          version.ref = "junit-jupiter" }
+jenkins-pipeline-unit = { module = "com.lesfurets:jenkins-pipeline-unit",          version.ref = "jenkins-pipeline-unit" }
 junit-jupiter-engine   = { module = "org.junit.jupiter:junit-jupiter-engine",       version.ref = "junit-jupiter" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-jupiter" }
 junit-vintage-engine   = { module = "org.junit.vintage:junit-vintage-engine",       version.ref = "junit-jupiter" }

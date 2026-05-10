@@ -16,9 +16,10 @@ abstract class JenkinsFunSpec(
    * Jenkins is started before the block and shut down after.
    * State in JENKINS_HOME is persisted across multiple calls to [jenkins] within the same test.
    */
-  suspend fun jenkins(block: (JenkinsRule) -> Unit) = withContext(Dispatchers.IO) {
-    fixture.then(block)
-  }
+  suspend fun jenkins(block: (JenkinsRule) -> Unit) =
+    withContext(Dispatchers.IO) {
+      fixture.then(block)
+    }
 
   init {
     beforeTest {
