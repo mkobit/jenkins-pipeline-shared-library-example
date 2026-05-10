@@ -10,14 +10,13 @@ import spock.lang.Specification
 // @CompileStatic on Specification subclasses.
 @CompileDynamic
 abstract class JenkinsSpec extends Specification {
-    @Shared
     private JenkinsSessionFixture fixture = new JenkinsSessionFixture()
 
-    def setupSpec() {
+    def setup() {
         fixture.setUp(this.class.name, 'integration')
     }
 
-    def cleanupSpec() {
+    def cleanup() {
         fixture.tearDown()
     }
 
