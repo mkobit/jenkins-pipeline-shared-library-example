@@ -21,6 +21,7 @@ junit-vintage-engine   = { module = "org.junit.vintage:junit-vintage-engine",   
 coroutines-core     = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotest-assertions     = { module = "io.kotest:kotest-assertions-core",             version.ref = "kotest" }
 kotest-decoroutinator = { module = "io.kotest:kotest-extensions-decoroutinator",   version.ref = "kotest" }
+kotest-engine         = { module = "io.kotest:kotest-framework-engine",            version.ref = "kotest" }
 kotest-runner         = { module = "io.kotest:kotest-runner-junit5",               version.ref = "kotest" }
 spock-core          = { module = "org.spockframework:spock-core",                version.ref = "spock" }
 spock-junit4        = { module = "org.spockframework:spock-junit4",              version.ref = "spock" }

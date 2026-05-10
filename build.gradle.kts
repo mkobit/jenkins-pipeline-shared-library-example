@@ -25,7 +25,8 @@ dependencies {
 
   testImplementation(libs.spock.core)
   testImplementation(libs.assertj)
-  testImplementation(libs.kotest.runner)
+  testImplementation(libs.kotest.engine)
+  testRuntimeOnly(libs.kotest.runner)
   testImplementation(libs.kotest.assertions)
   testImplementation(libs.kotest.decoroutinator)
 }
@@ -109,7 +110,8 @@ val integrationTestKotest =
       kotlin.setSrcDirs(listOf("test/integration-kotest/kotlin"))
     }
     dependencies {
-      implementation(libs.kotest.runner)
+      implementation(libs.kotest.engine)
+      runtimeOnly(libs.kotest.runner)
       implementation(libs.kotest.assertions)
       implementation(libs.kotest.decoroutinator)
       implementation(libs.coroutines.core)
