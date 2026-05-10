@@ -11,13 +11,23 @@ abstract class JenkinsFunSpec(
 ) : FunSpec() {
   private val fixture = JenkinsSessionFixture()
 
-  // fixture.then() is a synchronous blocking call (Jetty startup + shutdown).
-  // withContext(Dispatchers.IO) prevents it from starving Kotest's coroutine dispatcher.
-  suspend fun jenkins(block: (JenkinsRule) -> Unit) = withContext(Dispatchers.IO) { fixture.then { r -> block(r) } }
+  /**
+   * Runs a block of code within a fresh Jenkins process.
+   * Jenkins is started before the block and shut down after.
+   * State in JENKINS_HOME is persisted across multiple calls to [jenkins] within the same test.
+   */
+  suspend fun jenkins(block: (JenkinsRule) -> Unit) = withContext(Dispatchers.IO) {
+    fixture.then(block)
+  }
 
   init {
-    beforeSpec { fixture.setUp(this::class.java.name, "integration") }
-    afterSpec { fixture.tearDown() }
+    beforeTest {
+      val className = this::class.qualifiedName ?: this::class.java.name
+      fixture.setUp(className, it.name.testName)
+    }
+    afterTest {
+      fixture.tearDown()
+    }
     body()
   }
 }
