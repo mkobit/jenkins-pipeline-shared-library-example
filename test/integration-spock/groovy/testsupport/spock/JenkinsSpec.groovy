@@ -1,4 +1,4 @@
-package com.mkobit.libraryexample
+package testsupport.spock
 
 import groovy.transform.CompileDynamic
 import org.jvnet.hudson.test.JenkinsRule

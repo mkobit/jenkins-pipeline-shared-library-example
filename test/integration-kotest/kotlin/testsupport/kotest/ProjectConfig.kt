@@ -1,4 +1,4 @@
-package io.kotest.provided
+package testsupport.kotest
 
 import io.kotest.core.config.AbstractProjectConfig
 import io.kotest.extensions.decoroutinator.DecoroutinatorExtension

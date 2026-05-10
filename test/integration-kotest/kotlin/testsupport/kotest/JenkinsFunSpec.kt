@@ -1,4 +1,4 @@
-package com.mkobit.libraryexample
+package testsupport.kotest
 
 import io.kotest.core.spec.style.FunSpec
 import kotlinx.coroutines.Dispatchers

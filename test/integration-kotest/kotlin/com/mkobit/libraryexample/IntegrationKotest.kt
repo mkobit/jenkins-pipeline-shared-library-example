@@ -9,11 +9,35 @@ import jenkins.model.ParameterizedJobMixIn
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition
 import org.jenkinsci.plugins.workflow.job.WorkflowJob
 import org.jenkinsci.plugins.workflow.job.WorkflowRun
+import testsupport.kotest.JenkinsFunSpec
 
-// JenkinsFunSpec: test-support base class wrapping JenkinsSessionFixture for Kotest FunSpec
-class ExampleSrcKotestIntTest :
+class IntegrationKotest :
   JenkinsFunSpec({
-    test("sayHelloTo prints greeting") {
+    test("doStuff step logs expected output") {
+      jenkins { r ->
+        val job = r.createProject(WorkflowJob::class.java, "kotest-doStuff")
+        job.definition = CpsFlowDefinition("doStuff()", true)
+        r.assertLogContains("hello stuff", r.buildAndAssertSuccess(job))
+      }
+    }
+
+    test("evenOrOdd step identifies odd build numbers") {
+      jenkins { r ->
+        val job = r.createProject(WorkflowJob::class.java, "kotest-evenOdd")
+        job.definition = CpsFlowDefinition("evenOrOdd(1)", true)
+        r.assertLogContains("The build number is odd", r.buildAndAssertSuccess(job))
+      }
+    }
+
+    test("library resource loads content") {
+      jenkins { r ->
+        val job = r.createProject(WorkflowJob::class.java, "kotest-resource")
+        job.definition = CpsFlowDefinition("loadGreeting()", true)
+        r.assertLogContains("Hello from libraryResource!", r.buildAndAssertSuccess(job))
+      }
+    }
+
+    test("sayHelloTo prints greeting from src/") {
       jenkins { j ->
         val job = j.createProject(WorkflowJob::class.java, "say-hello")
         job.definition =
@@ -29,7 +53,7 @@ class ExampleSrcKotestIntTest :
       }
     }
 
-    test("nonCpsDouble doubles each integer") {
+    test("nonCpsDouble doubles each integer from src/") {
       jenkins { j ->
         val job = j.createProject(WorkflowJob::class.java, "non-cps")
         job.definition =

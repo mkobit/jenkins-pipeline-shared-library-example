@@ -18,6 +18,13 @@ java {
   }
 }
 
+codenarc {
+  toolVersion = libs.versions.codenarc.get()
+  configFile = file("config/codenarc/codenarc-src.xml")
+  reportFormat = "text"
+  sourceSets = sourceSets + listOf(scriptsSourceSet)
+}
+
 dependencies {
   jenkinsPlugin("org.jenkins-ci.plugins.workflow:workflow-multibranch")
   jenkinsPlugin("org.jenkinsci.plugins:pipeline-model-definition")
@@ -38,13 +45,6 @@ val scriptsSourceSet =
     resources.setSrcDirs(emptyList<String>())
   }
 tasks.named("compileScriptsGroovy") { enabled = false }
-
-codenarc {
-  toolVersion = libs.versions.codenarc.get()
-  configFile = file("config/codenarc/codenarc-src.xml")
-  reportFormat = "text"
-  sourceSets = sourceSets + listOf(scriptsSourceSet)
-}
 
 tasks.named<CodeNarc>("codenarcScripts") {
   config = resources.text.fromFile("config/codenarc/codenarc-scripts.xml")
@@ -70,11 +70,11 @@ testing {
   }
 }
 
-val integrationTestJunit5 =
-  testing.suites.register<JvmTestSuite>("integrationTestJunit5") {
+val integrationTestJunit =
+  testing.suites.register<JvmTestSuite>("integrationTestJunit") {
     sharedLibrary.useJenkinsTestRunnerSuite(this)
     sources {
-      java.setSrcDirs(listOf("test/integration-junit5/java"))
+      java.setSrcDirs(listOf("test/integration-junit/java"))
     }
     dependencies {
       implementation(libs.junit.jupiter.api)
@@ -136,28 +136,31 @@ val smokeTest =
     }
   }
 
-tasks.withType<Test>().configureEach {
-  testLogging {
-    events("failed", "skipped")
-    showExceptions = true
-    showCauses = true
-    showStackTraces = true
-    exceptionFormat = TestExceptionFormat.FULL
-    stackTraceFilters = setOf(TestStackTraceFilter.TRUNCATE)
+tasks {
+  withType<Test>().configureEach {
+    systemProperty("kotest.framework.config.fqn", "testsupport.kotest.ProjectConfig")
+    testLogging {
+      events("failed", "skipped")
+      showExceptions = true
+      showCauses = true
+      showStackTraces = true
+      exceptionFormat = TestExceptionFormat.FULL
+      stackTraceFilters = setOf(TestStackTraceFilter.TRUNCATE)
+    }
   }
-}
 
-tasks.named<GroovyCompile>("compileIntegrationTestSpockGroovy") {
-  groovyClasspath = configurations.getByName("integrationTestSpockCompileClasspath")
-}
+  named<GroovyCompile>("compileIntegrationTestSpockGroovy") {
+    groovyClasspath = configurations.getByName("integrationTestSpockCompileClasspath")
+  }
 
-tasks.check {
-  dependsOn(integrationTestJunit5, integrationTestSpock, integrationTestKotest, smokeTest)
-}
+  check {
+    dependsOn(integrationTestJunit, integrationTestSpock, integrationTestKotest, smokeTest)
+  }
 
-tasks.wrapper {
-  gradleVersion = "9.5.0"
-  distributionType = Wrapper.DistributionType.ALL
+  wrapper {
+    gradleVersion = "9.5.0"
+    distributionType = Wrapper.DistributionType.ALL
+  }
 }
 
 spotless {
