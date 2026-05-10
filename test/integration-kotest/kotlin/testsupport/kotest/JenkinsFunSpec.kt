@@ -23,7 +23,7 @@ abstract class JenkinsFunSpec(
   init {
     beforeTest {
       val className = this::class.qualifiedName ?: this::class.java.name
-      fixture.setUp(className, it.name.testName)
+      fixture.setUp(className, "integration")
     }
     afterTest {
       fixture.tearDown()
