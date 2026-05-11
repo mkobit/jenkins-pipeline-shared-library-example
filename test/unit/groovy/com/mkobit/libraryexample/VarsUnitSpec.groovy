@@ -5,7 +5,7 @@ import groovy.transform.CompileDynamic
 import spock.lang.Specification
 
 @CompileDynamic
-class JPUExampleSpec extends Specification {
+class VarsUnitSpec extends Specification {
 
     // DeclarativePipelineTest registers the `pipeline {}` keyword and all declarative
     // step mocks; composition avoids JUnit 4 lifecycle annotations incompatible with Spock 2.

@@ -18,7 +18,7 @@ private fun <T> closure(fn: (Array<out Any?>) -> T): Closure<T> =
     override fun call(vararg args: Any?): T = fn(args)
   }
 
-class VarsExampleKotestSpec :
+class VarsUnitKotest :
   FunSpec({
     lateinit var base: DeclarativePipelineTest
 

@@ -51,8 +51,11 @@ tasks.named<CodeNarc>("codenarcScripts") {
 testing {
   suites {
     named<JvmTestSuite>("test") {
+      useJUnitJupiter()
       sources {
-        kotlin.setSrcDirs(listOf("test/unit/kotlin"))
+        java.srcDirs("test/unit/java")
+        groovy.srcDirs("test/unit/groovy")
+        kotlin.srcDirs("test/unit/kotlin")
       }
       dependencies {
         implementation(libs.spock.core)
@@ -66,9 +69,7 @@ testing {
       }
     }
     named<JvmTestSuite>("integrationTest") {
-      sources {
-        kotlin.setSrcDirs(listOf("test/integration/kotlin"))
-      }
+      useJUnit()
     }
   }
 }
@@ -121,24 +122,6 @@ val integrationTestKotest =
     }
   }
 
-val smokeTest =
-  testing.suites.register<JvmTestSuite>("smokeTest") {
-    sharedLibrary.useJenkinsTestRunnerSuite(this)
-    sources {
-      java.setSrcDirs(listOf("test/smoke/java"))
-    }
-    dependencies {
-      implementation(libs.junit.jupiter.api)
-      runtimeOnly(libs.junit.jupiter.engine)
-      runtimeOnly(libs.junit.platform.launcher)
-    }
-    targets.all {
-      testTask.configure {
-        useJUnitPlatform()
-      }
-    }
-  }
-
 tasks {
   withType<Test>().configureEach {
     systemProperty("kotest.framework.config.fqn", "testsupport.kotest.ProjectConfig")
@@ -157,7 +140,7 @@ tasks {
   }
 
   check {
-    dependsOn(integrationTestJunit, integrationTestSpock, integrationTestKotest, smokeTest)
+    dependsOn(integrationTestJunit, integrationTestSpock, integrationTestKotest)
   }
 
   wrapper {
