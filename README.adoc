@@ -38,20 +38,27 @@ Use this as a reference for structuring a shared library project, writing tests 
 
 == Test framework patterns
 
-=== Spock base class (`JenkinsSpec`)
+=== Spock integration tests
 
-All Spock integration tests extend `JenkinsSpec` from `testsupport.spock`:
+All Spock integration tests utilize the `JenkinsSupport` trait from `testsupport.spock`.
+
+[NOTE]
+====
+Spock 2.x integration tests currently require `sandbox=false` due to a bytecode incompatibility between modern Groovy (2.5+) and the Jenkins CPS transformer.
+JUnit 5 and Kotest suites fully support `sandbox=true`.
+====
 
 [source,groovy]
 ----
-import testsupport.spock.JenkinsSpec
+import spock.lang.Specification
+import testsupport.spock.JenkinsSupport
 
-class MySpec extends JenkinsSpec {
+class MySpec extends Specification implements JenkinsSupport {
     def 'my step executes'() {
-        jenkins { JenkinsRule r ->
-            def job = r.createProject(WorkflowJob, 'test')
+        jenkins {
+            def job = createProject(WorkflowJob, 'test')
             job.definition = new CpsFlowDefinition('myStep()', false)
-            r.buildAndAssertSuccess(job)
+            buildAndAssertSuccess(job)
         }
     }
 }
