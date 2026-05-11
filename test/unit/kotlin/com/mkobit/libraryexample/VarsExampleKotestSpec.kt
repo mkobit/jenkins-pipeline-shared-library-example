@@ -3,8 +3,11 @@ package com.mkobit.libraryexample
 import com.lesfurets.jenkins.unit.declarative.DeclarativePipelineTest
 import groovy.lang.Closure
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.inspectors.forNone
+import io.kotest.inspectors.forOne
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import org.codehaus.groovy.runtime.InvokerHelper
 
@@ -35,25 +38,19 @@ class VarsExampleKotestSpec :
     test("doStuff runs successfully") {
       InvokerHelper.invokeMethod(base.loadScript("vars/doStuff.groovy"), "call", null)
 
-      base.helper.callStack
-        .filter { it.methodName == "error" }
-        .shouldBeEmpty()
+      base.helper.callStack.forNone { it.methodName shouldBe "error" }
     }
 
     test("evenOrOdd executes even pipeline for even build number") {
       InvokerHelper.invokeMethod(base.loadScript("vars/evenOrOdd.groovy"), "call", 2)
 
-      base.helper.callStack
-        .filter { it.methodName == "error" }
-        .shouldBeEmpty()
+      base.helper.callStack.forNone { it.methodName shouldBe "error" }
     }
 
     test("evenOrOdd executes odd pipeline for odd build number") {
       InvokerHelper.invokeMethod(base.loadScript("vars/evenOrOdd.groovy"), "call", 1)
 
-      base.helper.callStack
-        .filter { it.methodName == "error" }
-        .shouldBeEmpty()
+      base.helper.callStack.forNone { it.methodName shouldBe "error" }
     }
 
     test("requireEnv passes when all named variables are set") {
@@ -64,9 +61,7 @@ class VarsExampleKotestSpec :
         arrayOf("DEPLOY_TARGET", "API_KEY"),
       )
 
-      base.helper.callStack
-        .filter { it.methodName == "error" }
-        .shouldBeEmpty()
+      base.helper.callStack.forNone { it.methodName shouldBe "error" }
     }
 
     test("requireEnv fails build listing all missing variables") {
@@ -78,8 +73,6 @@ class VarsExampleKotestSpec :
           InvokerHelper.invokeMethod(script, "call", arrayOf("DEPLOY_TARGET", "API_KEY", "REGION"))
         }
       thrown.exceptionOrNull() shouldNotBe null
-      base.helper.callStack
-        .filter { it.methodName == "error" }
-        .shouldHaveSize(1)
+      base.helper.callStack.forOne { it.methodName shouldBe "error" }
     }
   })
