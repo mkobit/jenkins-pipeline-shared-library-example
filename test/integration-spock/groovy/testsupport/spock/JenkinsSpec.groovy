@@ -3,7 +3,6 @@ package testsupport.spock
 import groovy.transform.CompileDynamic
 import org.jvnet.hudson.test.JenkinsRule
 import org.jvnet.hudson.test.fixtures.JenkinsSessionFixture
-import spock.lang.Shared
 import spock.lang.Specification
 
 // @CompileDynamic is required: Spock 2.x AST transformations can fail under
@@ -20,7 +19,11 @@ abstract class JenkinsSpec extends Specification {
         fixture.tearDown()
     }
 
-    void jenkins(Closure block) {
-        fixture.then { JenkinsRule j -> block(j) }
+    void jenkins(@DelegatesTo(value = JenkinsRule, strategy = Closure.DELEGATE_FIRST) Closure block) {
+        fixture.then { JenkinsRule j ->
+            block.delegate = j
+            block.resolveStrategy = Closure.DELEGATE_FIRST
+            block.call(j)
+        }
     }
 }

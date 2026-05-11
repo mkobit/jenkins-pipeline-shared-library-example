@@ -14,10 +14,10 @@ class IntegrationSpec extends JenkinsSpec {
 
     def 'doStuff step logs expected output'() {
         when:
-        jenkins { j ->
-            def job = j.createProject(WorkflowJob, 'spock-doStuff')
+        jenkins {
+            def job = createProject(WorkflowJob, 'spock-doStuff')
             job.definition = new CpsFlowDefinition('doStuff()', false)
-            j.assertLogContains('hello stuff', j.buildAndAssertSuccess(job))
+            assertLogContains('hello stuff', buildAndAssertSuccess(job))
         }
 
         then:
@@ -26,10 +26,10 @@ class IntegrationSpec extends JenkinsSpec {
 
     def 'evenOrOdd step identifies odd build numbers'() {
         when:
-        jenkins { j ->
-            def job = j.createProject(WorkflowJob, 'spock-evenOdd')
+        jenkins {
+            def job = createProject(WorkflowJob, 'spock-evenOdd')
             job.definition = new CpsFlowDefinition('evenOrOdd(1)', false)
-            j.assertLogContains('The build number is odd', j.buildAndAssertSuccess(job))
+            assertLogContains('The build number is odd', buildAndAssertSuccess(job))
         }
 
         then:
@@ -38,10 +38,10 @@ class IntegrationSpec extends JenkinsSpec {
 
     def 'library resource loads content'() {
         when:
-        jenkins { j ->
-            def job = j.createProject(WorkflowJob, 'spock-resource')
+        jenkins {
+            def job = createProject(WorkflowJob, 'spock-resource')
             job.definition = new CpsFlowDefinition('loadGreeting()', false)
-            j.assertLogContains('Hello from libraryResource!', j.buildAndAssertSuccess(job))
+            assertLogContains('Hello from libraryResource!', buildAndAssertSuccess(job))
         }
 
         then:
@@ -50,14 +50,14 @@ class IntegrationSpec extends JenkinsSpec {
 
     def 'sayHelloTo prints greeting from src/'() {
         when:
-        jenkins { j ->
-            def job = j.createProject(WorkflowJob, 'spock-say-hello')
+        jenkins {
+            def job = createProject(WorkflowJob, 'spock-say-hello')
             job.definition = new CpsFlowDefinition("""
                 import com.mkobit.libraryexample.ExampleSrc
                 final exampleSrc = new ExampleSrc(this)
                 exampleSrc.sayHelloTo('Bob')
             """.stripIndent(), false)
-            j.assertLogContains('Hello there Bob', j.buildAndAssertSuccess(job))
+            assertLogContains('Hello there Bob', buildAndAssertSuccess(job))
         }
 
         then:
@@ -66,14 +66,14 @@ class IntegrationSpec extends JenkinsSpec {
 
     def 'nonCpsDouble doubles each integer from src/'() {
         when:
-        jenkins { j ->
-            def job = j.createProject(WorkflowJob, 'spock-non-cps')
+        jenkins {
+            def job = createProject(WorkflowJob, 'spock-non-cps')
             job.definition = new CpsFlowDefinition("""
                 import com.mkobit.libraryexample.ExampleSrc
                 final exampleSrc = new ExampleSrc(this)
                 echo 'Numbers: ' + exampleSrc.nonCpsDouble([1, 2])
             """.stripIndent(), false)
-            j.assertLogContains('Numbers: [2, 4]', j.buildAndAssertSuccess(job))
+            assertLogContains('Numbers: [2, 4]', buildAndAssertSuccess(job))
         }
 
         then:
@@ -82,14 +82,14 @@ class IntegrationSpec extends JenkinsSpec {
 
     def 'lock step from plugin runs successfully'() {
         when:
-        jenkins { j ->
-            def job = j.createProject(WorkflowJob, 'spock-lock-step')
+        jenkins {
+            def job = createProject(WorkflowJob, 'spock-lock-step')
             job.definition = new CpsFlowDefinition("""
                 lock('myLock') {
                     echo 'Hello world during lock!'
                 }
             """.stripIndent(), false)
-            j.assertLogContains('Hello world during lock!', j.buildAndAssertSuccess(job))
+            assertLogContains('Hello world during lock!', buildAndAssertSuccess(job))
         }
 
         then:
@@ -98,8 +98,8 @@ class IntegrationSpec extends JenkinsSpec {
 
     def 'parameterized project uses default and overridden values'() {
         when:
-        jenkins { j ->
-            def job = j.createProject(WorkflowJob, 'spock-parameterized')
+        jenkins {
+            def job = createProject(WorkflowJob, 'spock-parameterized')
             def stringParam = new StringParameterDefinition('myString', 'myDefault')
             def boolParam = new BooleanParameterDefinition('myBoolean', false, 'boolean parameter description')
             def choiceParam = new ChoiceParameterDefinition('myChoice', ['choice1', 'choice2'] as String[], 'choice parameter description')
@@ -110,12 +110,12 @@ class IntegrationSpec extends JenkinsSpec {
                 echo 'Choice param: ' + params.myChoice
             """.stripIndent(), false)
 
-            def defaults = j.buildAndAssertSuccess(job)
-            j.assertLogContains('String param: myDefault', defaults)
-            j.assertLogContains('Boolean param: false', defaults)
-            j.assertLogContains('Choice param: choice1', defaults)
+            def defaults = buildAndAssertSuccess(job)
+            assertLogContains('String param: myDefault', defaults)
+            assertLogContains('Boolean param: false', defaults)
+            assertLogContains('Choice param: choice1', defaults)
 
-            def withParams = j.assertBuildStatusSuccess(
+            def withParams = assertBuildStatusSuccess(
                     ParameterizedJobMixIn.scheduleBuild2(
                     job,
                     0,
@@ -124,11 +124,11 @@ class IntegrationSpec extends JenkinsSpec {
                     boolParam.createValue('true'),
                     choiceParam.createValue('choice2')
                     )
-                    ).future.get()
+                    ).future
                     )
-            j.assertLogContains('String param: mySpecified', withParams)
-            j.assertLogContains('Boolean param: true', withParams)
-            j.assertLogContains('Choice param: choice2', withParams)
+            assertLogContains('String param: mySpecified', withParams)
+            assertLogContains('Boolean param: true', withParams)
+            assertLogContains('Choice param: choice2', withParams)
         }
 
         then:
