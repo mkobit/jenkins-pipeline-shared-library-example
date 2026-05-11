@@ -16,9 +16,6 @@ class IntegrationSpec extends Specification implements JenkinsSupport {
         when:
         jenkins {
             def job = createProject(WorkflowJob, 'spock-doStuff')
-            // TODO: figure out how to support sandbox: true with Spock 2.x
-            // sandbox=false: Spock 2.x (Groovy 2.5/3.x) bytecode causes CPS transformer errors
-            // when sandbox=true. This is a known limitation of the 2.479.x LTS line.
             job.definition = new CpsFlowDefinition('doStuff()', false)
             assertLogContains('hello stuff', buildAndAssertSuccess(job))
         }
