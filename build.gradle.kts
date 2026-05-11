@@ -69,7 +69,7 @@ testing {
       }
     }
     named<JvmTestSuite>("integrationTest") {
-      useJUnit()
+      useJUnitJupiter()
     }
   }
 }

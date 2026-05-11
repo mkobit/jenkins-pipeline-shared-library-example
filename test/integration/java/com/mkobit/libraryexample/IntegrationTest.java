@@ -3,16 +3,15 @@ package com.mkobit.libraryexample;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
-public class IntegrationTest {
-
-  @Rule public JenkinsRule rule = new JenkinsRule();
+@WithJenkins
+class IntegrationTest {
 
   @Test
-  public void doStuffStepLogsExpectedOutput() throws Exception {
+  void doStuffStepLogsExpectedOutput(JenkinsRule rule) throws Exception {
     var job = rule.createProject(WorkflowJob.class, "doStuff");
     job.setDefinition(new CpsFlowDefinition("doStuff()", true));
     WorkflowRun run = rule.buildAndAssertSuccess(job);
@@ -20,7 +19,7 @@ public class IntegrationTest {
   }
 
   @Test
-  public void evenOrOddStepIdentifiesOddBuildNumbers() throws Exception {
+  void evenOrOddStepIdentifiesOddBuildNumbers(JenkinsRule rule) throws Exception {
     var job = rule.createProject(WorkflowJob.class, "evenOdd");
     job.setDefinition(new CpsFlowDefinition("evenOrOdd(1)", true));
     WorkflowRun run = rule.buildAndAssertSuccess(job);
@@ -28,7 +27,7 @@ public class IntegrationTest {
   }
 
   @Test
-  public void libraryResourceLoadsContent() throws Exception {
+  void libraryResourceLoadsContent(JenkinsRule rule) throws Exception {
     var job = rule.createProject(WorkflowJob.class, "resource");
     job.setDefinition(new CpsFlowDefinition("loadGreeting()", true));
     WorkflowRun run = rule.buildAndAssertSuccess(job);
@@ -36,7 +35,7 @@ public class IntegrationTest {
   }
 
   @Test
-  public void sayHelloToPrintsGreetingFromSrc() throws Exception {
+  void sayHelloToPrintsGreetingFromSrc(JenkinsRule rule) throws Exception {
     var job = rule.createProject(WorkflowJob.class, "sayHello");
     job.setDefinition(
         new CpsFlowDefinition(
