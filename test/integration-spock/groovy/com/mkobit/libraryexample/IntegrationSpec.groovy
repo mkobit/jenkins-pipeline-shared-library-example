@@ -5,17 +5,19 @@ import hudson.model.ChoiceParameterDefinition
 import hudson.model.ParametersAction
 import hudson.model.ParametersDefinitionProperty
 import hudson.model.StringParameterDefinition
-import jenkins.model.ParameterizedJobMixIn
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition
 import org.jenkinsci.plugins.workflow.job.WorkflowJob
-import testsupport.spock.JenkinsSpec
+import spock.lang.Specification
+import testsupport.spock.JenkinsSupport
 
-class IntegrationSpec extends JenkinsSpec {
+class IntegrationSpec extends Specification implements JenkinsSupport {
 
     def 'doStuff step logs expected output'() {
         when:
         jenkins {
             def job = createProject(WorkflowJob, 'spock-doStuff')
+            // sandbox=false: Spock 2.x (Groovy 2.5/3.x) bytecode causes CPS transformer errors
+            // when sandbox=true. This is a known limitation of the 2.479.x LTS line.
             job.definition = new CpsFlowDefinition('doStuff()', false)
             assertLogContains('hello stuff', buildAndAssertSuccess(job))
         }
@@ -115,17 +117,14 @@ class IntegrationSpec extends JenkinsSpec {
             assertLogContains('Boolean param: false', defaults)
             assertLogContains('Choice param: choice1', defaults)
 
-            def withParams = assertBuildStatusSuccess(
-                    ParameterizedJobMixIn.scheduleBuild2(
-                    job,
+            def withParams = assertBuildStatusSuccess(job.scheduleBuild2(
                     0,
                     new ParametersAction(
                     stringParam.createValue('mySpecified'),
                     boolParam.createValue('true'),
                     choiceParam.createValue('choice2')
                     )
-                    ).future
-                    )
+                    ))
             assertLogContains('String param: mySpecified', withParams)
             assertLogContains('Boolean param: true', withParams)
             assertLogContains('Choice param: choice2', withParams)

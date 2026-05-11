@@ -8,7 +8,7 @@ coroutines            = "1.10.2"
 kotlin                = "2.2.21"
 kotest                = "6.1.11"
 openrewrite           = "6.26.0"
-spock                 = "2.4-groovy-3.0"
+spock                 = "2.3-groovy-2.5"
 spotless              = "8.4.0"
 
 [libraries]

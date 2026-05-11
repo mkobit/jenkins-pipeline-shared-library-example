@@ -3,12 +3,12 @@ package testsupport.spock
 import groovy.transform.CompileDynamic
 import org.jvnet.hudson.test.JenkinsRule
 import org.jvnet.hudson.test.fixtures.JenkinsSessionFixture
-import spock.lang.Specification
 
-// @CompileDynamic is required: Spock 2.x AST transformations can fail under
-// @CompileStatic on Specification subclasses.
+/**
+ * Trait providing an embedded Jenkins environment for Spock specifications.
+ */
 @CompileDynamic
-abstract class JenkinsSpec extends Specification {
+trait JenkinsSupport {
     private JenkinsSessionFixture fixture = new JenkinsSessionFixture()
 
     def setup() {
@@ -19,6 +19,9 @@ abstract class JenkinsSpec extends Specification {
         fixture.tearDown()
     }
 
+    /**
+     * Executes a block of code against a fresh Jenkins instance.
+     */
     void jenkins(@DelegatesTo(value = JenkinsRule, strategy = Closure.DELEGATE_FIRST) Closure block) {
         fixture.then { JenkinsRule j ->
             block.delegate = j
