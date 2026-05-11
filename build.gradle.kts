@@ -51,7 +51,7 @@ tasks.named<CodeNarc>("codenarcScripts") {
 testing {
   suites {
     named<JvmTestSuite>("test") {
-      useJUnitJupiter()
+      useJUnitJupiter(libs.versions.junit.jupiter)
       sources {
         java.srcDirs("test/unit/java")
         groovy.srcDirs("test/unit/groovy")
@@ -69,7 +69,7 @@ testing {
       }
     }
     named<JvmTestSuite>("integrationTest") {
-      useJUnitJupiter()
+      useJUnitJupiter(libs.versions.junit.jupiter)
     }
   }
 }
@@ -109,7 +109,7 @@ val integrationTestSpock =
 val integrationTestKotest =
   testing.suites.register<JvmTestSuite>("integrationTestKotest") {
     sharedLibrary.useJenkinsTestRunnerSuite(this)
-    useJUnitJupiter()
+    useJUnitJupiter(libs.versions.junit.jupiter)
     sources {
       kotlin.setSrcDirs(listOf("test/integration-kotest/kotlin"))
     }
