@@ -9,6 +9,7 @@ import org.jvnet.hudson.test.fixtures.JenkinsSessionFixture
  */
 @CompileDynamic
 trait JenkinsSupport {
+
     private JenkinsSessionFixture fixture = new JenkinsSessionFixture()
 
     def setup() {
@@ -19,9 +20,6 @@ trait JenkinsSupport {
         fixture.tearDown()
     }
 
-    /**
-     * Executes a block of code against a fresh Jenkins instance.
-     */
     void jenkins(@DelegatesTo(value = JenkinsRule, strategy = Closure.DELEGATE_FIRST) Closure block) {
         fixture.then { JenkinsRule j ->
             block.delegate = j

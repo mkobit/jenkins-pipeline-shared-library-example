@@ -94,6 +94,8 @@ val integrationTestJunit =
 
 // sandbox=false: Spock 2.x (groovy:3.x) conflicts with groovy-all:2.4.x injected by the plugin
 // for SandboxTransformer (compiled against Groovy 2.4 AST); avoids the transformer entirely.
+// RealJenkinsFixture would isolate the runtimes but requires test-dependencies/index infrastructure
+// that the Gradle plugin does not yet generate. Tracked in the backlog.
 val integrationTestSpock =
   testing.suites.register<JvmTestSuite>("integrationTestSpock") {
     sharedLibrary.useJenkinsTestRunnerSuite(this)
