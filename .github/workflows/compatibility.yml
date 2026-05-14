@@ -62,7 +62,7 @@ jobs:
         with:
           repository: mkobit/jenkins-pipeline-shared-libraries-gradle-plugin
           ref: ${{ steps.plugin-ref.outputs.ref }}
-          path: plugin
+          path: jenkins-pipeline-shared-libraries-gradle-plugin
       - uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654
         with:
           java-version: ${{ matrix.java }}
@@ -70,4 +70,4 @@ jobs:
       - uses: gradle/actions/setup-gradle@50e97c2cd7a37755bbfafc9c5b7cafaece252f6e
       - name: Build
         working-directory: example
-        run: ./gradlew build --include-build ../plugin --continue
+        run: ./gradlew build --continue

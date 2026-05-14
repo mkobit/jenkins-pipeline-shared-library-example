@@ -1,4 +1,8 @@
 pluginManagement {
+  val pluginProjectDir = file("../jenkins-pipeline-shared-libraries-gradle-plugin")
+  if (pluginProjectDir.exists()) {
+    includeBuild(pluginProjectDir)
+  }
   repositories {
     gradlePluginPortal()
   }

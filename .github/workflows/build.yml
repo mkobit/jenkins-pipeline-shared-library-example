@@ -1,8 +1,10 @@
 name: Build
 
-# Quick-start CI: builds against the published plugin from the Gradle Plugin Portal.
-# No plugin source checkout required — suitable for template forks and standalone use.
-# For plugin development use compatibility.yml which composites the plugin from source.
+# Builds the example against the plugin source via composite build.
+# Once the plugin is published to the Gradle Plugin Portal, the plugin checkout
+# steps below can be removed and this workflow becomes a standalone portal consumer.
+# For template forks that only use the published plugin, delete the checkout steps
+# and use the portal directly.
 
 on:
   push:
@@ -10,6 +12,10 @@ on:
       - main
   pull_request:
   workflow_dispatch:
+    inputs:
+      plugin-ref:
+        description: "Plugin branch/tag to test against (default: main)"
+        default: main
 
 permissions: {}
 
@@ -28,10 +34,31 @@ jobs:
       DEVELOCITY_PUBLISH: "1"
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          path: example
+
+      - name: Resolve plugin ref
+        id: plugin-ref
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "ref=${{ inputs.plugin-ref }}" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.head_ref || github.ref_name }}" = "the-phoenix-project" ]; then
+            echo "ref=the-phoenix-project" >> "$GITHUB_OUTPUT"
+          else
+            echo "ref=main" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          repository: mkobit/jenkins-pipeline-shared-libraries-gradle-plugin
+          ref: ${{ steps.plugin-ref.outputs.ref }}
+          path: jenkins-pipeline-shared-libraries-gradle-plugin
+
       - uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654
         with:
           java-version: 17
           distribution: temurin
       - uses: gradle/actions/setup-gradle@50e97c2cd7a37755bbfafc9c5b7cafaece252f6e
       - name: Build
+        working-directory: example
         run: ./gradlew build --continue
