@@ -77,15 +77,53 @@ class MyKotestSpec : JenkinsFunSpec({
 })
 ----
 
-== Adapting this example
+== Using this as a template
 
-To use this project as a starting point for your own shared library:
+Fork this repository and follow these steps to adapt it to your own shared library.
 
-1. Replace `src/com/mkobit/libraryexample/` with your own package structure.
-2. Update `vars/` with your pipeline step scripts.
-3. Update the `rootProject.name` in `settings.gradle.kts` — this becomes the default Jenkins library name.
-4. Swap the Jenkins BOM version in `gradle/libs.versions.toml` for your target LTS line.
-5. Add extra Jenkins plugins via `jenkinsPlugin("group:artifact")` in `build.gradle.kts`.
+=== Step 1 — Adapt the library code
+
+. Replace `src/com/mkobit/libraryexample/` with your own package structure.
+. Update `vars/` with your pipeline step scripts.
+. Update `rootProject.name` in `settings.gradle.kts` — this becomes the default Jenkins library identifier when the library is loaded without an explicit name.
+. Swap the Jenkins BOM version in `gradle/libs.versions.toml` for your target LTS line.
+. Add extra Jenkins plugins via `jenkinsPlugin("group:artifact")` in `build.gradle.kts`.
+
+=== Step 2 — Pin to a released plugin version
+
+The `shared-library` plugin version is declared under `[versions]` in `gradle/libs.versions.toml`.
+Once the release you need is available on the https://plugins.gradle.org/plugin/com.mkobit.jenkins.pipelines.shared-library[Gradle Plugin Portal], the `gradlePluginPortal()` repository in `settings.gradle.kts` resolves it automatically.
+
+=== Step 3 — Remove the composite build hook (optional)
+
+The `pluginManagement` block in `settings.gradle.kts` contains a conditional `includeBuild` that is only active during plugin source development.
+It activates only when the plugin source directory exists next to the example on disk, so leaving it in is harmless.
+To clean it up, remove the lines marked `// TEMPLATE FORK` and keep only:
+
+[source,kotlin]
+----
+pluginManagement {
+  repositories {
+    gradlePluginPortal()
+  }
+}
+----
+
+=== Step 4 — Trim the CI workflows
+
+This repo ships two GitHub Actions workflows.
+Each file contains `# TEMPLATE FORK:` comments marking what to remove — run `grep -rn "TEMPLATE FORK" .` to find every marker at once.
+
+`build.yml`::
+Builds the library.
+Currently checks out the plugin source for a composite build (pre-release workaround).
+Once you pin to a published portal version, remove the "Resolve plugin ref" step, the plugin checkout step, and the `path: example` / `working-directory: example` arguments.
+The result is a standalone workflow that builds against the released plugin.
+
+`compatibility.yml`::
+Tests against multiple Java versions and plugin source branches.
+This workflow only makes sense when developing the plugin itself alongside the example.
+Delete this file entirely once you are consuming a released plugin version.
 
 == Scripts
 
