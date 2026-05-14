@@ -76,7 +76,7 @@ testing {
 
 val integrationTestJunit =
   testing.suites.register<JvmTestSuite>("integrationTestJunit") {
-    sharedLibrary.useJenkinsTestRunnerSuite(this)
+    sharedLibrary.withJenkins(this)
     sources {
       java.setSrcDirs(listOf("test/integration-junit/java"))
     }
@@ -98,7 +98,7 @@ val integrationTestJunit =
 // that the Gradle plugin does not yet generate. Tracked in the backlog.
 val integrationTestSpock =
   testing.suites.register<JvmTestSuite>("integrationTestSpock") {
-    sharedLibrary.useJenkinsTestRunnerSuite(this)
+    sharedLibrary.withJenkins(this)
     sources {
       groovy.setSrcDirs(listOf("test/integration-spock/groovy"))
     }
@@ -110,7 +110,7 @@ val integrationTestSpock =
 
 val integrationTestKotest =
   testing.suites.register<JvmTestSuite>("integrationTestKotest") {
-    sharedLibrary.useJenkinsTestRunnerSuite(this)
+    sharedLibrary.withJenkins(this)
     useJUnitJupiter(libs.versions.junit.jupiter)
     sources {
       kotlin.setSrcDirs(listOf("test/integration-kotest/kotlin"))
