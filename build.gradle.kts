@@ -33,10 +33,12 @@ codenarc {
   sourceSets = sourceSets + listOf(scriptsSourceSet)
 }
 
-dependencies {
-  jenkinsPlugin("org.jenkins-ci.plugins.workflow:workflow-multibranch")
-  jenkinsPlugin("org.jenkinsci.plugins:pipeline-model-definition")
-  jenkinsPlugin("org.6wind.jenkins:lockable-resources")
+sharedLibrary {
+  plugins {
+    plugin("org.jenkins-ci.plugins.workflow:workflow-multibranch")
+    plugin("org.jenkinsci.plugins:pipeline-model-definition")
+    plugin("org.6wind.jenkins:lockable-resources")
+  }
 }
 
 tasks.named<CodeNarc>("codenarcScripts") {
