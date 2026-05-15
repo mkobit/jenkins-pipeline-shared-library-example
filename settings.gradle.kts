@@ -1,9 +1,7 @@
 pluginManagement {
-  // TEMPLATE FORK: remove the next two lines once you pin to a released portal version
-  val pluginProjectDir = file("../jenkins-pipeline-shared-libraries-gradle-plugin")
-  if (pluginProjectDir.exists()) {
-    includeBuild(pluginProjectDir)
-  }
+  // TEMPLATE FORK: remove the composite build inclusion once you pin to a released portal version
+  // TEMPLATE FORK: replace includeBuild with a pinned portal version once published
+  includeBuild("../jenkins-pipeline-shared-libraries-gradle-plugin")
   repositories {
     gradlePluginPortal()
   }
