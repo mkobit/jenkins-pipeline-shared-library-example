@@ -67,7 +67,6 @@ testing {
         implementation(libs.kotest.assertions)
         implementation(libs.kotest.decoroutinator)
         implementation(libs.jenkins.pipeline.unit)
-        implementation(libs.groovy.core)
       }
     }
     named<JvmTestSuite>("integrationTest") {
@@ -106,7 +105,6 @@ val integrationTestSpock =
     }
     dependencies {
       implementation(libs.spock.core)
-      compileOnly(libs.groovy.core)
     }
   }
 

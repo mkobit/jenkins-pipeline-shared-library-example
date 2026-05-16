@@ -14,8 +14,6 @@ spotless = "8.5.1"
 [libraries]
 assertj = { module = "org.assertj:assertj-core", version.ref = "assertj" }
 coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
-# TODO: remove once jenkins-core transitively supplies groovy on the test classpath without a pinned version
-groovy-core = { module = "org.codehaus.groovy:groovy", version = "2.4.21" }
 jenkins-pipeline-unit = { module = "com.lesfurets:jenkins-pipeline-unit", version.ref = "jenkins-pipeline-unit" }
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit-jupiter" }
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit-jupiter" }
