@@ -7,6 +7,7 @@ import hudson.model.ParametersDefinitionProperty
 import hudson.model.StringParameterDefinition
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition
 import org.jenkinsci.plugins.workflow.job.WorkflowJob
+import spock.lang.PendingFeature
 import spock.lang.Specification
 import testsupport.spock.JenkinsSupport
 
@@ -126,6 +127,21 @@ class IntegrationSpec extends Specification implements JenkinsSupport {
             assertLogContains('String param: mySpecified', withParams)
             assertLogContains('Boolean param: true', withParams)
             assertLogContains('Choice param: choice2', withParams)
+        }
+
+        then:
+        noExceptionThrown()
+    }
+
+    @PendingFeature(reason = 'groovyAllRuntime injects groovy-all:2.4.x alongside Spock\'s groovy:3.x. ' +
+    'CPS transform fails. Tracked: https://github.com/jenkinsci/jenkins/issues/19976, ' +
+    'https://issues.jenkins.io/browse/JENKINS-51823')
+    def 'doStuff step with sandbox=true'() {
+        when:
+        jenkins {
+            def job = createProject(WorkflowJob, 'spock-sandbox')
+            job.definition = new CpsFlowDefinition('doStuff()', true)
+            assertLogContains('hello stuff', buildAndAssertSuccess(job))
         }
 
         then:
