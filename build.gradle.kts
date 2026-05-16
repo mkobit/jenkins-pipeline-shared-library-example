@@ -170,4 +170,8 @@ spotless {
     ktlint()
     target("*.gradle.kts")
   }
+  toml {
+    versionCatalog()
+    target("gradle/libs.versions.toml")
+  }
 }
