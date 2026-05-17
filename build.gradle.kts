@@ -26,6 +26,10 @@ val scriptsSourceSet =
   }
 tasks.named("compileScriptsGroovy") { enabled = false }
 
+dependencies {
+  add(scriptsSourceSet.compileOnlyConfigurationName, localGroovy())
+}
+
 codenarc {
   toolVersion = libs.versions.codenarc.get()
   configFile = file("config/codenarc/codenarc-src.xml")
