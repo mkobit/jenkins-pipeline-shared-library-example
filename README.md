@@ -16,7 +16,7 @@ This repo shows four frameworks across Java, Groovy, and Kotlin.
 | `vars/` | Pipeline step scripts |
 | `resources/` | Files accessible via `libraryResource()` |
 | `test/unit/` | [JenkinsPipelineUnit](https://github.com/lesfurets/JenkinsPipelineUnit) — fast, no Jenkins runtime |
-| `test/integration/` | [JUnit 4](https://junit.org/junit4/) via `JenkinsRule` (built-in suite) |
+| `test/integration/` | [JUnit Jupiter](https://junit.org/junit5/) via `@WithJenkins` (built-in suite) |
 | `test/integration-junit/` | [JUnit Jupiter](https://junit.org/junit5/) (Java) |
 | `test/integration-spock/` | [Spock 2.x](https://spockframework.org/) (Groovy) |
 | `test/integration-kotest/` | [Kotest](https://kotest.io/) (Kotlin) |
@@ -26,7 +26,7 @@ This repo shows four frameworks across Java, Groovy, and Kotlin.
 | Task | Runs |
 |---|---|
 | `./gradlew test` | Unit tests (fast) |
-| `./gradlew integrationTest` | Built-in JUnit 4 suite |
+| `./gradlew integrationTest` | Built-in JUnit Jupiter suite |
 | `./gradlew integrationTestJunit` | JUnit Jupiter |
 | `./gradlew integrationTestSpock` | Spock 2.x |
 | `./gradlew integrationTestKotest` | Kotest |
