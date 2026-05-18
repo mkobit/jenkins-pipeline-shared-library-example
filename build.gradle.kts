@@ -15,7 +15,7 @@ plugins {
 
 java {
   toolchain {
-    languageVersion = JavaLanguageVersion.of(17)
+    languageVersion = JavaLanguageVersion.of(21)
   }
 }
 
@@ -51,11 +51,12 @@ tasks.named<CodeNarc>("codenarcScripts") {
   config = resources.text.fromFile("config/codenarc/codenarc-scripts.xml")
 }
 
-// TODO: https://github.com/gradle/gradle/issues/24972 — bare accessor syntax
-//   (e.g. `test { }`, `integrationTest { }`) does not compile inside `testing.suites { }` even
-//   though both suites are known before this script evaluates. The KTS accessor generator does not
-//   produce accessors for ExtensiblePolymorphicDomainObjectContainer<TestSuite>. Until fixed,
-//   `named<JvmTestSuite>()` is the only non-deprecated option.
+val kotestParallelism =
+  providers
+    .gradleProperty("kotest.parallelism")
+    .map { it.toInt() }
+    .orElse(Runtime.getRuntime().availableProcessors())
+
 testing {
   suites {
     named<JvmTestSuite>("test") {
@@ -74,9 +75,6 @@ testing {
         implementation(libs.kotest.decoroutinator)
         implementation(libs.jenkins.pipeline.unit)
       }
-    }
-    named<JvmTestSuite>("integrationTest") {
-      useJUnitJupiter(libs.versions.junit.jupiter)
     }
   }
 }
@@ -99,10 +97,6 @@ val integrationTestJunit =
     }
   }
 
-// sandbox=false: Spock 2.x (groovy:3.x) conflicts with groovy-all:2.4.x injected by the plugin
-// for SandboxTransformer (compiled against Groovy 2.4 AST); avoids the transformer entirely.
-// RealJenkinsFixture would isolate the runtimes but requires test-dependencies/index infrastructure
-// that the Gradle plugin does not yet generate. Tracked in the backlog.
 val integrationTestSpock =
   testing.suites.register<JvmTestSuite>("integrationTestSpock") {
     sharedLibrary.withJenkins(this)
@@ -111,6 +105,11 @@ val integrationTestSpock =
     }
     dependencies {
       implementation(libs.spock.core)
+    }
+    targets.all {
+      testTask.configure {
+        mustRunAfter(integrationTestJunit)
+      }
     }
   }
 
@@ -128,11 +127,18 @@ val integrationTestKotest =
       implementation(libs.kotest.decoroutinator)
       implementation(libs.coroutines.core)
     }
+    targets.all {
+      testTask.configure {
+        mustRunAfter(integrationTestSpock)
+        systemProperty("kotest.framework.parallelism", kotestParallelism)
+      }
+    }
   }
 
 tasks {
   withType<Test>().configureEach {
     systemProperty("kotest.framework.config.fqn", "testsupport.kotest.ProjectConfig")
+    maxParallelForks = 1
     testLogging {
       events("failed", "skipped")
       showExceptions = true
