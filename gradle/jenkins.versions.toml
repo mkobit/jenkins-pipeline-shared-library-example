@@ -59,6 +59,7 @@ joda-time-api = "2.14.2-193.v422b_efce56e0"
 jquery3-api = "3.7.1-687.v68d468e40b_30"
 json-api = "20251224-185.v0cc18490c62c"
 junit = "1403.vd9d1413fd205"
+lockable-resources = "1305.v1a_3035fa_9065"
 mailer = "534.v1b_36f5864073"
 matrix-auth = "3.2.10"
 pipeline-build-step = "584.vdb_a_2cc3a_d07a_"
@@ -126,6 +127,7 @@ joda-time-api = { module = "io.jenkins.plugins:joda-time-api", version.ref = "jo
 jquery3-api = { module = "io.jenkins.plugins:jquery3-api", version.ref = "jquery3-api" }
 json-api = { module = "io.jenkins.plugins:json-api", version.ref = "json-api" }
 junit = { module = "org.jenkins-ci.plugins:junit", version.ref = "junit" }
+lockable-resources = { module = "org.6wind.jenkins:lockable-resources", version.ref = "lockable-resources" }
 mailer = { module = "org.jenkins-ci.plugins:mailer", version.ref = "mailer" }
 matrix-auth = { module = "org.jenkins-ci.plugins:matrix-auth", version.ref = "matrix-auth" }
 pipeline-build-step = { module = "org.jenkins-ci.plugins:pipeline-build-step", version.ref = "pipeline-build-step" }
@@ -194,6 +196,7 @@ allPlugins = [
   "jquery3-api",
   "json-api",
   "junit",
+  "lockable-resources",
   "mailer",
   "matrix-auth",
   "pipeline-build-step",
