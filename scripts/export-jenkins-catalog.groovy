@@ -9,28 +9,30 @@ import jenkins.model.Jenkins
 
 @Immutable class Plugin {
     String groupId, shortName, version
-    String getTomlKey() { shortName }
+    String getTomlKey() {
+        shortName
+    }
 }
 
 final List<Plugin> plugins = Jenkins.get().pluginManager.plugins.stream()
-    .filter { it.active && !it.deleted }
-    .map { new Plugin(it.manifest.mainAttributes.getValue('Group-Id') ?: 'unknown', it.shortName, it.version) }
-    .peek { if (it.groupId == 'unknown') System.err.println "WARNING: no Group-Id for $it.shortName" }
-    .filter { it.groupId != 'unknown' }
-    .sorted(Comparator.comparing { it.shortName })
-    .collect(Collectors.toList())
+        .filter { it.active && !it.deleted }
+        .map { new Plugin(it.manifest.mainAttributes.getValue('Group-Id') ?: 'unknown', it.shortName, it.version) }
+        .peek { if (it.groupId == 'unknown') System.err.println "WARNING: no Group-Id for $it.shortName" }
+        .filter { it.groupId != 'unknown' }
+        .sorted(Comparator.comparing { it.shortName })
+        .collect(Collectors.toList())
 
 final String versions = plugins.stream()
-    .map { "${it.tomlKey} = \"${it.version}\"" }
-    .collect(Collectors.joining('\n'))
+        .map { "${it.tomlKey} = \"${it.version}\"" }
+        .collect(Collectors.joining('\n'))
 
 final String libraries = plugins.stream()
-    .map { "${it.tomlKey} = { module = \"${it.groupId}:${it.shortName}\", version.ref = \"${it.tomlKey}\" }" }
-    .collect(Collectors.joining('\n'))
+        .map { "${it.tomlKey} = { module = \"${it.groupId}:${it.shortName}\", version.ref = \"${it.tomlKey}\" }" }
+        .collect(Collectors.joining('\n'))
 
 final String bundles = plugins.stream()
-    .map { "    \"${it.tomlKey}\"" }
-    .collect(Collectors.joining(',\n', '[\n', '\n]'))
+        .map { "    \"${it.tomlKey}\"" }
+        .collect(Collectors.joining(',\n', '[\n', '\n]'))
 
 print """\
 # Generated from: ${Jenkins.get().rootUrl ?: 'unknown'}
