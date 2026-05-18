@@ -4,9 +4,8 @@
 
 An example [Jenkins Pipeline Shared Library](https://jenkins.io/doc/book/pipeline/shared-libraries/) built with the [Shared Library Gradle plugin](https://github.com/mkobit/jenkins-pipeline-shared-libraries-gradle-plugin).
 
-Use your test framework of choice.
-The plugin wires any `JvmTestSuite` with Jenkins test harness via `sharedLibrary.withJenkins(suite)`.
-This repo shows four frameworks across Java, Groovy, and Kotlin.
+The plugin creates an `integrationTest` suite automatically.
+`test/integration-junit/`, `test/integration-spock/`, and `test/integration-kotest/` each show how to register an additional suite for a different test framework using `sharedLibrary.withJenkins(suite)`.
 
 ## Project layout
 
@@ -16,20 +15,20 @@ This repo shows four frameworks across Java, Groovy, and Kotlin.
 | `vars/` | Pipeline step scripts |
 | `resources/` | Files accessible via `libraryResource()` |
 | `test/unit/` | [JenkinsPipelineUnit](https://github.com/lesfurets/JenkinsPipelineUnit) — fast, no Jenkins runtime |
-| `test/integration/` | [JUnit Jupiter](https://junit.org/junit5/) via `@WithJenkins` (built-in suite) |
-| `test/integration-junit/` | [JUnit Jupiter](https://junit.org/junit5/) (Java) |
-| `test/integration-spock/` | [Spock 2.x](https://spockframework.org/) (Groovy) |
-| `test/integration-kotest/` | [Kotest](https://kotest.io/) (Kotlin) |
+| `test/integration/` | Plugin-provided integration suite — [JUnit Jupiter](https://junit.org/junit5/) via `@WithJenkins` |
+| `test/integration-junit/` | Additional suite — [JUnit Jupiter](https://junit.org/junit5/) registered with `withJenkins()` |
+| `test/integration-spock/` | Additional suite — [Spock 2.x](https://spockframework.org/) registered with `withJenkins()` |
+| `test/integration-kotest/` | Additional suite — [Kotest](https://kotest.io/) registered with `withJenkins()` |
 
 ## Running tests
 
 | Task | Runs |
 |---|---|
 | `./gradlew test` | Unit tests (fast) |
-| `./gradlew integrationTest` | Built-in JUnit Jupiter suite |
-| `./gradlew integrationTestJunit` | JUnit Jupiter |
-| `./gradlew integrationTestSpock` | Spock 2.x |
-| `./gradlew integrationTestKotest` | Kotest |
+| `./gradlew integrationTest` | Plugin-provided integration suite |
+| `./gradlew integrationTestJunit` | Additional JUnit Jupiter suite |
+| `./gradlew integrationTestSpock` | Additional Spock 2.x suite |
+| `./gradlew integrationTestKotest` | Additional Kotest suite |
 | `./gradlew check` | All suites |
 
 ## Framework wrappers
