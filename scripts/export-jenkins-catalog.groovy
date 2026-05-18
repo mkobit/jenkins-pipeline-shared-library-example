@@ -23,7 +23,7 @@ final List<Plugin> plugins = Jenkins.get().pluginManager.plugins.stream()
             }
         }
         .filter { p -> p.groupId != 'unknown' }
-        .sorted(java.util.Comparator.comparing { p -> p.shortName })
+        .sorted(Comparator.comparing { p -> p.shortName })
         .collect(Collectors.toList())
 
 final String versions = plugins.stream()
