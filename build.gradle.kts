@@ -43,6 +43,7 @@ codenarc {
 sharedLibrary {
   plugins {
     plugins(jenkinsPlugins.bundles.allPlugins)
+    plugin(jenkinsPlugins.lockable.resources)
   }
 }
 

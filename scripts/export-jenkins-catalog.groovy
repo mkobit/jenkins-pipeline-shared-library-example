@@ -26,17 +26,22 @@ final List<Plugin> plugins = Jenkins.get().pluginManager.plugins.stream()
         .sorted(Comparator.comparing { p -> p.shortName })
         .collect(Collectors.toList())
 
+final int maxKeyLen = plugins.stream()
+        .mapToInt { p -> p.tomlKey.length() }
+        .max()
+        .orElse(0)
+
 final String versions = plugins.stream()
-        .map { p -> "${p.tomlKey} = \"${p.version}\"" }
-        .collect(Collectors.joining('\n'))
+        .map { p -> "${p.tomlKey.padRight(maxKeyLen)} = \"${p.version}\"" }
+        .collect(Collectors.joining('\n', '[versions]\n', '\n'))
 
 final String libraries = plugins.stream()
-        .map { p -> "${p.tomlKey} = { module = \"${p.groupId}:${p.shortName}\", version.ref = \"${p.tomlKey}\" }" }
-        .collect(Collectors.joining('\n'))
+        .map { p -> "${p.tomlKey.padRight(maxKeyLen)} = { module = \"${p.groupId}:${p.shortName}\", version.ref = \"${p.tomlKey}\" }" }
+        .collect(Collectors.joining('\n', '\n[libraries]\n', '\n'))
 
 final String bundles = plugins.stream()
         .map { p -> "    \"${p.tomlKey}\"" }
-        .collect(Collectors.joining(',\n', '[\n', '\n]'))
+        .collect(Collectors.joining(',\n', '\n[bundles]\nallPlugins = [\n', '\n]\n'))
 
 print """\
 # Generated from: ${Jenkins.get().rootUrl ?: 'unknown'}
@@ -59,20 +64,11 @@ print """\
 #
 # sharedLibrary {
 #   plugins {
-#     // Declare individual plugins (hyphens become camelCase)
-#     plugin(jenkinsPlugins.workflowJob)
+#     // Declare individual plugins (hyphens become dots)
+#     plugin(jenkinsPlugins.lockable.resources)
 #
 #     // OR declare the entire bundle of all plugins
 #     plugins(jenkinsPlugins.bundles.allPlugins)
 #   }
 # }
-
-[versions]
-$versions
-
-[libraries]
-$libraries
-
-[bundles]
-allPlugins = $bundles
-"""
+$versions$libraries$bundles"""
