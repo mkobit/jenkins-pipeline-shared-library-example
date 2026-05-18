@@ -1,10 +1,11 @@
 name: Build
 
 # Builds the example against the plugin source via composite build.
-# Once the plugin is published to the Gradle Plugin Portal, the plugin checkout
-# steps below can be removed and this workflow becomes a standalone portal consumer.
-# For template forks that only use the published plugin, delete the checkout steps
-# and use the portal directly.
+# This is the development workflow — it tests the example against plugin source directly.
+#
+# TEMPLATE FORK: if you only consume the published plugin from the Gradle Plugin Portal,
+# remove the "path: example", plugin ref resolution, and plugin checkout steps, and drop
+# the working-directory override on the Build step.
 
 on:
   push:
@@ -33,7 +34,7 @@ jobs:
     env:
       DEVELOCITY_PUBLISH: "1"
     steps:
-      # TEMPLATE FORK: remove `path: example` once the plugin checkout steps below are deleted
+      # TEMPLATE FORK: remove `path: example` when the plugin checkout steps below are removed
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           path: example
@@ -44,8 +45,6 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "ref=${{ inputs.plugin-ref }}" >> "$GITHUB_OUTPUT"
-          elif [ "${{ github.head_ref || github.ref_name }}" = "the-phoenix-project" ]; then
-            echo "ref=the-phoenix-project" >> "$GITHUB_OUTPUT"
           else
             echo "ref=main" >> "$GITHUB_OUTPUT"
           fi
@@ -62,7 +61,7 @@ jobs:
           java-version: 21
           distribution: temurin
       - uses: gradle/actions/setup-gradle@50e97c2cd7a37755bbfafc9c5b7cafaece252f6e
-      # TEMPLATE FORK: remove `working-directory` once plugin checkout steps are deleted
+      # TEMPLATE FORK: remove `working-directory` when the plugin checkout steps above are removed
       - name: Build
         working-directory: example
         run: ./gradlew build --continue
