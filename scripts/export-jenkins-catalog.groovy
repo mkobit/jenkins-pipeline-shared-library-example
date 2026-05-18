@@ -23,25 +23,22 @@ final List<Plugin> plugins = Jenkins.get().pluginManager.plugins.stream()
             }
         }
         .filter { p -> p.groupId != 'unknown' }
-        .sorted(Comparator.comparing { p -> p.shortName })
+        .sorted(java.util.Comparator.comparing { p -> p.shortName })
         .collect(Collectors.toList())
 
-final int maxKeyLen = plugins.stream()
-        .mapToInt { p -> p.tomlKey.length() }
-        .max()
-        .orElse(0)
+final int maxKeyLen = plugins.stream().mapToInt { p -> p.tomlKey.length() }.max().orElse(0)
 
 final String versions = plugins.stream()
         .map { p -> "${p.tomlKey.padRight(maxKeyLen)} = \"${p.version}\"" }
-        .collect(Collectors.joining('\n', '[versions]\n', '\n'))
+        .collect(Collectors.joining('\n'))
 
 final String libraries = plugins.stream()
         .map { p -> "${p.tomlKey.padRight(maxKeyLen)} = { module = \"${p.groupId}:${p.shortName}\", version.ref = \"${p.tomlKey}\" }" }
-        .collect(Collectors.joining('\n', '\n[libraries]\n', '\n'))
+        .collect(Collectors.joining('\n'))
 
-final String bundles = plugins.stream()
+final String bundleEntries = plugins.stream()
         .map { p -> "    \"${p.tomlKey}\"" }
-        .collect(Collectors.joining(',\n', '\n[bundles]\nallPlugins = [\n', '\n]\n'))
+        .collect(Collectors.joining(',\n'))
 
 print """\
 # Generated from: ${Jenkins.get().rootUrl ?: 'unknown'}
@@ -71,4 +68,15 @@ print """\
 #     plugins(jenkinsPlugins.bundles.allPlugins)
 #   }
 # }
-$versions$libraries$bundles"""
+
+[versions]
+$versions
+
+[libraries]
+$libraries
+
+[bundles]
+allPlugins = [
+$bundleEntries
+]
+"""
