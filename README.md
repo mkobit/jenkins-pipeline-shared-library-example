@@ -4,40 +4,39 @@
 
 An example [Jenkins Pipeline Shared Library](https://jenkins.io/doc/book/pipeline/shared-libraries/) built with the [Shared Library Gradle plugin](https://github.com/mkobit/jenkins-pipeline-shared-libraries-gradle-plugin).
 
-The plugin works with any JVM test framework.
-This repo demonstrates four across three languages: JUnit 4 and JUnit Jupiter (Java), Spock 2.x (Groovy), and Kotest (Kotlin).
+Use your test framework of choice.
+The plugin wires any `JvmTestSuite` with Jenkins test harness via `sharedLibrary.withJenkins(suite)`.
+This repo shows four frameworks across Java, Groovy, and Kotlin.
 
 ## Project layout
 
-```
-src/                    Groovy shared library classes
-vars/                   pipeline step scripts
-resources/              files accessible via libraryResource()
-test/
-  unit/                 JenkinsPipelineUnit (fast, no Jenkins runtime)
-  integration/          built-in JenkinsRule suite (JUnit 4, Java)
-  integration-junit/    JUnit Jupiter suite (Java)
-  integration-spock/    Spock 2.x suite (Groovy)
-  integration-kotest/   Kotest suite (Kotlin)
-```
+| Path | Contents |
+|---|---|
+| `src/` | Groovy shared library classes |
+| `vars/` | Pipeline step scripts |
+| `resources/` | Files accessible via `libraryResource()` |
+| `test/unit/` | [JenkinsPipelineUnit](https://github.com/lesfurets/JenkinsPipelineUnit) — fast, no Jenkins runtime |
+| `test/integration/` | JUnit 4 via `JenkinsRule` (built-in suite) |
+| `test/integration-junit/` | JUnit Jupiter (Java) |
+| `test/integration-spock/` | Spock 2.x (Groovy) |
+| `test/integration-kotest/` | Kotest (Kotlin) |
 
 ## Running tests
 
-```shell
-./gradlew test                   # unit tests (fast)
-./gradlew integrationTest        # built-in JUnit 4 suite
-./gradlew integrationTestJunit   # JUnit Jupiter suite
-./gradlew integrationTestSpock   # Spock 2.x suite
-./gradlew integrationTestKotest  # Kotest suite
-./gradlew check                  # all suites
-```
+| Task | Runs |
+|---|---|
+| `./gradlew test` | Unit tests (fast) |
+| `./gradlew integrationTest` | Built-in JUnit 4 suite |
+| `./gradlew integrationTestJunit` | JUnit Jupiter |
+| `./gradlew integrationTestSpock` | Spock 2.x |
+| `./gradlew integrationTestKotest` | Kotest |
+| `./gradlew check` | All suites |
 
 ## Framework wrappers
 
-The Spock and Kotest suites include thin wrappers that handle `JenkinsSessionFixture` setup and teardown.
-Wire additional suites into Jenkins using `sharedLibrary.withJenkins(suite)` in `build.gradle.kts`.
+The Spock and Kotest suites ship thin wrappers around `JenkinsSessionFixture` that handle setup and teardown.
 
-**Spock** — implement `JenkinsSupport` and call `jenkins { }`:
+`JenkinsSupport` (Spock trait) — implement it and call `jenkins { }`:
 
 ```groovy
 class MySpec extends Specification implements JenkinsSupport {
@@ -51,7 +50,7 @@ class MySpec extends Specification implements JenkinsSupport {
 }
 ```
 
-**Kotest** — extend `JenkinsFunSpec` and call `jenkins { }`:
+`JenkinsFunSpec` (Kotest base class) — extend it and call `jenkins { }`:
 
 ```kotlin
 class MySpec : JenkinsFunSpec({
@@ -67,13 +66,8 @@ class MySpec : JenkinsFunSpec({
 
 ## Using this as a template
 
-1. Replace `src/com/mkobit/libraryexample/` with your package structure.
-2. Update `vars/` and `rootProject.name` in `settings.gradle.kts`.
+1. Replace `src/com/mkobit/libraryexample/` with your package structure and update `vars/`.
+2. Set `rootProject.name` in `settings.gradle.kts` to your Jenkins library name.
 3. Swap the Jenkins BOM version in `gradle/libs.versions.toml` for your target LTS line.
 4. Pin to a released plugin version on the [Gradle Plugin Portal](https://plugins.gradle.org/plugin/com.mkobit.jenkins.pipelines.shared-library).
-5. Remove the composite build hook in `settings.gradle.kts` (marked `// TEMPLATE FORK`).
-6. Drop `compatibility.yml` — it only applies when developing the plugin alongside the example.
-
-## Scripts
-
-`scripts/export-jenkins-catalog.groovy` runs in the Jenkins Script Console and exports installed plugins as a `jenkins.versions.toml` Gradle version catalog.
+5. Remove the `// TEMPLATE FORK` lines in `settings.gradle.kts` and drop `compatibility.yml`.
