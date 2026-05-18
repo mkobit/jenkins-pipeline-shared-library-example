@@ -33,15 +33,15 @@ final int maxKeyLen = plugins.stream()
 
 final String versions = plugins.stream()
         .map { p -> "${p.tomlKey.padRight(maxKeyLen)} = \"${p.version}\"" }
-        .collect(Collectors.joining('\n', '[versions]\n', '\n'))
+        .collect(Collectors.joining('\n', '[versions]\n', ''))
 
 final String libraries = plugins.stream()
         .map { p -> "${p.tomlKey.padRight(maxKeyLen)} = { module = \"${p.groupId}:${p.shortName}\", version.ref = \"${p.tomlKey}\" }" }
-        .collect(Collectors.joining('\n', '\n[libraries]\n', '\n'))
+        .collect(Collectors.joining('\n', '[libraries]\n', ''))
 
 final String allPlugins = plugins.stream()
         .map { p -> "    \"${p.tomlKey}\"" }
-        .collect(Collectors.joining(',\n', '\n[bundles]\nallPlugins = [\n', '\n]\n'))
+        .collect(Collectors.joining(',\n', '[bundles]\nallPlugins = [\n', '\n]'))
 
 print """\
 # Generated from: ${Jenkins.get().rootUrl ?: 'unknown'}
@@ -72,4 +72,9 @@ print """\
 #   }
 # }
 
-$versions$libraries$allPlugins"""
+$versions
+
+$libraries
+
+$allPlugins
+"""
