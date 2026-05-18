@@ -1,49 +1,40 @@
-= Jenkins Pipeline Shared Library example
-:uri-shared-library-plugin: https://github.com/mkobit/jenkins-pipeline-shared-libraries-gradle-plugin
-:uri-jenkins-shared-library-docs: https://jenkins.io/doc/book/pipeline/shared-libraries/
-:uri-build-badge: https://github.com/mkobit/jenkins-pipeline-shared-library-example/actions/workflows/build.yml/badge.svg?branch=main
-:uri-build-link: https://github.com/mkobit/jenkins-pipeline-shared-library-example/actions/workflows/build.yml
-:build-badge: image:{uri-build-badge}["Build", link="{uri-build-link}"]
+# Jenkins pipeline shared library example
 
-{build-badge}
+[![Build](https://github.com/mkobit/jenkins-pipeline-shared-library-example/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/mkobit/jenkins-pipeline-shared-library-example/actions/workflows/build.yml)
 
-An example link:{uri-jenkins-shared-library-docs}[Jenkins Pipeline Shared Library] built with the link:{uri-shared-library-plugin}[Shared Library Gradle plugin].
+An example [Jenkins Pipeline Shared Library](https://jenkins.io/doc/book/pipeline/shared-libraries/) built with the [Shared Library Gradle plugin](https://github.com/mkobit/jenkins-pipeline-shared-libraries-gradle-plugin).
 
 Use this as a reference for structuring a shared library project, writing tests in multiple JVM languages and frameworks, and wiring the plugin with a Jenkins BOM.
 
-== Project layout
+## Project layout
 
-* link:src/[`src/`] ← shared library classes
-* link:vars/[`vars/`] ← pipeline step scripts
-* link:resources/[`resources/`] ← library resource files
-* link:test/[`test/`] ← test suites using popular libraries:
-** link:test/unit/[`unit/`] ← link:https://github.com/lesfurets/JenkinsPipelineUnit[JenkinsPipelineUnit] (fast Groovy/Kotlin tests)
-** link:test/integration-junit/[`integration-junit/`] ← Java tests with JUnit Jupiter
-** link:test/integration-spock/[`integration-spock/`] ← Groovy tests with Spock 2.x
-** link:test/integration-kotest/[`integration-kotest/`] ← Kotlin tests with Kotest
-** link:test/smoke/[`smoke/`] ← Java smoke tests
+- [`src/`](src/) — shared library classes
+- [`vars/`](vars/) — pipeline step scripts
+- [`resources/`](resources/) — library resource files
+- [`test/`](test/) — test suites using popular libraries:
+  - [`unit/`](test/unit/) — [JenkinsPipelineUnit](https://github.com/lesfurets/JenkinsPipelineUnit) (fast Groovy/Kotlin tests)
+  - [`integration-junit/`](test/integration-junit/) — Java tests with JUnit Jupiter
+  - [`integration-spock/`](test/integration-spock/) — Groovy tests with Spock 2.x
+  - [`integration-kotest/`](test/integration-kotest/) — Kotlin tests with Kotest
 
-== Running tests
+## Running tests
 
-[source,shell]
-----
+```shell
 ./gradlew test                      # JPU unit tests only (fast)
 ./gradlew integrationTest           # built-in JenkinsRule suite
 ./gradlew integrationTestJunit      # JUnit Jupiter suite
 ./gradlew integrationTestSpock      # Spock 2.x suite
 ./gradlew integrationTestKotest     # Kotest suite
-./gradlew smokeTest                 # smoke test
 ./gradlew check                     # all suites (runs everything)
-----
+```
 
-== Test framework patterns
+## Test framework patterns
 
-=== Spock integration tests
+### Spock integration tests
 
-All Spock integration tests utilize the `JenkinsSupport` trait from `testsupport.spock`.
+All Spock integration tests implement the `JenkinsSupport` trait from `testsupport.spock`.
 
-[source,groovy]
-----
+```groovy
 import spock.lang.Specification
 import testsupport.spock.JenkinsSupport
 
@@ -56,14 +47,13 @@ class MySpec extends Specification implements JenkinsSupport {
         }
     }
 }
-----
+```
 
-=== Kotest base class (`JenkinsFunSpec`)
+### Kotest base class (`JenkinsFunSpec`)
 
-All Kotest integration tests extend `JenkinsFunSpec` from `testsupport.kotest`:
+All Kotest integration tests extend `JenkinsFunSpec` from `testsupport.kotest`.
 
-[source,kotlin]
-----
+```kotlin
 import testsupport.kotest.JenkinsFunSpec
 
 class MyKotestSpec : JenkinsFunSpec({
@@ -75,64 +65,62 @@ class MyKotestSpec : JenkinsFunSpec({
         }
     }
 })
-----
+```
 
-== Using this as a template
+## Using this as a template
 
 Fork this repository and follow these steps to adapt it to your own shared library.
 
-=== Step 1 — Adapt the library code
+### Step 1 — Adapt the library code
 
-. Replace `src/com/mkobit/libraryexample/` with your own package structure.
-. Update `vars/` with your pipeline step scripts.
-. Update `rootProject.name` in `settings.gradle.kts` — this becomes the default Jenkins library identifier when the library is loaded without an explicit name.
-. Swap the Jenkins BOM version in `gradle/libs.versions.toml` for your target LTS line.
-. Add extra Jenkins plugins via `jenkinsPlugin("group:artifact")` in `build.gradle.kts`.
+1. Replace `src/com/mkobit/libraryexample/` with your own package structure.
+2. Update `vars/` with your pipeline step scripts.
+3. Update `rootProject.name` in `settings.gradle.kts` — this becomes the default Jenkins library identifier when the library is loaded without an explicit name.
+4. Swap the Jenkins BOM version in `gradle/libs.versions.toml` for your target LTS line.
+5. Add extra Jenkins plugins via `jenkinsPlugin("group:artifact")` in `build.gradle.kts`.
 
-=== Step 2 — Pin to a released plugin version
+### Step 2 — Pin to a released plugin version
 
 The `shared-library` plugin version is declared under `[versions]` in `gradle/libs.versions.toml`.
-Once the release you need is available on the https://plugins.gradle.org/plugin/com.mkobit.jenkins.pipelines.shared-library[Gradle Plugin Portal], the `gradlePluginPortal()` repository in `settings.gradle.kts` resolves it automatically.
+Once the release you need is available on the [Gradle Plugin Portal](https://plugins.gradle.org/plugin/com.mkobit.jenkins.pipelines.shared-library), the `gradlePluginPortal()` repository in `settings.gradle.kts` resolves it automatically.
 
-=== Step 3 — Remove the composite build hook (optional)
+### Step 3 — Remove the composite build hook (optional)
 
 The `pluginManagement` block in `settings.gradle.kts` contains a conditional `includeBuild` that is only active during plugin source development.
 It activates only when the plugin source directory exists next to the example on disk, so leaving it in is harmless.
 To clean it up, remove the lines marked `// TEMPLATE FORK` and keep only:
 
-[source,kotlin]
-----
+```kotlin
 pluginManagement {
   repositories {
     gradlePluginPortal()
   }
 }
-----
+```
 
-=== Step 4 — Trim the CI workflows
+### Step 4 — Trim the CI workflows
 
 This repo ships two GitHub Actions workflows.
 Each file contains `# TEMPLATE FORK:` comments marking what to remove — run `grep -rn "TEMPLATE FORK" .` to find every marker at once.
 
-`build.yml`::
+**`build.yml`**
 Builds the library.
 Currently checks out the plugin source for a composite build (pre-release workaround).
 Once you pin to a published portal version, remove the "Resolve plugin ref" step, the plugin checkout step, and the `path: example` / `working-directory: example` arguments.
 The result is a standalone workflow that builds against the released plugin.
 
-`compatibility.yml`::
+**`compatibility.yml`**
 Tests against multiple Java versions and plugin source branches.
 This workflow only makes sense when developing the plugin itself alongside the example.
 Delete this file entirely once you are consuming a released plugin version.
 
-== Scripts
+## Scripts
 
 `scripts/export-jenkins-catalog.groovy` runs in the Jenkins Script Console and exports all installed plugins as a `jenkins.versions.toml` Gradle version catalog.
 Save the output to `gradle/jenkins.versions.toml` and wire it via `versionCatalogs { create("jenkinsPlugins") { ... } }` to reference plugins as typed accessors.
 
-[source,shell]
-----
+```shell
 # Run on a live Jenkins instance to generate the catalog:
 # Manage Jenkins → Script Console → paste and run scripts/export-jenkins-catalog.groovy
 # Then save the output as gradle/jenkins.versions.toml
-----
+```
