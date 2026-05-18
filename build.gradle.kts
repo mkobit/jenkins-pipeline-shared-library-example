@@ -106,11 +106,6 @@ val integrationTestSpock =
     dependencies {
       implementation(libs.spock.core)
     }
-    targets.all {
-      testTask.configure {
-        mustRunAfter(integrationTestJunit)
-      }
-    }
   }
 
 val integrationTestKotest =
@@ -129,7 +124,6 @@ val integrationTestKotest =
     }
     targets.all {
       testTask.configure {
-        mustRunAfter(integrationTestSpock)
         systemProperty("kotest.framework.parallelism", kotestParallelism)
       }
     }
