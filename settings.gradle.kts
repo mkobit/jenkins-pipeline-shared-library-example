@@ -27,6 +27,11 @@ dependencyResolutionManagement {
       url = uri("https://repo.jenkins-ci.org/public/")
     }
   }
+  versionCatalogs {
+    create("jenkinsPlugins") {
+      from(files("gradle/jenkins.versions.toml"))
+    }
+  }
 }
 
 rootProject.name = "jenkins-pipeline-shared-library-example"

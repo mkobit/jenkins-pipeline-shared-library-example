@@ -42,9 +42,7 @@ codenarc {
 
 sharedLibrary {
   plugins {
-    plugin("org.jenkins-ci.plugins.workflow:workflow-multibranch")
-    plugin("org.jenkinsci.plugins:pipeline-model-definition")
-    plugin("org.6wind.jenkins:lockable-resources")
+    plugins(jenkinsPlugins.bundles.allPlugins)
   }
 }
 
@@ -161,7 +159,7 @@ tasks {
 spotless {
   groovy {
     greclipse().configFile("config/greclipse.properties")
-    target("src/**/*.groovy", "vars/**/*.groovy", "test/**/*.groovy")
+    target("src/**/*.groovy", "vars/**/*.groovy", "test/**/*.groovy", "scripts/**/*.groovy")
   }
   java {
     googleJavaFormat()
