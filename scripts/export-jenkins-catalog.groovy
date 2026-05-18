@@ -4,7 +4,6 @@
  */
 import groovy.transform.Immutable
 import java.time.Instant
-import java.util.Comparator
 import java.util.stream.Collectors
 import jenkins.model.Jenkins
 
@@ -24,7 +23,7 @@ final List<Plugin> plugins = Jenkins.get().pluginManager.plugins.stream()
             }
         }
         .filter { p -> p.groupId != 'unknown' }
-        .sorted(Comparator.comparing { p -> p.shortName })
+        .sorted(java.util.Comparator.comparing { p -> p.shortName })
         .collect(Collectors.toList())
 
 final String versions = plugins.stream()
