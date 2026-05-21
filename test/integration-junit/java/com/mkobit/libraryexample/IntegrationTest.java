@@ -81,6 +81,18 @@ class IntegrationTest {
   }
 
   @Test
+  void baseAnnounceStepFromTransitivelyLoadedPeerLibraryWorks(JenkinsRule rule) throws Exception {
+    // Root declares only :config-lib. :config-lib in turn declares :base-lib as its own peer.
+    // The :base-lib source directory reaches Jenkins only through source-variant transitivity
+    // (sharedLibrarySourceElements extendsFrom sharedLibraryDependencies on the producer).
+    var job = rule.createProject(WorkflowJob.class, "junit-transitive-peer");
+    job.setDefinition(new CpsFlowDefinition("baseAnnounce('hello from root')", true));
+
+    WorkflowRun run = rule.buildAndAssertSuccess(job);
+    rule.assertLogContains("[base-lib] hello from root", run);
+  }
+
+  @Test
   void siteConfigClassFromPeerLibrarySrcAccessibleFromPipeline(JenkinsRule rule) throws Exception {
     var job = rule.createProject(WorkflowJob.class, "junit-peer-site-config");
     // sandbox=false: we are exercising peer-library class visibility from the pipeline, not the
