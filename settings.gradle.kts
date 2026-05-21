@@ -37,3 +37,7 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "jenkins-pipeline-shared-library-example"
+
+// :config-lib is a peer Jenkins shared library — root project consumes it via
+// `sharedLibrary(project(":config-lib"))` to demonstrate the multi-library workflow (#158).
+include("config-lib")

@@ -45,6 +45,11 @@ sharedLibrary {
     plugins(jenkinsPlugins.bundles.allPlugins)
     plugin("org.6wind.jenkins:lockable-resources:1305.v1a_3035fa_9065")
   }
+  dependencies {
+    // Peer JSL contributed by :config-lib — its classes are available on this project's
+    // compile/test classpaths, and Jenkins loads its source automatically during integrationTest.
+    sharedLibrary(project(":config-lib"))
+  }
 }
 
 tasks.named<CodeNarc>("codenarcScripts") {

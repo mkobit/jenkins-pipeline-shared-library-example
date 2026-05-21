@@ -71,6 +71,32 @@ class IntegrationTest {
   }
 
   @Test
+  void siteRegionStepFromPeerLibraryReturnsExpectedRegion(JenkinsRule rule) throws Exception {
+    var job = rule.createProject(WorkflowJob.class, "junit-peer-site-region");
+    job.setDefinition(
+        new CpsFlowDefinition("echo 'Region: ' + siteRegion('us-east')", true));
+
+    WorkflowRun run = rule.buildAndAssertSuccess(job);
+    rule.assertLogContains("Region: us-east-1", run);
+  }
+
+  @Test
+  void siteConfigClassFromPeerLibrarySrcAccessibleFromPipeline(JenkinsRule rule) throws Exception {
+    var job = rule.createProject(WorkflowJob.class, "junit-peer-site-config");
+    // sandbox=false: we are exercising peer-library class visibility from the pipeline, not the
+    // script-security whitelist. Static methods on user-defined library classes are not on the
+    // default sandbox whitelist and would otherwise be rejected before the call reaches the class.
+    job.setDefinition(
+        new CpsFlowDefinition(
+            "import com.mkobit.libraryexample.config.SiteConfig\n"
+                + "echo 'Region: ' + SiteConfig.region('eu-west')",
+            false));
+
+    WorkflowRun run = rule.buildAndAssertSuccess(job);
+    rule.assertLogContains("Region: eu-west-1", run);
+  }
+
+  @Test
   void lockStepFromPluginRunsSuccessfully(JenkinsRule rule) throws Exception {
     var job = rule.createProject(WorkflowJob.class, "junit-lock-step");
     job.setDefinition(
