@@ -14,10 +14,6 @@ on:
       - 'LICENSE.txt'
       - '.gitignore'
   workflow_dispatch:
-    inputs:
-      plugin-ref:
-        description: "Plugin branch/tag for composite build job (default: main)"
-        default: main
 
 permissions: {}
 
@@ -42,30 +38,4 @@ jobs:
           distribution: temurin
       - uses: gradle/actions/setup-gradle@50e97c2cd7a37755bbfafc9c5b7cafaece252f6e
       - name: Build
-        run: ./gradlew build --continue
-
-  build-composite:
-    name: Build (composite — plugin ${{ inputs.plugin-ref || 'main' }})
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    permissions:
-      contents: read
-    env:
-      DEVELOCITY_PUBLISH: "1"
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
-        with:
-          path: example
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
-        with:
-          repository: mkobit/jenkins-pipeline-shared-libraries-gradle-plugin
-          ref: ${{ inputs.plugin-ref || 'main' }}
-          path: jenkins-pipeline-shared-libraries-gradle-plugin
-      - uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654
-        with:
-          java-version: 21
-          distribution: temurin
-      - uses: gradle/actions/setup-gradle@50e97c2cd7a37755bbfafc9c5b7cafaece252f6e
-      - name: Build
-        working-directory: example
         run: ./gradlew build --continue
