@@ -27,6 +27,10 @@ updates:
       spock:
         patterns:
           - "org.spockframework:*"
+      jetbrains:
+        patterns:
+          - "org.jetbrains:*"
+          - "org.jetbrains.*:*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
