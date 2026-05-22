@@ -2,7 +2,6 @@ package com.mkobit.libraryexample.config
 
 import com.cloudbees.groovy.cps.NonCPS
 
-/** Site-to-region mapping shared across multiple Jenkins shared libraries. */
 class SiteConfig implements Serializable {
 
     @NonCPS

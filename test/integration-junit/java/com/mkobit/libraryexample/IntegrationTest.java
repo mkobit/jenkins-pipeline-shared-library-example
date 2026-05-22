@@ -73,8 +73,7 @@ class IntegrationTest {
   @Test
   void siteRegionStepFromPeerLibraryReturnsExpectedRegion(JenkinsRule rule) throws Exception {
     var job = rule.createProject(WorkflowJob.class, "junit-peer-site-region");
-    job.setDefinition(
-        new CpsFlowDefinition("echo 'Region: ' + siteRegion('us-east')", true));
+    job.setDefinition(new CpsFlowDefinition("echo 'Region: ' + siteRegion('us-east')", true));
 
     WorkflowRun run = rule.buildAndAssertSuccess(job);
     rule.assertLogContains("Region: us-east-1", run);
@@ -82,9 +81,6 @@ class IntegrationTest {
 
   @Test
   void baseAnnounceStepFromTransitivelyLoadedPeerLibraryWorks(JenkinsRule rule) throws Exception {
-    // Root declares only :config-lib. :config-lib in turn declares :base-lib as its own peer.
-    // The :base-lib source directory reaches Jenkins only through source-variant transitivity
-    // (sharedLibrarySourceElements extendsFrom sharedLibraryDependencies on the producer).
     var job = rule.createProject(WorkflowJob.class, "junit-transitive-peer");
     job.setDefinition(new CpsFlowDefinition("baseAnnounce('hello from root')", true));
 
@@ -95,9 +91,8 @@ class IntegrationTest {
   @Test
   void siteConfigClassFromPeerLibrarySrcAccessibleFromPipeline(JenkinsRule rule) throws Exception {
     var job = rule.createProject(WorkflowJob.class, "junit-peer-site-config");
-    // sandbox=false: we are exercising peer-library class visibility from the pipeline, not the
-    // script-security whitelist. Static methods on user-defined library classes are not on the
-    // default sandbox whitelist and would otherwise be rejected before the call reaches the class.
+    // sandbox=false: static methods on user-defined library classes are not on the default
+    // whitelist.
     job.setDefinition(
         new CpsFlowDefinition(
             "import com.mkobit.libraryexample.config.SiteConfig\n"
