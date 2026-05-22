@@ -1,3 +1,5 @@
+import com.mkobit.libraryexample.config.SiteConfig
+
 def call(String site) {
-    com.mkobit.libraryexample.config.SiteConfig.region(site)
+    SiteConfig.region(site)
 }
