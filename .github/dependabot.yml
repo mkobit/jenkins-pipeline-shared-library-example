@@ -4,6 +4,8 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    labels:
+      - "enhancement"
     cooldown:
       # Gradle wrapper and test-framework bumps can land quickly; Jenkins plugin
       # dependencies managed by the BOM are in the ignore list below.
@@ -30,6 +32,8 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    labels:
+      - "infra"
     cooldown:
       default-days: 30
     groups:
