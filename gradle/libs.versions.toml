@@ -7,7 +7,7 @@ jenkins-pipeline-unit = "1.30"
 junit-jupiter = "6.0.3"
 kotest = "6.1.11"
 kotlin = "2.3.21"
-openrewrite = "6.26.0"
+openrewrite = "7.32.2"
 spock = "2.4-groovy-2.5"
 spotless = "8.5.1"
 
