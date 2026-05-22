@@ -5,7 +5,7 @@ updates:
     schedule:
       interval: "weekly"
     labels:
-      - "dependency-management"
+      - "infra"
     cooldown:
       # Gradle wrapper and test-framework bumps can land quickly; Jenkins plugin
       # dependencies managed by the BOM are in the ignore list below.
