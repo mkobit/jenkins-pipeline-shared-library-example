@@ -21,6 +21,7 @@ updates:
       kotest:
         patterns:
           - "io.kotest:*"
+          - "io.kotest.*:*"
       junit:
         patterns:
           - "org.junit.*:*"
