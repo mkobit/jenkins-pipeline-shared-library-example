@@ -4,9 +4,6 @@ import groovy.transform.CompileDynamic
 import org.jvnet.hudson.test.JenkinsRule
 import org.jvnet.hudson.test.fixtures.JenkinsSessionFixture
 
-/**
- * Trait providing an embedded Jenkins environment for Spock specifications.
- */
 @CompileDynamic
 trait JenkinsSupport {
 

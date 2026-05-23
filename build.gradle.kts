@@ -1,7 +1,6 @@
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.jvm.JvmTestSuite
 import org.gradle.api.plugins.quality.CodeNarc
-import org.gradle.api.tasks.compile.GroovyCompile
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestStackTraceFilter
 
@@ -51,24 +50,14 @@ tasks.named<CodeNarc>("codenarcScripts") {
   config = resources.text.fromFile("config/codenarc/codenarc-scripts.xml")
 }
 
-val kotestParallelism =
-  providers
-    .gradleProperty("kotest.parallelism")
-    .map { it.toInt() }
-    .orElse(Runtime.getRuntime().availableProcessors())
-
 testing {
   suites {
     named<JvmTestSuite>("test") {
       useJUnitJupiter(libs.versions.junit.jupiter)
       sources {
-        java.srcDirs("test/unit/java")
-        groovy.srcDirs("test/unit/groovy")
         kotlin.srcDirs("test/unit/kotlin")
       }
       dependencies {
-        implementation(libs.spock.core)
-        implementation(libs.assertj)
         implementation(libs.kotest.engine)
         runtimeOnly(libs.kotest.runner)
         implementation(libs.kotest.assertions)
@@ -79,13 +68,15 @@ testing {
   }
 }
 
-val integrationTestJunit =
-  testing.suites.register<JvmTestSuite>("integrationTestJunit") {
+val integrationTest =
+  testing.suites.register<JvmTestSuite>("integrationTest") {
     sharedLibrary.withJenkins(this)
     sources {
-      java.setSrcDirs(listOf("test/integration-junit/java"))
+      java.setSrcDirs(listOf("test/integration/java"))
+      groovy.setSrcDirs(listOf("test/integration/groovy"))
     }
     dependencies {
+      implementation(libs.spock.core)
       implementation(libs.junit.jupiter.api)
       runtimeOnly(libs.junit.jupiter.engine)
       runtimeOnly(libs.junit.platform.launcher)
@@ -93,38 +84,6 @@ val integrationTestJunit =
     targets.all {
       testTask.configure {
         useJUnitPlatform()
-      }
-    }
-  }
-
-val integrationTestSpock =
-  testing.suites.register<JvmTestSuite>("integrationTestSpock") {
-    sharedLibrary.withJenkins(this)
-    sources {
-      groovy.setSrcDirs(listOf("test/integration-spock/groovy"))
-    }
-    dependencies {
-      implementation(libs.spock.core)
-    }
-  }
-
-val integrationTestKotest =
-  testing.suites.register<JvmTestSuite>("integrationTestKotest") {
-    sharedLibrary.withJenkins(this)
-    useJUnitJupiter(libs.versions.junit.jupiter)
-    sources {
-      kotlin.setSrcDirs(listOf("test/integration-kotest/kotlin"))
-    }
-    dependencies {
-      implementation(libs.kotest.engine)
-      runtimeOnly(libs.kotest.runner)
-      implementation(libs.kotest.assertions)
-      implementation(libs.kotest.decoroutinator)
-      implementation(libs.coroutines.core)
-    }
-    targets.all {
-      testTask.configure {
-        systemProperty("kotest.framework.parallelism", kotestParallelism)
       }
     }
   }
@@ -143,12 +102,8 @@ tasks {
     }
   }
 
-  named<GroovyCompile>("compileIntegrationTestSpockGroovy") {
-    groovyClasspath = configurations.getByName("integrationTestSpockCompileClasspath")
-  }
-
-  check {
-    dependsOn(integrationTestJunit, integrationTestSpock, integrationTestKotest)
+  compileIntegrationTestGroovy {
+    groovyClasspath = project.files(configurations.integrationTestCompileClasspath)
   }
 
   wrapper {
