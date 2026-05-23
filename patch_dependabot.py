@@ -1,6 +1,7 @@
-version: 2
-updates:
-  - package-ecosystem: "gradle"
+with open('.github/dependabot.yml', 'r') as f:
+    content = f.read()
+
+new_block = """  - package-ecosystem: "gradle"
     target-branch: "main"
     directory: "/"
     schedule:
@@ -38,17 +39,9 @@ updates:
           - "org.jenkins-ci.modules:*"
           - "org.jenkins-ci.modules.*:*"
 
-  - package-ecosystem: "gradle"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    labels:
-      - "infra"
-    cooldown:
-      # Gradle wrapper and test-framework bumps can land quickly; Jenkins plugin
-      # dependencies managed by the BOM are in the ignore list below.
-      default-days: 14
-    ignore:
+"""
+
+ignore_addition = """    ignore:
       - dependency-name: "io.jenkins:*"
       - dependency-name: "io.jenkins.*:*"
       - dependency-name: "com.jenkins:*"
@@ -61,43 +54,10 @@ updates:
       - dependency-name: "org.jenkinsci.plugins.*:*"
       - dependency-name: "org.jenkins-ci.modules:*"
       - dependency-name: "org.jenkins-ci.modules.*:*"
+"""
+if "jenkins-plugins" not in content:
+    content = content.replace("    ignore:", ignore_addition)
+    content = content.replace('updates:\n', 'updates:\n' + new_block)
 
-      # Jenkins BOM and pinned groovy-all are kept in sync with the Jenkins LTS
-      # line manually — Dependabot should not propose bumps for these.
-      - dependency-name: "io.jenkins.tools.bom:*"
-      - dependency-name: "org.codehaus.groovy:groovy"
-      # This project owns the shared-library plugin; pin updates manually.
-      - dependency-name: "com.mkobit.jenkins.pipelines.shared-library"
-    groups:
-      kotest:
-        patterns:
-          - "io.kotest:*"
-      junit:
-        patterns:
-          - "org.junit.*:*"
-      spock:
-        patterns:
-          - "org.spockframework:*"
-      jetbrains:
-        patterns:
-          - "org.jetbrains:*"
-          - "org.jetbrains.*:*"
-
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-    labels:
-      - "infra"
-    cooldown:
-      default-days: 30
-    groups:
-      github-actions-first-party:
-        patterns:
-          - "actions/*"
-      gradle-actions:
-        patterns:
-          - "gradle/*"
-      third-party-actions:
-        patterns:
-          - "*"
+    with open('.github/dependabot.yml', 'w') as f:
+        f.write(content)
