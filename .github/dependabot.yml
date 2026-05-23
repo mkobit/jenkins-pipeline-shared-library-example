@@ -1,4 +1,35 @@
 version: 2
+
+# Define reusable list of Jenkins plugin dependency names for allow/ignore
+x-jenkins-plugins: &jenkins-plugins
+  - dependency-name: "io.jenkins:*"
+  - dependency-name: "io.jenkins.*:*"
+  - dependency-name: "com.jenkins:*"
+  - dependency-name: "com.jenkins.*:*"
+  - dependency-name: "org.6wind.jenkins:*"
+  - dependency-name: "org.6wind.jenkins.*:*"
+  - dependency-name: "org.jenkins-ci.plugins:*"
+  - dependency-name: "org.jenkins-ci.plugins.*:*"
+  - dependency-name: "org.jenkinsci.plugins:*"
+  - dependency-name: "org.jenkinsci.plugins.*:*"
+  - dependency-name: "org.jenkins-ci.modules:*"
+  - dependency-name: "org.jenkins-ci.modules.*:*"
+
+# Define reusable list of Jenkins plugin patterns for groups
+x-jenkins-plugin-patterns: &jenkins-plugin-patterns
+  - "io.jenkins:*"
+  - "io.jenkins.*:*"
+  - "com.jenkins:*"
+  - "com.jenkins.*:*"
+  - "org.6wind.jenkins:*"
+  - "org.6wind.jenkins.*:*"
+  - "org.jenkins-ci.plugins:*"
+  - "org.jenkins-ci.plugins.*:*"
+  - "org.jenkinsci.plugins:*"
+  - "org.jenkinsci.plugins.*:*"
+  - "org.jenkins-ci.modules:*"
+  - "org.jenkins-ci.modules.*:*"
+
 updates:
   - package-ecosystem: "gradle"
     target-branch: "main"
@@ -9,34 +40,10 @@ updates:
       - "infra"
     cooldown:
       default-days: 60
-    allow:
-      - dependency-name: "io.jenkins:*"
-      - dependency-name: "io.jenkins.*:*"
-      - dependency-name: "com.jenkins:*"
-      - dependency-name: "com.jenkins.*:*"
-      - dependency-name: "org.6wind.jenkins:*"
-      - dependency-name: "org.6wind.jenkins.*:*"
-      - dependency-name: "org.jenkins-ci.plugins:*"
-      - dependency-name: "org.jenkins-ci.plugins.*:*"
-      - dependency-name: "org.jenkinsci.plugins:*"
-      - dependency-name: "org.jenkinsci.plugins.*:*"
-      - dependency-name: "org.jenkins-ci.modules:*"
-      - dependency-name: "org.jenkins-ci.modules.*:*"
+    allow: *jenkins-plugins
     groups:
       jenkins-plugins:
-        patterns:
-          - "io.jenkins:*"
-          - "io.jenkins.*:*"
-          - "com.jenkins:*"
-          - "com.jenkins.*:*"
-          - "org.6wind.jenkins:*"
-          - "org.6wind.jenkins.*:*"
-          - "org.jenkins-ci.plugins:*"
-          - "org.jenkins-ci.plugins.*:*"
-          - "org.jenkinsci.plugins:*"
-          - "org.jenkinsci.plugins.*:*"
-          - "org.jenkins-ci.modules:*"
-          - "org.jenkins-ci.modules.*:*"
+        patterns: *jenkins-plugin-patterns
 
   - package-ecosystem: "gradle"
     directory: "/"
