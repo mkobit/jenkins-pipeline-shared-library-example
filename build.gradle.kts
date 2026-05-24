@@ -59,7 +59,7 @@ testing {
       }
       dependencies {
         // TODO: https://github.com/mkobit/jenkins-pipeline-shared-libraries-gradle-plugin/issues/161
-        implementation(localGroovy())
+        implementation(libs.spock.core)
         implementation(libs.kotest.engine)
         runtimeOnly(libs.kotest.runner)
         implementation(libs.kotest.assertions)
@@ -74,10 +74,8 @@ val integrationTest =
   testing.suites.named<JvmTestSuite>("integrationTest") {
     sources {
       java.setSrcDirs(listOf("test/integration/java"))
-      groovy.setSrcDirs(listOf("test/integration/groovy"))
     }
     dependencies {
-      implementation(libs.spock.core)
       implementation(libs.junit.jupiter.api)
       runtimeOnly(libs.junit.jupiter.engine)
       runtimeOnly(libs.junit.platform.launcher)
@@ -101,10 +99,6 @@ tasks {
       exceptionFormat = TestExceptionFormat.FULL
       stackTraceFilters = setOf(TestStackTraceFilter.TRUNCATE)
     }
-  }
-
-  compileIntegrationTestGroovy {
-    groovyClasspath = project.files(configurations.integrationTestCompileClasspath)
   }
 
   wrapper {
