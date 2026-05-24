@@ -4,6 +4,7 @@ import hudson.model.BooleanParameterDefinition;
 import hudson.model.ChoiceParameterDefinition;
 import hudson.model.ParametersAction;
 import hudson.model.ParametersDefinitionProperty;
+import hudson.model.Result;
 import hudson.model.StringParameterDefinition;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
@@ -108,5 +109,54 @@ class IntegrationTest {
     rule.assertLogContains("String param: mySpecified", withParams);
     rule.assertLogContains("Boolean param: true", withParams);
     rule.assertLogContains("Choice param: choice2", withParams);
+  }
+
+  @Test
+  void captureBuildInfoLogsBuildContext(JenkinsRule rule) throws Exception {
+    var job = rule.createProject(WorkflowJob.class, "captureBuildInfo");
+    job.setDefinition(new CpsFlowDefinition("captureBuildInfo()", true));
+    WorkflowRun run = rule.buildAndAssertSuccess(job);
+    rule.assertLogContains("BuildContext(", run);
+    rule.assertLogContains("captureBuildInfo", run);
+  }
+
+  @Test
+  void withRetrySucceedsOnFirstAttempt(JenkinsRule rule) throws Exception {
+    var job = rule.createProject(WorkflowJob.class, "withRetrySuccess");
+    job.setDefinition(new CpsFlowDefinition("withRetry(3) { echo 'ok' }", true));
+    WorkflowRun run = rule.buildAndAssertSuccess(job);
+    rule.assertLogContains("Attempt 1 of 3", run);
+    rule.assertLogContains("ok", run);
+  }
+
+  @Test
+  void withRetryFailsAfterExhausting(JenkinsRule rule) throws Exception {
+    var job = rule.createProject(WorkflowJob.class, "withRetryExhausted");
+    job.setDefinition(new CpsFlowDefinition("withRetry(2) { error 'always fails' }", true));
+    WorkflowRun run = job.scheduleBuild2(0).get();
+    rule.assertBuildStatus(Result.FAILURE, run);
+    rule.assertLogContains("All attempts exhausted", run);
+  }
+
+  @Test
+  void deployToLogsEnvironmentAndCompletion(JenkinsRule rule) throws Exception {
+    var job = rule.createProject(WorkflowJob.class, "deployTo");
+    job.setDefinition(
+        new CpsFlowDefinition(
+            "env.DEPLOY_ENV = 'production'\n" + "deployTo('production', 1) { echo 'deploying' }",
+            true));
+    WorkflowRun run = rule.buildAndAssertSuccess(job);
+    rule.assertLogContains("Deploying", run);
+    rule.assertLogContains("production", run);
+    rule.assertLogContains("complete", run);
+  }
+
+  @Test
+  void notifyBuildEchosRenderedPayloadWithStatus(JenkinsRule rule) throws Exception {
+    var job = rule.createProject(WorkflowJob.class, "my-service");
+    job.setDefinition(new CpsFlowDefinition("notifyBuild('FAILURE')", true));
+    WorkflowRun run = rule.buildAndAssertSuccess(job);
+    rule.assertLogContains("Build FAILURE", run);
+    rule.assertLogContains("my-service", run);
   }
 }
