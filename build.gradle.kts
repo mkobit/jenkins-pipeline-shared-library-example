@@ -69,7 +69,7 @@ testing {
 }
 
 val integrationTest =
-  testing.suites.register<JvmTestSuite>("integrationTest") {
+  testing.suites.named<JvmTestSuite>("integrationTest") {
     sharedLibrary.withJenkins(this)
     sources {
       java.setSrcDirs(listOf("test/integration/java"))
