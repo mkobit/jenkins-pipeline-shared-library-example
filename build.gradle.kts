@@ -58,6 +58,8 @@ testing {
         kotlin.srcDirs("test/unit/kotlin")
       }
       dependencies {
+        // TODO: https://github.com/mkobit/jenkins-pipeline-shared-libraries-gradle-plugin/issues/161
+        implementation(localGroovy())
         implementation(libs.kotest.engine)
         runtimeOnly(libs.kotest.runner)
         implementation(libs.kotest.assertions)
@@ -70,7 +72,6 @@ testing {
 
 val integrationTest =
   testing.suites.named<JvmTestSuite>("integrationTest") {
-    sharedLibrary.withJenkins(this)
     sources {
       java.setSrcDirs(listOf("test/integration/java"))
       groovy.setSrcDirs(listOf("test/integration/groovy"))
