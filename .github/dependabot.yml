@@ -1,6 +1,33 @@
 version: 2
 updates:
   - package-ecosystem: "gradle"
+    target-branch: "main"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "infra"
+    cooldown:
+      default-days: 60
+    allow:
+      - dependency-name: "io.jenkins:*"
+      - dependency-name: "io.jenkins.*:*"
+      - dependency-name: "com.jenkins:*"
+      - dependency-name: "com.jenkins.*:*"
+      - dependency-name: "org.6wind.jenkins:*"
+      - dependency-name: "org.6wind.jenkins.*:*"
+      - dependency-name: "org.jenkins-ci.plugins:*"
+      - dependency-name: "org.jenkins-ci.plugins.*:*"
+      - dependency-name: "org.jenkinsci.plugins:*"
+      - dependency-name: "org.jenkinsci.plugins.*:*"
+      - dependency-name: "org.jenkins-ci.modules:*"
+      - dependency-name: "org.jenkins-ci.modules.*:*"
+    groups:
+      jenkins-plugins:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "gradle"
     directory: "/"
     schedule:
       interval: "weekly"
@@ -11,6 +38,19 @@ updates:
       # dependencies managed by the BOM are in the ignore list below.
       default-days: 14
     ignore:
+      - dependency-name: "io.jenkins:*"
+      - dependency-name: "io.jenkins.*:*"
+      - dependency-name: "com.jenkins:*"
+      - dependency-name: "com.jenkins.*:*"
+      - dependency-name: "org.6wind.jenkins:*"
+      - dependency-name: "org.6wind.jenkins.*:*"
+      - dependency-name: "org.jenkins-ci.plugins:*"
+      - dependency-name: "org.jenkins-ci.plugins.*:*"
+      - dependency-name: "org.jenkinsci.plugins:*"
+      - dependency-name: "org.jenkinsci.plugins.*:*"
+      - dependency-name: "org.jenkins-ci.modules:*"
+      - dependency-name: "org.jenkins-ci.modules.*:*"
+
       # Jenkins BOM and pinned groovy-all are kept in sync with the Jenkins LTS
       # line manually — Dependabot should not propose bumps for these.
       - dependency-name: "io.jenkins.tools.bom:*"
