@@ -13,10 +13,10 @@ class PipelineLogger implements Serializable {
     }
 
     void info(String message)  {
-        script.echo(format('INFO ', message))
+        script.echo(format('INFO', message))
     }
     void warn(String message)  {
-        script.echo(format('WARN ', message))
+        script.echo(format('WARN', message))
     }
     void error(String message) {
         script.echo(format('ERROR', message))

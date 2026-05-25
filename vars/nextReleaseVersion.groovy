@@ -9,11 +9,16 @@ def call(String fallback = 'v0.0.0') {
     if (!subjects) {
         return base.toString()
     }
-    def bump = ConventionalCommit.highestBump(subjects.split('\n').toList())
+    def bump = ConventionalCommit.highestBump(splitLines(subjects))
     switch (bump) {
         case 'major': return base.bumpMajor().toString()
         case 'minor': return base.bumpMinor().toString()
         case 'patch': return base.bumpPatch().toString()
         default: return base.toString()
     }
+}
+
+@com.cloudbees.groovy.cps.NonCPS
+private List<String> splitLines(String text) {
+    text.split('\n').toList()
 }
