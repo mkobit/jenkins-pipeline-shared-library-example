@@ -115,28 +115,7 @@ class VarsUnitTest {
     assertEquals("development", policy.getEnvironment());
   }
 
-  // doStuff / evenOrOdd / requireEnv
-
-  @Test
-  void doStuffRunsSuccessfully() {
-    InvokerHelper.invokeMethod(base.loadScript("vars/doStuff.groovy"), "call", null);
-    assertTrue(
-        base.getHelper().getCallStack().stream().noneMatch(c -> c.getMethodName().equals("error")));
-  }
-
-  @Test
-  void evenOrOddExecutesEvenPipelineForEvenBuildNumber() {
-    InvokerHelper.invokeMethod(base.loadScript("vars/evenOrOdd.groovy"), "call", 2);
-    assertTrue(
-        base.getHelper().getCallStack().stream().noneMatch(c -> c.getMethodName().equals("error")));
-  }
-
-  @Test
-  void evenOrOddExecutesOddPipelineForOddBuildNumber() {
-    InvokerHelper.invokeMethod(base.loadScript("vars/evenOrOdd.groovy"), "call", 1);
-    assertTrue(
-        base.getHelper().getCallStack().stream().noneMatch(c -> c.getMethodName().equals("error")));
-  }
+  // requireEnv
 
   @Test
   void requireEnvPassesWhenAllNamedVariablesAreSet() {

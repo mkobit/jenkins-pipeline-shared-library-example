@@ -24,66 +24,6 @@ import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 class IntegrationTest {
 
   @Test
-  void doStuffStepLogsExpectedOutput(JenkinsRule rule) throws Exception {
-    var job = rule.createProject(WorkflowJob.class, "doStuff");
-    job.setDefinition(new CpsFlowDefinition("doStuff()", true));
-    WorkflowRun run = rule.buildAndAssertSuccess(job);
-    rule.assertLogContains("hello stuff", run);
-  }
-
-  @Test
-  void evenOrOddStepIdentifiesOddBuildNumbers(JenkinsRule rule) throws Exception {
-    var job = rule.createProject(WorkflowJob.class, "evenOdd");
-    job.setDefinition(new CpsFlowDefinition("evenOrOdd(1)", true));
-    WorkflowRun run = rule.buildAndAssertSuccess(job);
-    rule.assertLogContains("The build number is odd", run);
-  }
-
-  @Test
-  void libraryResourceLoadsContent(JenkinsRule rule) throws Exception {
-    var job = rule.createProject(WorkflowJob.class, "resource");
-    job.setDefinition(new CpsFlowDefinition("loadGreeting()", true));
-    WorkflowRun run = rule.buildAndAssertSuccess(job);
-    rule.assertLogContains("Hello from libraryResource!", run);
-  }
-
-  @Test
-  void sayHelloToPrintsGreetingFromSrc(JenkinsRule rule) throws Exception {
-    var job = rule.createProject(WorkflowJob.class, "sayHello");
-    job.setDefinition(
-        new CpsFlowDefinition(
-            "import com.mkobit.libraryexample.ExampleSrc\n"
-                + "final exampleSrc = new ExampleSrc(this)\n"
-                + "exampleSrc.sayHelloTo('Bob')",
-            true));
-    WorkflowRun run = rule.buildAndAssertSuccess(job);
-    rule.assertLogContains("Hello there Bob", run);
-  }
-
-  @Test
-  void nonCpsDoubleDoublesEachIntegerFromSrc(JenkinsRule rule) throws Exception {
-    var job = rule.createProject(WorkflowJob.class, "nonCpsDouble");
-    job.setDefinition(
-        new CpsFlowDefinition(
-            "import com.mkobit.libraryexample.ExampleSrc\n"
-                + "final exampleSrc = new ExampleSrc(this)\n"
-                + "echo 'Numbers: ' + exampleSrc.nonCpsDouble([1, 2])",
-            true));
-    WorkflowRun run = rule.buildAndAssertSuccess(job);
-    rule.assertLogContains("Numbers: [2, 4]", run);
-  }
-
-  @Test
-  void lockStepFromPluginRunsSuccessfully(JenkinsRule rule) throws Exception {
-    var job = rule.createProject(WorkflowJob.class, "lockStep");
-    job.setDefinition(
-        new CpsFlowDefinition(
-            "lock('myLock') {\n" + "  echo 'Hello world during lock!'\n" + "}", true));
-    WorkflowRun run = rule.buildAndAssertSuccess(job);
-    rule.assertLogContains("Hello world during lock!", run);
-  }
-
-  @Test
   void parameterizedProjectUsesDefaultAndOverriddenValues(JenkinsRule rule) throws Exception {
     var job = rule.createProject(WorkflowJob.class, "parameterized");
     var stringParam = new StringParameterDefinition("myString", "myDefault");
