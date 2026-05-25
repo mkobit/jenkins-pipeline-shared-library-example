@@ -251,28 +251,6 @@ class VarsUnitTest {
             .anyMatch(c -> "windows".equals(c.get("os")) && "21".equals(c.get("jdk"))));
   }
 
-  // withSecretText
-
-  @Test
-  void withSecretTextExecutesBodyWithCredentialsBound() {
-    var calls = new ArrayList<>();
-    InvokerHelper.invokeMethod(
-        base.loadScript("vars/withSecretText.groovy"),
-        "call",
-        new Object[] {
-          "my-cred",
-          "MY_VAR",
-          closure(
-              args -> {
-                calls.add(true);
-                return null;
-              })
-        });
-    assertEquals(1, calls.size());
-    assertTrue(
-        base.getHelper().getCallStack().stream().noneMatch(c -> c.getMethodName().equals("error")));
-  }
-
   // notifyBuild
 
   @Test

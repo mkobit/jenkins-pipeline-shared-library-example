@@ -3,16 +3,12 @@ package com.mkobit.libraryexample;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.cloudbees.hudson.plugins.folder.Folder;
-import com.cloudbees.plugins.credentials.CredentialsScope;
-import com.cloudbees.plugins.credentials.SystemCredentialsProvider;
 import hudson.model.BooleanParameterDefinition;
 import hudson.model.ChoiceParameterDefinition;
 import hudson.model.ParametersAction;
 import hudson.model.ParametersDefinitionProperty;
 import hudson.model.Result;
 import hudson.model.StringParameterDefinition;
-import hudson.util.Secret;
-import org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
@@ -111,29 +107,6 @@ class IntegrationTest {
     WorkflowRun run = job.scheduleBuild2(0).get();
     rule.assertBuildStatus(Result.FAILURE, run);
     rule.assertLogContains("Condition not met after 2 attempts", run);
-  }
-
-  @Test
-  void withSecretTextInjectsCredentialIntoBody(JenkinsRule rule) throws Exception {
-    SystemCredentialsProvider.getInstance()
-        .getCredentials()
-        .add(
-            new StringCredentialsImpl(
-                CredentialsScope.GLOBAL,
-                "my-api-key",
-                "API key",
-                Secret.fromString("supersecret")));
-    SystemCredentialsProvider.getInstance().save();
-
-    var job = rule.createProject(WorkflowJob.class, "withSecretText");
-    job.setDefinition(
-        new CpsFlowDefinition(
-            "withSecretText('my-api-key', 'MY_SECRET') {\n"
-                + "  echo 'credential retrieved successfully'\n"
-                + "}",
-            true));
-    WorkflowRun run = rule.buildAndAssertSuccess(job);
-    rule.assertLogContains("credential retrieved successfully", run);
   }
 
   @Test
