@@ -9,7 +9,6 @@ plugins {
   alias(libs.plugins.openrewrite)
   alias(libs.plugins.spotless)
   codenarc
-  alias(libs.plugins.kotlin.jvm)
 }
 
 java {
@@ -55,15 +54,11 @@ testing {
     named<JvmTestSuite>("test") {
       useJUnitJupiter(libs.versions.junit.jupiter)
       sources {
-        kotlin.srcDirs("test/unit/kotlin")
+        java.setSrcDirs(listOf("test/unit/java"))
       }
       dependencies {
         // TODO: https://github.com/mkobit/jenkins-pipeline-shared-libraries-gradle-plugin/issues/161
         implementation(libs.spock.core)
-        implementation(libs.kotest.engine)
-        runtimeOnly(libs.kotest.runner)
-        implementation(libs.kotest.assertions)
-        implementation(libs.kotest.decoroutinator)
         implementation(libs.jenkins.pipeline.unit)
       }
     }
@@ -89,7 +84,6 @@ val integrationTest =
 
 tasks {
   withType<Test>().configureEach {
-    systemProperty("kotest.framework.config.fqn", "testsupport.kotest.ProjectConfig")
     maxParallelForks = 1
     testLogging {
       events("failed", "skipped")
@@ -115,10 +109,6 @@ spotless {
   java {
     googleJavaFormat()
     target("test/**/*.java")
-  }
-  kotlin {
-    ktlint()
-    target("test/**/*.kt")
   }
   kotlinGradle {
     ktlint()
