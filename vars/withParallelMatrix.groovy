@@ -1,0 +1,39 @@
+import com.cloudbees.groovy.cps.NonCPS
+import com.mkobit.libraryexample.PipelineLogger
+
+// Generates a cartesian product of the provided axes and runs each combination as a parallel stage.
+// Usage: withParallelMatrix([os: ['linux', 'windows'], jdk: ['11', '21']]) { axes -> ... }
+def call(Map axes, Closure body) {
+    def log = new PipelineLogger(this, 'withParallelMatrix')
+    def combinations = cartesianProduct(axes)
+    def stages = [:]
+    for (combo in combinations) {
+        def captured = combo
+        stages[stageLabel(captured)] = { body(captured) }
+    }
+    log.info("Running ${stages.size()} parallel combinations")
+    parallel stages
+}
+
+@NonCPS
+private List<Map> cartesianProduct(Map axes) {
+    List<String> keys = new ArrayList<>(axes.keySet())
+    List<List> result = [[]]
+    keys.each { key ->
+        result = result.collectMany { existing ->
+            (axes[key] as List).collect { v ->
+                existing + [v]
+            }
+        }
+    }
+    result.collect { vals ->
+        Map m = [:]
+        keys.eachWithIndex { k, i -> m[k] = vals[i] }
+        m
+    }
+}
+
+@NonCPS
+private String stageLabel(Map combo) {
+    combo.collect { k, v -> "${k}=${v}" }.join(', ')
+}
