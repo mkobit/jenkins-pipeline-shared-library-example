@@ -245,4 +245,40 @@ class IntegrationTest {
     rule.assertLogContains("passed milestone 1", run);
     rule.assertLogContains("passed milestone 2", run);
   }
+
+  @Test
+  void requireConventionalPrTitleIsNoOpOnNonPrBuild(JenkinsRule rule) throws Exception {
+    var job = rule.createProject(WorkflowJob.class, "prTitleNonPr");
+    job.setDefinition(new CpsFlowDefinition("requireConventionalPrTitle()", true));
+    rule.buildAndAssertSuccess(job);
+  }
+
+  @Test
+  void requireConventionalPrTitlePassesForValidConventionalTitle(JenkinsRule rule)
+      throws Exception {
+    var job = rule.createProject(WorkflowJob.class, "prTitleValid");
+    job.setDefinition(
+        new CpsFlowDefinition(
+            "env.CHANGE_ID = '42'\n"
+                + "env.CHANGE_TITLE = 'feat(auth): add OAuth login'\n"
+                + "requireConventionalPrTitle()",
+            true));
+    rule.buildAndAssertSuccess(job);
+  }
+
+  @Test
+  void requireConventionalPrTitleFailsBuildForNonConventionalTitle(JenkinsRule rule)
+      throws Exception {
+    var job = rule.createProject(WorkflowJob.class, "prTitleInvalid");
+    job.setDefinition(
+        new CpsFlowDefinition(
+            "env.CHANGE_ID = '99'\n"
+                + "env.CHANGE_TITLE = 'fix some stuff'\n"
+                + "requireConventionalPrTitle()",
+            true));
+    WorkflowRun run = job.scheduleBuild2(0).get();
+    rule.assertBuildStatus(Result.FAILURE, run);
+    rule.assertLogContains("PR #99", run);
+    rule.assertLogContains("fix some stuff", run);
+  }
 }

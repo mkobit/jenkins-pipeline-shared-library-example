@@ -3,6 +3,7 @@ package com.mkobit.libraryexample;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.lesfurets.jenkins.unit.declarative.DeclarativePipelineTest;
@@ -309,5 +310,135 @@ class VarsUnitTest {
                         && c.toString().contains("SUCCESS")
                         && c.toString().contains("my-service")
                         && c.toString().contains("42")));
+  }
+
+  // SemVer — pure @NonCPS logic; instantiate directly, no JPU needed.
+
+  @Test
+  void semVerParsesVersionStringWithAndWithoutPrefix() {
+    assertEquals("v1.2.3", SemVer.parse("1.2.3").toString());
+    assertEquals("v1.2.3", SemVer.parse("v1.2.3").toString());
+  }
+
+  @Test
+  void semVerBumpsMajorResettingMinorAndPatch() {
+    assertEquals("v2.0.0", SemVer.parse("v1.2.3").bumpMajor().toString());
+  }
+
+  @Test
+  void semVerBumpsMinorResettingPatch() {
+    assertEquals("v1.3.0", SemVer.parse("v1.2.3").bumpMinor().toString());
+  }
+
+  @Test
+  void semVerBumpsPatch() {
+    assertEquals("v1.2.4", SemVer.parse("v1.2.3").bumpPatch().toString());
+  }
+
+  @Test
+  void semVerComparesVersionsCorrectly() {
+    assertTrue(SemVer.parse("v1.2.3").compareTo(SemVer.parse("v1.2.4")) < 0);
+    assertTrue(SemVer.parse("v2.0.0").compareTo(SemVer.parse("v1.9.9")) > 0);
+    assertEquals(0, SemVer.parse("v1.0.0").compareTo(SemVer.parse("v1.0.0")));
+  }
+
+  // ConventionalCommit — pure @NonCPS logic; instantiate directly, no JPU needed.
+
+  @Test
+  void conventionalCommitParsesFeatureWithScope() {
+    var c = ConventionalCommit.parse("feat(auth): add OAuth login");
+    assertNotNull(c);
+    assertEquals("feat", c.getType());
+    assertFalse(c.isBreaking());
+    assertEquals("minor", c.getBumpType());
+  }
+
+  @Test
+  void conventionalCommitDetectsBreakingChangeViaBang() {
+    var c = ConventionalCommit.parse("feat!: redesign public API");
+    assertNotNull(c);
+    assertTrue(c.isBreaking());
+    assertEquals("major", c.getBumpType());
+  }
+
+  @Test
+  void conventionalCommitFixAndPerfArePatchBumps() {
+    assertEquals("patch", ConventionalCommit.parse("fix: null check").getBumpType());
+    assertEquals("patch", ConventionalCommit.parse("perf: cache results").getBumpType());
+  }
+
+  @Test
+  void conventionalCommitChoreAndDocsHaveNoBump() {
+    assertNull(ConventionalCommit.parse("chore: update deps").getBumpType());
+    assertNull(ConventionalCommit.parse("docs: fix typo").getBumpType());
+  }
+
+  @Test
+  void conventionalCommitReturnsNullForNonConventionalMessage() {
+    assertNull(ConventionalCommit.parse("fix some stuff without a colon"));
+    assertNull(ConventionalCommit.parse("WIP"));
+  }
+
+  @Test
+  void conventionalCommitHighestBumpReturnsMajorWhenBreakingPresent() {
+    assertEquals(
+        "major",
+        ConventionalCommit.highestBump(
+            List.of("feat: new thing", "fix!: breaking fix", "chore: cleanup")));
+  }
+
+  @Test
+  void conventionalCommitHighestBumpReturnsMinorForFeatWithoutBreaking() {
+    assertEquals("minor", ConventionalCommit.highestBump(List.of("fix: a", "feat: b", "chore: c")));
+  }
+
+  @Test
+  void conventionalCommitHighestBumpReturnsPatchWhenOnlyFixes() {
+    assertEquals("patch", ConventionalCommit.highestBump(List.of("fix: a", "chore: b", "docs: c")));
+  }
+
+  @Test
+  void conventionalCommitHighestBumpReturnsNullForNoReleasableCommits() {
+    assertNull(ConventionalCommit.highestBump(List.of("chore: a", "docs: b")));
+  }
+
+  // requireConventionalPrTitle
+
+  @Test
+  void requireConventionalPrTitleIsNoOpWhenNotOnPr() {
+    base.getBinding().setProperty("env", Map.of());
+    InvokerHelper.invokeMethod(
+        base.loadScript("vars/requireConventionalPrTitle.groovy"), "call", null);
+    assertTrue(
+        base.getHelper().getCallStack().stream().noneMatch(c -> c.getMethodName().equals("error")));
+  }
+
+  @Test
+  void requireConventionalPrTitlePassesForValidTitle() {
+    base.getBinding()
+        .setProperty("env", Map.of("CHANGE_ID", "42", "CHANGE_TITLE", "feat(auth): add login"));
+    InvokerHelper.invokeMethod(
+        base.loadScript("vars/requireConventionalPrTitle.groovy"), "call", null);
+    assertTrue(
+        base.getHelper().getCallStack().stream().noneMatch(c -> c.getMethodName().equals("error")));
+  }
+
+  @Test
+  void requireConventionalPrTitleFailsForNonConventionalTitle() {
+    base.getBinding()
+        .setProperty("env", Map.of("CHANGE_ID", "42", "CHANGE_TITLE", "fix some stuff"));
+    Exception thrown = null;
+    try {
+      InvokerHelper.invokeMethod(
+          base.loadScript("vars/requireConventionalPrTitle.groovy"), "call", null);
+    } catch (Exception e) {
+      thrown = e;
+    }
+    assertNotNull(thrown);
+    assertEquals(
+        1,
+        base.getHelper().getCallStack().stream()
+            .filter(c -> c.getMethodName().equals("error"))
+            .count());
   }
 }
