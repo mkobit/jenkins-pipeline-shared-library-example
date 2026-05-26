@@ -1,38 +1,18 @@
 package com.mkobit.libraryexample
 
-import com.cloudbees.groovy.cps.NonCPS
+// Numeric log levels for PIPELINE_LOG_LEVEL env var: 1=DEBUG, 2=INFO (default), 3=WARN, 4=ERROR.
+interface PipelineLogger extends Serializable {
 
-class PipelineLogger implements Serializable {
+    int DEBUG = 1
+    int INFO  = 2
+    int WARN  = 3
+    int ERROR = 4
 
-    private final String tag
-    private transient Object script
+    void debug(String message)
 
-    PipelineLogger(final Object script, final String tag) {
-        this.script = Objects.requireNonNull(script)
-        this.tag = Objects.requireNonNull(tag)
-    }
+    void info(String message)
 
-    void info(String message) {
-        script.echo(format('INFO', message))
-    }
+    void warn(String message)
 
-    void warn(String message) {
-        script.echo(format('WARN', message))
-    }
-
-    void error(String message) {
-        script.echo(format('ERROR', message))
-    }
-
-    void debug(String message) {
-        if (script.env?.PIPELINE_DEBUG == 'true') {
-            script.echo(format('DEBUG', message))
-        }
-    }
-
-    // padRight is CPS-unsafe (GDK collection method).
-    @NonCPS
-    private String format(String level, String message) {
-        "[${level.padRight(5)} ${tag}] ${message}"
-    }
+    void error(String message)
 }

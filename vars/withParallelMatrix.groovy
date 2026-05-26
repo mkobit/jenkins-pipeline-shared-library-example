@@ -1,8 +1,8 @@
 import com.cloudbees.groovy.cps.NonCPS
-import com.mkobit.libraryexample.PipelineLogger
+import com.mkobit.libraryexample.BasicScriptStepsLogger
 
 def call(Map axes, Closure body) {
-    def log = new PipelineLogger(this, 'withParallelMatrix')
+    def log = new BasicScriptStepsLogger(this, 'withParallelMatrix')
     def combinations = cartesianProduct(axes)
     def stages = [:]
     for (combo in combinations) {
@@ -17,7 +17,7 @@ def call(Map axes, Closure body) {
 private List<Map> cartesianProduct(Map axes) {
     List<String> keys = new ArrayList<>(axes.keySet())
     List<List> result = [[]]
-    keys.each { key ->
+    for (def key in keys) {
         result = result.collectMany { existing ->
             (axes[key] as List).collect { v ->
                 existing + [v]

@@ -1,9 +1,9 @@
-import com.mkobit.libraryexample.PipelineLogger
+import com.mkobit.libraryexample.BasicScriptStepsLogger
 
 // Polls a boolean condition with exponential backoff; unlike retry, this does not require exceptions.
 // Accepts: maxAttempts (int), initialWaitSeconds (int), backoffMultiplier (int).
 def call(Map opts = [:], Closure condition) {
-    def log = new PipelineLogger(this, 'eventually')
+    def log = new BasicScriptStepsLogger(this, 'eventually')
     def maxAttempts = opts.maxAttempts != null ? opts.maxAttempts : 5
     def waitSeconds = opts.initialWaitSeconds != null ? opts.initialWaitSeconds : 2
     def multiplier = opts.backoffMultiplier != null ? opts.backoffMultiplier : 2

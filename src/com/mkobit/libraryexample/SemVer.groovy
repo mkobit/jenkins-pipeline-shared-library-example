@@ -9,6 +9,9 @@ class SemVer implements Serializable, Comparable<SemVer> {
     final int patch
 
     SemVer(int major, int minor, int patch) {
+        if (major < 0 || minor < 0 || patch < 0) {
+            throw new IllegalArgumentException("SemVer components must be non-negative: ${major}.${minor}.${patch}")
+        }
         this.major = major
         this.minor = minor
         this.patch = patch
