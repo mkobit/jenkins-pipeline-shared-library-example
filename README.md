@@ -4,9 +4,6 @@
 
 An example [Jenkins Pipeline Shared Library](https://jenkins.io/doc/book/pipeline/shared-libraries/) built with the [Shared Library Gradle plugin](https://github.com/mkobit/jenkins-pipeline-shared-libraries-gradle-plugin).
 
-The plugin creates an `integrationTest` suite automatically.
-`test/integration-junit/`, `test/integration-spock/`, and `test/integration-kotest/` each show how to register an additional suite for a different test framework using `sharedLibrary.withJenkins(suite)`.
-
 ## Project layout
 
 | Path | Contents |
@@ -16,52 +13,68 @@ The plugin creates an `integrationTest` suite automatically.
 | `resources/` | Files accessible via `libraryResource()` |
 | `test/unit/` | [JenkinsPipelineUnit](https://github.com/lesfurets/JenkinsPipelineUnit) — fast, no Jenkins runtime |
 | `test/integration/` | Plugin-provided integration suite — [JUnit Jupiter](https://junit.org/junit5/) via `@WithJenkins` |
-| `test/integration-junit/` | Additional suite — [JUnit Jupiter](https://junit.org/junit5/) registered with `withJenkins()` |
-| `test/integration-spock/` | Additional suite — [Spock 2.x](https://spockframework.org/) registered with `withJenkins()` |
-| `test/integration-kotest/` | Additional suite — [Kotest](https://kotest.io/) registered with `withJenkins()` |
+
+## Library contents
+
+### `src/` — shared classes
+
+| Class | Purpose |
+|---|---|
+| `PipelineLogger` | Interface with numeric log levels (1=DEBUG, 2=INFO, 3=WARN, 4=ERROR) read from `PIPELINE_LOG_LEVEL` env var |
+| `BasicScriptStepsLogger` | `PipelineLogger` implementation — plain `echo` output |
+| `AnsiColorScriptStepsLogger` | `PipelineLogger` implementation — ANSI-colored output (requires [AnsiColor plugin](https://plugins.jenkins.io/ansicolor/)) |
+| `BuildContext` | Reads job metadata from `env` eagerly; holds no `script` reference after construction |
+| `BranchPolicy` | Classifies a branch name into environment (`production`, `staging`, `development`); `@CompileStatic` |
+| `ConventionalCommit` | Parses and classifies a [Conventional Commit](https://www.conventionalcommits.org/) message |
+| `SemVer` | Parses, compares, and bumps semantic version strings |
+
+### `vars/` — pipeline steps
+
+| Step | Signature | Purpose |
+|---|---|---|
+| `captureBuildInfo` | `call(PipelineLogger log = null)` | Logs job metadata; demonstrates optional logger injection |
+| `eventually` | `call(Map opts = [:], Closure condition)` | Polls a boolean closure with exponential backoff |
+| `nextReleaseVersion` | `call(String fallback = 'v0.0.0')` | Computes next version from git tags and conventional commits |
+| `notifyBuild` | `call(String status)` | Emits a build notification message with job metadata |
+| `requireConventionalPrTitle` | `call()` | Fails the build if the PR title is not a conventional commit |
+| `requireEnv` | `call(String... names)` | Fails the build if any named env vars are absent |
+| `tagBuild` | `call(String label)` | Sets `currentBuild.displayName` and `description` |
+| `withParallelMatrix` | `call(Map axes, Closure body)` | Runs a closure for every combination of axis values in parallel |
+
+## Design patterns demonstrated
+
+**Dependency injection via optional parameter** — `captureBuildInfo` accepts a `PipelineLogger` defaulting to `null`, resolved with an Elvis operator:
+
+```groovy
+def call(PipelineLogger log = null) {
+    def effectiveLog = log ?: new BasicScriptStepsLogger(this, 'captureBuildInfo')
+    ...
+}
+```
+
+Callers can inject `AnsiColorScriptStepsLogger`, a test mock, or omit the argument entirely.
+
+**CPS safety** — Groovy GDK methods such as `padRight` and collection methods with closures are CPS-unsafe in Jenkins pipelines.
+Methods that use them are annotated `@NonCPS`.
+Plain `for` loops and `.collectMany`/`.collectEntries` without closures are CPS-safe.
+
+**Serialization pattern** — Three distinct patterns across the src classes:
+
+| Class | Holds `script` ref | `transient` | When serialized |
+|---|---|---|---|
+| `BasicScriptStepsLogger` | Yes | Yes (field not serialized) | Logger reconstructed on resume |
+| `BuildContext` | No | N/A | Fully safe; all primitives |
+| `BranchPolicy` | No | N/A | Fully safe; all primitives |
+
+**`@CompileStatic` on value classes** — `BranchPolicy` uses `@CompileStatic` because all its methods are `@NonCPS` and the class holds only plain primitives.
 
 ## Running tests
 
 | Task | Runs |
 |---|---|
-| `./gradlew test` | Unit tests (fast) |
-| `./gradlew integrationTest` | Plugin-provided integration suite |
-| `./gradlew integrationTestJunit` | Additional JUnit Jupiter suite |
-| `./gradlew integrationTestSpock` | Additional Spock 2.x suite |
-| `./gradlew integrationTestKotest` | Additional Kotest suite |
-| `./gradlew check` | All suites |
-
-## Framework wrappers
-
-The Spock and Kotest suites ship thin wrappers around `JenkinsSessionFixture` that handle setup and teardown.
-
-`JenkinsSupport` (Spock trait) — implement it and call `jenkins { }`:
-
-```groovy
-class MySpec extends Specification implements JenkinsSupport {
-    def 'my step runs'() {
-        jenkins {
-            def job = createProject(WorkflowJob, 'test')
-            job.definition = new CpsFlowDefinition('myStep()', false)
-            buildAndAssertSuccess(job)
-        }
-    }
-}
-```
-
-`JenkinsFunSpec` (Kotest base class) — extend it and call `jenkins { }`:
-
-```kotlin
-class MySpec : JenkinsFunSpec({
-    test("my step runs") {
-        jenkins { rule ->
-            val job = rule.createProject(WorkflowJob::class.java, "test")
-            job.definition = CpsFlowDefinition("myStep()", true)
-            rule.buildAndAssertSuccess(job)
-        }
-    }
-})
-```
+| `./gradlew test` | Unit tests (fast, no Jenkins runtime) |
+| `./gradlew integrationTest` | Integration suite (starts embedded Jenkins) |
+| `./gradlew check` | All suites + CodeNarc + Spotless |
 
 ## Using this as a template
 
