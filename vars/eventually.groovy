@@ -1,7 +1,7 @@
 import com.mkobit.libraryexample.PipelineLogger
 
-// Polls until condition() returns true, with exponential backoff between attempts.
-// Unlike the built-in retry step (which is exception-based), this polls a boolean condition.
+// Polls a boolean condition with exponential backoff; unlike retry, this does not require exceptions.
+// Accepts: maxAttempts (int), initialWaitSeconds (int), backoffMultiplier (int).
 def call(Map opts = [:], Closure condition) {
     def log = new PipelineLogger(this, 'eventually')
     def maxAttempts = opts.maxAttempts != null ? opts.maxAttempts : 5

@@ -1,8 +1,9 @@
 package com.mkobit.libraryexample
 
 import com.cloudbees.groovy.cps.NonCPS
+import groovy.transform.CompileStatic
 
-// Pure value class — no script reference. All methods are @NonCPS (string logic only).
+@CompileStatic
 class BranchPolicy implements Serializable {
 
     private final String branchName

@@ -1,8 +1,6 @@
 import com.cloudbees.groovy.cps.NonCPS
 import com.mkobit.libraryexample.PipelineLogger
 
-// Generates a cartesian product of the provided axes and runs each combination as a parallel stage.
-// Usage: withParallelMatrix([os: ['linux', 'windows'], jdk: ['11', '21']]) { axes -> ... }
 def call(Map axes, Closure body) {
     def log = new PipelineLogger(this, 'withParallelMatrix')
     def combinations = cartesianProduct(axes)

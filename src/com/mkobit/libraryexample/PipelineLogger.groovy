@@ -12,19 +12,27 @@ class PipelineLogger implements Serializable {
         this.tag = Objects.requireNonNull(tag)
     }
 
-    void info(String message)  {
+    void info(String message) {
         script.echo(format('INFO', message))
     }
-    void warn(String message)  {
+
+    void warn(String message) {
         script.echo(format('WARN', message))
     }
+
     void error(String message) {
         script.echo(format('ERROR', message))
     }
 
-    // padRight is a GDK collection method that confuses the CPS transformer.
+    void debug(String message) {
+        if (script.env?.PIPELINE_DEBUG == 'true') {
+            script.echo(format('DEBUG', message))
+        }
+    }
+
+    // padRight is CPS-unsafe (GDK collection method).
     @NonCPS
-    String format(String level, String message) {
+    private String format(String level, String message) {
         "[${level.padRight(5)} ${tag}] ${message}"
     }
 }

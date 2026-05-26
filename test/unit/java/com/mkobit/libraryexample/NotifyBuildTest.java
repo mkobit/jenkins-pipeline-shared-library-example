@@ -2,25 +2,14 @@ package com.mkobit.libraryexample;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.List;
 import java.util.Map;
 import org.codehaus.groovy.runtime.InvokerHelper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class NotifyBuildTest extends PipelineTest {
 
-  @BeforeEach
-  void registerSteps() {
-    base.getHelper()
-        .registerAllowedMethod(
-            "libraryResource",
-            List.of(String.class),
-            closure(args -> "{\"text\": \"Build {{status}}: {{job}} #{{build}} ({{branch}})\"}"));
-  }
-
   @Test
-  void echoesRenderedPayloadWithStatus() {
+  void echoesRenderedMessageWithStatus() {
     base.getBinding()
         .setProperty(
             "env", Map.of("JOB_NAME", "my-service", "BUILD_NUMBER", "42", "BRANCH_NAME", "main"));
