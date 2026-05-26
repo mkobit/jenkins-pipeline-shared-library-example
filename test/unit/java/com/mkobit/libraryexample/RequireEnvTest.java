@@ -1,6 +1,5 @@
 package com.mkobit.libraryexample;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -34,10 +33,13 @@ class RequireEnvTest extends PipelineTest {
       thrown = e;
     }
     assertNotNull(thrown);
-    assertEquals(
-        1,
+    assertTrue(
         base.getHelper().getCallStack().stream()
-            .filter(c -> c.getMethodName().equals("error"))
-            .count());
+            .anyMatch(
+                c ->
+                    c.getMethodName().equals("error")
+                        && c.toString().contains("API_KEY")
+                        && c.toString().contains("REGION")
+                        && !c.toString().contains("DEPLOY_TARGET")));
   }
 }
