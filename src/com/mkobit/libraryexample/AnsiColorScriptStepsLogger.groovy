@@ -53,7 +53,8 @@ class AnsiColorScriptStepsLogger implements PipelineLogger, Serializable {
     }
 
     // padRight is CPS-unsafe (GDK collection method).
-    // ESC is built at runtime to avoid raw control bytes in source.
+    // ESC (0x1B) is built at runtime rather than as a string literal because
+    // GrEclipse (Spotless groovy formatter) crashes on raw control bytes in source.
     @NonCPS
     private String ansi(String colorCode, String level, String message) {
         def esc = new String([27] as char[])
