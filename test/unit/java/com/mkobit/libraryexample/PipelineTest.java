@@ -26,7 +26,7 @@ abstract class PipelineTest {
   @BeforeEach
   void initPipeline() throws Exception {
     base = new DeclarativePipelineTest() {};
-    base.setScriptRoots(new String[] {".", "vars"});
+
     base.setUp();
     base.getHelper()
         .registerAllowedMethod(
