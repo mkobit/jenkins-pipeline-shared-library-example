@@ -6,9 +6,11 @@ on:
       - main
     paths:
       - 'local-jenkins/**'
+      - '.github/workflows/local-jenkins.yml'
   pull_request:
     paths:
       - 'local-jenkins/**'
+      - '.github/workflows/local-jenkins.yml'
 
 permissions: {}
 
