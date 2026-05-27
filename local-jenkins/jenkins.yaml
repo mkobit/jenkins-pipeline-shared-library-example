@@ -6,8 +6,7 @@ jenkins:
   numExecutors: 4
   mode: NORMAL
   rootUrl: "http://localhost:8080/"
-  crumbIssuer:
-    none: {}
+  crumbIssuer: null
   securityRealm:
     none: {}
   authorizationStrategy:
