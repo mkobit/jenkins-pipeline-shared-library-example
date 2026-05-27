@@ -23,8 +23,15 @@ while true; do
   elapsed=$((elapsed + INTERVAL))
 done
 
+COOKIE_JAR=$(mktemp)
+trap 'rm -f "$COOKIE_JAR"' EXIT
+
+CRUMB=$(curl -sf -c "$COOKIE_JAR" "${JENKINS_URL}/crumbIssuer/api/json" \
+  | sed 's/.*"crumb":"\([^"]*\)".*/\1/')
+
 echo "Running export script ..."
-curl -sf \
+curl -sf -b "$COOKIE_JAR" \
+  -H "Jenkins-Crumb: ${CRUMB}" \
   --data-urlencode "script@${SCRIPT_FILE}" \
   "${JENKINS_URL}/scriptText" \
   -o "${OUTPUT_FILE}"

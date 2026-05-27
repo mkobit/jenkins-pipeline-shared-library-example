@@ -7,10 +7,23 @@ services:
           - type=gha
         cache-to:
           - type=gha,mode=max
+    environment:
+      - CASC_JENKINS_CONFIG=/workspace/local-jenkins/jenkins.yaml
     ports:
-      - "8080:8080"
+      - "7676:8080"
     volumes:
       - jenkins_home:/var/jenkins_home
+      - ..:/workspace
+
+  agent1:
+    image: jenkins/ssh-agent:latest-jdk21
+    environment:
+      - JENKINS_AGENT_SSH_PUBKEY=ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAs9eJSREwXLeNSbM8eQb97evW/G+lwUELKIToIQ5F/B local-jenkins-agent
+
+  agent2:
+    image: jenkins/ssh-agent:latest-jdk21
+    environment:
+      - JENKINS_AGENT_SSH_PUBKEY=ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAs9eJSREwXLeNSbM8eQb97evW/G+lwUELKIToIQ5F/B local-jenkins-agent
 
 volumes:
   jenkins_home:

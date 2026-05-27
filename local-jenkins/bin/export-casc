@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+COMPOSE="$(cd "$(dirname "$0")/.." && pwd)/docker-compose.yml"
+
+if ! docker compose -f "$COMPOSE" exec jenkins true 2>/dev/null; then
+  echo "error: Jenkins is not running — docker compose -f local-jenkins/docker-compose.yml up -d" >&2
+  exit 1
+fi
+
+docker compose -f "$COMPOSE" exec jenkins bash -c '
+  COOKIE_JAR=$(mktemp)
+  EXPORT_TMP=$(mktemp)
+  trap "rm -f $COOKIE_JAR $EXPORT_TMP" EXIT
+  CRUMB=$(curl -sf -c "$COOKIE_JAR" http://localhost:8080/crumbIssuer/api/json \
+    | sed "s/.*\"crumb\":\"\([^\"]*\)\".*/\1/")
+  curl -sf -b "$COOKIE_JAR" -X POST \
+    -H "Jenkins-Crumb: ${CRUMB}" \
+    http://localhost:8080/configuration-as-code/export \
+    -o "$EXPORT_TMP"
+  { printf "# Generated via local-jenkins/bin/export-casc — do not edit by hand.\n# Configure in Jenkins UI, then re-export: local-jenkins/bin/export-casc\n"; cat "$EXPORT_TMP"; } \
+    > /workspace/local-jenkins/jenkins.yaml
+'
+
+echo "Saved local-jenkins/jenkins.yaml"

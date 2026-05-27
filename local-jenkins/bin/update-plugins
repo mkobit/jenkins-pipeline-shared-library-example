@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+COMPOSE="$(cd "$(dirname "$0")/.." && pwd)/docker-compose.yml"
+
+if ! docker compose -f "$COMPOSE" exec jenkins true 2>/dev/null; then
+  echo "error: Jenkins is not running — docker compose -f local-jenkins/docker-compose.yml up -d" >&2
+  exit 1
+fi
+
+docker compose -f "$COMPOSE" exec jenkins bash -c '
+  COOKIE_JAR=$(mktemp)
+  trap "rm -f $COOKIE_JAR" EXIT
+  CRUMB=$(curl -sf -c "$COOKIE_JAR" http://localhost:8080/crumbIssuer/api/json \
+    | sed "s/.*\"crumb\":\"\([^\"]*\)\".*/\1/")
+  curl -sf -b "$COOKIE_JAR" \
+    -H "Jenkins-Crumb: ${CRUMB}" \
+    --data-urlencode "script=
+Jenkins.instance.pluginManager.plugins
+  .findAll { it.active }
+  .sort { it.shortName }
+  .each { println \"\${it.shortName}:\${it.version}\" }
+null
+" http://localhost:8080/scriptText > /workspace/local-jenkins/plugins.txt
+'
+
+echo "Updated local-jenkins/plugins.txt"
