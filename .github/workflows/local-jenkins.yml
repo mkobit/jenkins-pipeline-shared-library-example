@@ -42,11 +42,7 @@ jobs:
 
       - name: Build image
         working-directory: local-jenkins
-        run: |
-          docker buildx bake \
-            --cache-from type=gha \
-            --cache-to type=gha,mode=max \
-            --load
+        run: docker buildx bake --load
 
       - name: Start Jenkins
         working-directory: local-jenkins
