@@ -1,0 +1,11 @@
+services:
+  jenkins:
+    build:
+      context: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+
+volumes:
+  jenkins_home:

@@ -1,0 +1,13 @@
+jenkins:
+  systemMessage: >-
+    LOCAL DEV INSTANCE — not for production use.
+    Plugins scraped from Jenkins 2.555.2.
+  numExecutors: 4
+  mode: NORMAL
+  rootUrl: "http://localhost:8080/"
+  crumbIssuer:
+    none: {}
+  securityRealm:
+    none: {}
+  authorizationStrategy:
+    unsecured: {}
