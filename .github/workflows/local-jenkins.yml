@@ -57,11 +57,12 @@ jobs:
 
       - name: Smoke test — Script Console
         run: |
-          result=$(curl -sf \
+          result=$(curl -s -w "\nHTTP_STATUS:%{http_code}" \
             --data-urlencode 'script=println "hello from script console"' \
             http://localhost:8080/scriptText)
+          echo "Response: $result"
           echo "$result" | grep -q "hello from script console" || {
-            echo "Script Console test failed. Got: $result"; exit 1; }
+            echo "Script Console test failed"; exit 1; }
 
       - uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654
         with:
