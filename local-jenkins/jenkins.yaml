@@ -5,7 +5,6 @@ jenkins:
     Plugins scraped from Jenkins 2.555.2.
   numExecutors: 4
   mode: NORMAL
-  rootUrl: "http://localhost:8080/"
   crumbIssuer: null
   securityRealm:
     none: {}
