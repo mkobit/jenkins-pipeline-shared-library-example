@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+COMPOSE="$(cd "$(dirname "$0")/.." && pwd)/docker-compose.yml"
+
+if ! docker compose -f "$COMPOSE" exec jenkins true 2>/dev/null; then
+  echo "error: Jenkins is not running — docker compose -f local-jenkins/docker-compose.yml up -d" >&2
+  exit 1
+fi
+
+docker compose -f "$COMPOSE" exec jenkins \
+  bash /workspace/local-jenkins/run-collector-and-update-catalog.sh

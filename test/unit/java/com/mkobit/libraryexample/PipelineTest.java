@@ -26,7 +26,6 @@ abstract class PipelineTest {
   @BeforeEach
   void initPipeline() throws Exception {
     base = new DeclarativePipelineTest() {};
-
     base.setUp();
     base.getHelper()
         .registerAllowedMethod(

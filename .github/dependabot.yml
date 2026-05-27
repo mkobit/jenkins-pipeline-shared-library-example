@@ -73,6 +73,18 @@ updates:
           - "org.jetbrains:*"
           - "org.jetbrains.*:*"
 
+  - package-ecosystem: "docker"
+    target-branch: "main"
+    directory: "/local-jenkins"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "infra"
+    cooldown:
+      # Jenkins releases frequently; bumping the image version requires a
+      # corresponding plugins.txt refresh, so keep the same cadence as Jenkins plugins.
+      default-days: 60
+
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
