@@ -20,7 +20,7 @@ jobs:
   local-jenkins:
     name: Build and smoke test local Jenkins image
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     permissions:
       contents: read
     steps:
@@ -50,22 +50,7 @@ jobs:
 
       - name: Start Jenkins
         working-directory: local-jenkins
-        run: docker compose up --detach
-
-      - name: Wait for Jenkins
-        run: |
-          echo "Polling Jenkins at http://localhost:8080/login ..."
-          for i in $(seq 1 24); do
-            if curl -sf -o /dev/null http://localhost:8080/login; then
-              echo "Jenkins is ready."
-              exit 0
-            fi
-            echo "  Attempt $i/24: not ready yet. Sleeping 5s ..."
-            sleep 5
-          done
-          echo "ERROR: Jenkins did not become ready within 120s." >&2
-          docker compose -f local-jenkins/docker-compose.yml logs
-          exit 1
+        run: docker compose up --detach --wait --wait-timeout 240
 
       - name: Smoke test — API
         run: |
