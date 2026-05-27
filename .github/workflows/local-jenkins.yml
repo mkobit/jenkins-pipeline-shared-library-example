@@ -97,6 +97,10 @@ jobs:
           touch /tmp/catalog-check/build.gradle.kts
           cd /tmp/catalog-check && gradle --no-daemon help
 
+      - name: Dump Jenkins logs
+        if: failure()
+        run: docker logs local-jenkins-jenkins-1 2>&1 || true
+
       - name: Stop Jenkins
         if: always()
         working-directory: local-jenkins
