@@ -1,6 +1,11 @@
 import com.mkobit.libraryexample.ConventionalCommit
 import com.mkobit.libraryexample.SemVer
 
+/**
+ * Computes next version from git tags and conventional commits.
+ * @param fallback the fallback version to use if no tags exist
+ * @return the next version string
+ */
 def call(String fallback = 'v0.0.0') {
     def tag = sh(script: 'git tag --list "v*.*.*" --sort=-v:refname | head -1', returnStdout: true).trim()
     def base = SemVer.parse(tag ?: fallback)

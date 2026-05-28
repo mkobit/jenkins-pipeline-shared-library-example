@@ -1,7 +1,11 @@
 import com.mkobit.libraryexample.BasicScriptStepsLogger
 
-// Polls a boolean condition with exponential backoff; unlike retry, this does not require exceptions.
-// Accepts: maxAttempts (int), initialWaitSeconds (int), backoffMultiplier (int).
+/**
+ * Polls a boolean condition with exponential backoff; unlike retry, this does not require exceptions.
+ * Accepts: maxAttempts (int), initialWaitSeconds (int), backoffMultiplier (int).
+ * @param opts options map
+ * @param condition the condition to evaluate
+ */
 def call(Map opts = [:], Closure condition) {
     def log = new BasicScriptStepsLogger(this, 'eventually')
     def maxAttempts = opts.maxAttempts != null ? opts.maxAttempts : 5

@@ -2,13 +2,20 @@ package com.mkobit.libraryexample
 
 import com.cloudbees.groovy.cps.NonCPS
 
-// Emits ANSI-colored output. Requires the AnsiColor Jenkins plugin to render colors in the log.
+/**
+ * Emits ANSI-colored output. Requires the AnsiColor Jenkins plugin to render colors in the log.
+ */
 class AnsiColorScriptStepsLogger implements PipelineLogger, Serializable {
 
     private final String tag
     private transient Object script
     private final int logLevel
 
+    /**
+     * Constructs a new ANSI color logger.
+     * @param script the pipeline script context
+     * @param tag a tag to prefix log messages with
+     */
     AnsiColorScriptStepsLogger(Object script, String tag) {
         this.script = Objects.requireNonNull(script)
         this.tag = Objects.requireNonNull(tag)
@@ -52,9 +59,16 @@ class AnsiColorScriptStepsLogger implements PipelineLogger, Serializable {
         }
     }
 
-    // padRight is CPS-unsafe (GDK collection method).
-    // ESC (0x1B) is built at runtime rather than as a string literal because
-    // GrEclipse (Spotless groovy formatter) crashes on raw control bytes in source.
+    /**
+     * Formats a log message with ANSI colors.
+     * padRight is CPS-unsafe (GDK collection method).
+     * ESC (0x1B) is built at runtime rather than as a string literal because
+     * GrEclipse (Spotless groovy formatter) crashes on raw control bytes in source.
+     * @param colorCode the ANSI color code
+     * @param level the log level string
+     * @param message the message
+     * @return the ANSI-colored log line
+     */
     @NonCPS
     private String ansi(String colorCode, String level, String message) {
         def esc = new String([27] as char[])
