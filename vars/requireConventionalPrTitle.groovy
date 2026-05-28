@@ -1,5 +1,8 @@
 import com.mkobit.libraryexample.ConventionalCommit
 
+/**
+ * Fails the build if the PR title is not a conventional commit.
+ */
 def call() {
     if (!env.CHANGE_ID) {
         return

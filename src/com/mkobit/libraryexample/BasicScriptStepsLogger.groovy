@@ -2,12 +2,20 @@ package com.mkobit.libraryexample
 
 import com.cloudbees.groovy.cps.NonCPS
 
+/**
+ * A simple logger implementation that outputs messages using the standard Jenkins {@code echo} step.
+ */
 class BasicScriptStepsLogger implements PipelineLogger, Serializable {
 
     private final String tag
     private transient Object script
     private final int logLevel
 
+    /**
+     * Constructs a new basic logger.
+     * @param script the pipeline script context
+     * @param tag a tag to prefix log messages with
+     */
     BasicScriptStepsLogger(Object script, String tag) {
         this.script = Objects.requireNonNull(script)
         this.tag = Objects.requireNonNull(tag)
@@ -51,7 +59,13 @@ class BasicScriptStepsLogger implements PipelineLogger, Serializable {
         }
     }
 
-    // padRight is CPS-unsafe (GDK collection method).
+    /**
+     * Formats a log message.
+     * padRight is CPS-unsafe (GDK collection method).
+     * @param level the log level string
+     * @param message the message
+     * @return the formatted log line
+     */
     @NonCPS
     private String format(String level, String message) {
         "[${level.padRight(5)} ${tag}] ${message}"

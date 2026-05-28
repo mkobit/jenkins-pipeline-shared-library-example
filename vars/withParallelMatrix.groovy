@@ -1,6 +1,11 @@
 import com.cloudbees.groovy.cps.NonCPS
 import com.mkobit.libraryexample.BasicScriptStepsLogger
 
+/**
+ * Runs a closure for every combination of axis values in parallel.
+ * @param axes a map of axis names to list of values
+ * @param body the closure to execute for each combination
+ */
 def call(Map axes, Closure body) {
     def log = new BasicScriptStepsLogger(this, 'withParallelMatrix')
     def combinations = cartesianProduct(axes)
