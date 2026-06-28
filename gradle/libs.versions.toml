@@ -9,7 +9,7 @@ kotest = "6.1.11"
 kotlin = "2.3.21"
 openrewrite = "7.32.2"
 spock = "2.4-groovy-2.5"
-spotless = "8.5.1"
+spotless = "8.6.0"
 
 [libraries]
 assertj = { module = "org.assertj:assertj-core", version.ref = "assertj" }
