@@ -58,6 +58,11 @@ updates:
       # This project owns the shared-library plugin; pin updates manually.
       - dependency-name: "com.mkobit.jenkins.pipelines.shared-library"
     groups:
+      build-infra:
+        patterns:
+          - "com.gradle.develocity"
+          - "com.diffplug.spotless"
+          - "org.gradle.toolchains.foojay-resolver-convention"
       kotest:
         patterns:
           - "io.kotest:*"

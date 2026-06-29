@@ -6,7 +6,6 @@ import org.gradle.api.tasks.testing.logging.TestStackTraceFilter
 
 plugins {
   alias(libs.plugins.shared.library)
-  alias(libs.plugins.openrewrite)
   alias(libs.plugins.spotless)
   codenarc
 }

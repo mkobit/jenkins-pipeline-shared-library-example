@@ -7,7 +7,6 @@ jenkins-pipeline-unit = "1.30"
 junit-jupiter = "6.1.0"
 kotest = "6.1.11"
 kotlin = "2.3.21"
-openrewrite = "7.32.2"
 spock = "2.4-groovy-2.5"
 spotless = "8.6.0"
 
@@ -29,6 +28,5 @@ spock-junit4 = { module = "org.spockframework:spock-junit4", version.ref = "spoc
 [plugins]
 foojay = { id = "org.gradle.toolchains.foojay-resolver-convention", version.ref = "foojay" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-openrewrite = { id = "org.openrewrite.rewrite", version.ref = "openrewrite" }
 shared-library = { id = "com.mkobit.jenkins.pipelines.shared-library", version = "0.12.1" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
