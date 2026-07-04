@@ -8,7 +8,7 @@ junit-jupiter = "6.1.0"
 kotest = "6.2.0"
 kotlin = "2.4.0"
 spock = "2.4-groovy-2.5"
-spotless = "8.6.0"
+spotless = "8.7.0"
 
 [libraries]
 assertj = { module = "org.assertj:assertj-core", version.ref = "assertj" }
