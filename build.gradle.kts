@@ -40,7 +40,7 @@ codenarc {
 sharedLibrary {
   plugins {
     plugins(jenkinsPlugins.bundles.allPlugins)
-    plugin("org.6wind.jenkins:lockable-resources:1515.v380548282a_59")
+    plugin("org.6wind.jenkins:lockable-resources:1524.v2c727b_b_e56ef")
   }
 }
 
