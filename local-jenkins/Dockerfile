@@ -1,4 +1,4 @@
-FROM jenkins/jenkins:2.570-jdk21
+FROM jenkins/jenkins:2.573-jdk21
 
 ENV JAVA_OPTS="-Djenkins.install.runSetupWizard=false"
 
