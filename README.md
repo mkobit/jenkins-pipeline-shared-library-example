@@ -68,6 +68,11 @@ Plain `for` loops and `.collectMany`/`.collectEntries` without closures are CPS-
 
 **`@CompileStatic` on value classes** — `BranchPolicy` uses `@CompileStatic` because all its methods are `@NonCPS` and the class holds only plain primitives.
 
+## Pull requests
+
+The `Build` check runs on every pull request, including documentation changes.
+Merge to `main` with a squash commit after the build passes.
+
 ## Running tests
 
 | Task | Runs |
