@@ -10,11 +10,6 @@ on:
       - '.gitignore'
       - 'local-jenkins/**'
   pull_request:
-    paths-ignore:
-      - '**.md'
-      - 'LICENSE.txt'
-      - '.gitignore'
-      - 'local-jenkins/**'
   workflow_dispatch:
 
 permissions: {}
